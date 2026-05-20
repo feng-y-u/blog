@@ -10,6 +10,7 @@ export default function Layout() {
             <Link to="/" className="hover:text-blue-600">首页</Link>
             <Link to="/categories" className="hover:text-blue-600">分类</Link>
             <Link to="/tags" className="hover:text-blue-600">标签</Link>
+            <Link to="/notes" className="hover:text-blue-600">笔记</Link>
             <Link to="/search" className="hover:text-blue-600">搜索</Link>
           </nav>
         </div>

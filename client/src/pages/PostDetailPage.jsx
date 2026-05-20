@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { getPostBySlug } from '../api/posts'
 import Loading from '../components/Loading'
+import CommentSection from '../components/CommentSection'
 import { formatDate } from '../utils/date'
 
 export default function PostDetailPage() {
@@ -55,6 +56,8 @@ export default function PostDetailPage() {
           ))}
         </div>
       )}
+
+      <CommentSection postId={post.id} />
     </article>
   )
 }

@@ -1,8 +1,9 @@
 const router = require('express').Router()
 const controller = require('../controllers/post-controller')
 const auth = require('../middleware/auth')
+const optionalAuth = require('../middleware/optional-auth')
 
-router.get('/', controller.list)
+router.get('/', optionalAuth, controller.list)
 router.get('/id/:id', controller.getById)
 router.get('/:slug', controller.getBySlug)
 router.post('/', auth, controller.create)

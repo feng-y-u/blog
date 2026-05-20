@@ -8,12 +8,15 @@ import CategoryPage from './pages/CategoryPage'
 import TagCloudPage from './pages/TagCloudPage'
 import TagPage from './pages/TagPage'
 import SearchPage from './pages/SearchPage'
+import NotesPage from './pages/NotesPage'
 import LoginPage from './pages/LoginPage'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import PostManager from './pages/admin/PostManager'
 import PostEditor from './pages/admin/PostEditor'
 import CategoryManager from './pages/admin/CategoryManager'
 import TagManager from './pages/admin/TagManager'
+import CommentManager from './pages/admin/CommentManager'
+import NoteManager from './pages/admin/NoteManager'
 import NotFoundPage from './pages/NotFoundPage'
 
 export default function App() {
@@ -27,6 +30,7 @@ export default function App() {
         <Route path="/tags" element={<TagCloudPage />} />
         <Route path="/tag/:slug" element={<TagPage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/notes" element={<NotesPage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/admin" element={<AdminLayout />}>
@@ -36,6 +40,8 @@ export default function App() {
         <Route path="posts/:id/edit" element={<PostEditor />} />
         <Route path="categories" element={<CategoryManager />} />
         <Route path="tags" element={<TagManager />} />
+        <Route path="comments" element={<CommentManager />} />
+        <Route path="notes" element={<NoteManager />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
