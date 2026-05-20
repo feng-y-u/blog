@@ -7,6 +7,7 @@ async function list(req, res, next) {
       include: { _count: { select: { posts: true } } },
       orderBy: { name: 'asc' },
     })
+    res.set('Cache-Control', 'public, max-age=300')
     res.json({ data })
   } catch (err) {
     next(err)

@@ -38,6 +38,7 @@ async function list(req, res, next) {
       prisma.post.count({ where }),
     ])
 
+    res.set('Cache-Control', 'public, max-age=300')
     res.json({
       data: data.map(reshapeTags),
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
@@ -181,4 +182,25 @@ async function getById(req, res, next) {
   }
 }
 
-module.exports = { list, getBySlug, getById, create, update, remove, updateStatus }
+async function getAdjacentPosts(req, res, next) {
+  try {
+    const id = +req.params.id
+    const [prev, next] = await Promise.all([
+      prisma.post.findFirst({
+        where: { id: { lt: id }, status: POST_STATUS.PUBLISHED },
+        orderBy: { id: 'desc' },
+        select: { id: true, title: true, slug: true },
+      }),
+      prisma.post.findFirst({
+        where: { id: { gt: id }, status: POST_STATUS.PUBLISHED },
+        orderBy: { id: 'asc' },
+        select: { id: true, title: true, slug: true },
+      }),
+    ])
+    res.json({ data: { prev, next } })
+  } catch (err) {
+    next(err)
+  }
+}
+
+module.exports = { list, getBySlug, getById, create, update, remove, updateStatus, getAdjacentPosts }

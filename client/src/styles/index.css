@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  transition: background var(--transition), color var(--transition);
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-muted);
+}
+
+/* 入场动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.animate-fade-in:nth-child(1) { animation-delay: 0.05s; }
+.animate-fade-in:nth-child(2) { animation-delay: 0.1s; }
+.animate-fade-in:nth-child(3) { animation-delay: 0.15s; }
+.animate-fade-in:nth-child(4) { animation-delay: 0.2s; }
+.animate-fade-in:nth-child(5) { animation-delay: 0.25s; }
+.animate-fade-in:nth-child(6) { animation-delay: 0.3s; }
+.animate-fade-in:nth-child(7) { animation-delay: 0.35s; }
+.animate-fade-in:nth-child(8) { animation-delay: 0.4s; }
+.animate-fade-in:nth-child(9) { animation-delay: 0.45s; }
+.animate-fade-in:nth-child(10) { animation-delay: 0.5s; }

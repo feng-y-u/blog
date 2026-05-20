@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { useSearchParams } from 'react-router-dom'
 import { getPosts, getCategories } from '../api/posts'
 import Loading from '../components/Loading'
@@ -98,6 +99,9 @@ export default function SearchPage() {
 
   return (
     <div>
+      <Helmet>
+        <title>{query ? `${query} — 搜索` : '搜索'} — Blog</title>
+      </Helmet>
       <h1 className="text-2xl font-bold mb-6">搜索</h1>
 
       <div className="relative mb-4">

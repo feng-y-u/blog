@@ -5,6 +5,7 @@ const optionalAuth = require('../middleware/optional-auth')
 
 router.get('/', optionalAuth, controller.list)
 router.get('/id/:id', controller.getById)
+router.get('/:id/adjacent', controller.getAdjacentPosts)
 router.get('/:slug', controller.getBySlug)
 router.post('/', auth, controller.create)
 router.put('/:id', auth, controller.update)

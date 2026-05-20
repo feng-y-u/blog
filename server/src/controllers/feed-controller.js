@@ -35,6 +35,7 @@ async function rss(req, res, next) {
     })
 
     res.set('Content-Type', 'application/rss+xml; charset=utf-8')
+    res.set('Cache-Control', 'public, max-age=3600')
     res.send(feed.rss2())
   } catch (err) {
     next(err)
