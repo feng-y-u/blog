@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Database
+*.db
+*.db-journal
+
+# Build output
+client/dist/
+server/dist/
+
+# Claude local settings
+.claude/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Uploads (local development)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Prisma (keep schema, ignore generated client)
+server/node_modules/.prisma/
