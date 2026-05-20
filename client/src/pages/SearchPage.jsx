@@ -47,6 +47,10 @@ export default function SearchPage() {
     getCategories().then(res => setCategories(res.data.data)).catch(() => {})
   }, [])
 
+  useEffect(() => {
+    return () => clearTimeout(debounceRef.current)
+  }, [])
+
   function doSearch(q, category) {
     const params = { search: q, limit: 50 }
     if (category) params.category = category

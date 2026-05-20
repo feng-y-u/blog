@@ -1,4 +1,5 @@
 const prisma = require('../utils/prisma')
+const fs = require('fs/promises')
 
 async function listPublic(req, res, next) {
   try {
@@ -36,7 +37,7 @@ async function list(req, res, next) {
         where,
         skip: (page - 1) * limit,
         take: limit,
-        include: { category: { select: { id: true, name: true, slug: true } } },
+        select: { id: true, title: true, categoryId: true, category: { select: { id: true, name: true, slug: true } }, createdAt: true, updatedAt: true },
         orderBy: { updatedAt: 'desc' },
       }),
       prisma.note.count({ where }),
@@ -71,7 +72,7 @@ async function create(req, res, next) {
 
     if (req.file) {
       title = req.file.originalname.replace(/\.md$/i, '')
-      content = require('fs').readFileSync(req.file.path, 'utf-8')
+      content = await fs.readFile(req.file.path, 'utf-8')
       categoryId = req.body.categoryId ? +req.body.categoryId : null
     } else {
       title = req.body.title

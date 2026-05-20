@@ -8,9 +8,7 @@ function optionalAuth(req, res, next) {
   try {
     const token = header.split(' ')[1]
     req.user = jwt.verify(token, config.jwtSecret)
-  } catch {
-    // 忽略无效token
-  }
+  } catch { /* eslint no-empty */ }
   next()
 }
 

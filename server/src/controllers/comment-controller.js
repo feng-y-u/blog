@@ -28,14 +28,12 @@ async function create(req, res, next) {
       return res.status(400).json({ error: '昵称和内容不能为空' })
     }
 
-    const post = await prisma.post.findUnique({ where: { id: postId } })
+    const checks = [prisma.post.findUnique({ where: { id: postId } })]
+    if (parentId) checks.push(prisma.comment.findUnique({ where: { id: +parentId } }))
+    const [post, parent] = await Promise.all(checks)
     if (!post) return res.status(404).json({ error: '文章不存在' })
-
-    if (parentId) {
-      const parent = await prisma.comment.findUnique({ where: { id: +parentId } })
-      if (!parent || parent.postId !== postId) {
-        return res.status(400).json({ error: '父评论不存在' })
-      }
+    if (parentId && (!parent || parent.postId !== postId)) {
+      return res.status(400).json({ error: '父评论不存在' })
     }
 
     const comment = await prisma.comment.create({

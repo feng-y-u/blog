@@ -13,7 +13,7 @@ export default function AdminDashboard() {
       getCategories(),
       getTags(),
       client.get('/comments', { params: { limit: 1 } }),
-      client.get('/comments', { params: { status: 'pending', limit: 1 } }),
+      client.get('/comments', { params: { limit: 5, status: 'pending' } }),
       getNotes({ limit: 1 }),
     ]).then(([postsRes, catRes, tagRes, commentsRes, pendingRes, notesRes]) => {
       setStats({
@@ -24,11 +24,8 @@ export default function AdminDashboard() {
         pendingComments: pendingRes.data.pagination.total,
         notes: notesRes.data.pagination.total,
       })
-    })
-
-    client.get('/comments', { params: { limit: 5, status: 'pending' } })
-      .then(res => setRecentComments(res.data.data))
-      .catch(() => {})
+      setRecentComments(pendingRes.data.data)
+    }).catch(() => {})
   }, [])
 
   return (

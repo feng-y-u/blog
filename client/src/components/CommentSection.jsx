@@ -167,10 +167,7 @@ export default function CommentSection({ postId }) {
     }
   }
 
-  async function handleReply(data) {
-    const comment = await handleCreate(data)
-    return comment
-  }
+  const handleReply = handleCreate
 
   if (loading) return <div className="text-center py-8 text-sm text-gray-400">加载评论中...</div>
 
