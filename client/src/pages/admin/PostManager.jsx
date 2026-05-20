@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getPosts, deletePost, updatePostStatus } from '../../api/posts'
+import Loading from '../../components/Loading'
+import { formatDate } from '../../utils/date'
 
 export default function PostManager() {
   const [posts, setPosts] = useState([])
@@ -27,7 +29,7 @@ export default function PostManager() {
     loadPosts()
   }
 
-  if (loading) return <div>加载中...</div>
+  if (loading) return <Loading />
 
   return (
     <div>
@@ -51,7 +53,7 @@ export default function PostManager() {
               <td className="p-3">{post.title}</td>
               <td className="p-3 text-sm text-gray-500">{post.category?.name || '-'}</td>
               <td className="p-3"><span className={`text-xs px-2 py-1 rounded ${post.status === 'published' ? 'bg-green-100 text-green-700' : post.status === 'draft' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>{post.status}</span></td>
-              <td className="p-3 text-sm text-gray-500">{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : '-'}</td>
+              <td className="p-3 text-sm text-gray-500">{post.publishedAt ? formatDate(post.publishedAt) : '-'}</td>
               <td className="p-3 flex gap-2">
                 <button onClick={() => handleToggleStatus(post)} className="text-sm text-blue-600 hover:underline">{post.status === 'published' ? '归档' : '发布'}</button>
                 <Link to={`/admin/posts/${post.id}/edit`} className="text-sm text-green-600 hover:underline">编辑</Link>

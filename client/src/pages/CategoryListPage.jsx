@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getCategories } from '../api/posts'
+import Loading from '../components/Loading'
 
 export default function CategoryListPage() {
   const [categories, setCategories] = useState([])
@@ -10,7 +11,7 @@ export default function CategoryListPage() {
     getCategories().then(res => setCategories(res.data.data)).finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <div className="text-center py-12">加载中...</div>
+  if (loading) return <Loading />
 
   return (
     <div>

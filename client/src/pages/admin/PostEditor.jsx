@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getPostBySlug, createPost, updatePost, getCategories, getTags } from '../../api/posts'
+import { getPost, createPost, updatePost, getCategories, getTags } from '../../api/posts'
 
 export default function PostEditor() {
   const { id } = useParams()
@@ -24,7 +24,7 @@ export default function PostEditor() {
 
   useEffect(() => {
     if (!isEdit) return
-    getPostBySlug(id).then(res => {
+    getPost(id).then(res => {
       const post = res.data.data
       setTitle(post.title)
       setContent(post.content)

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getPosts, getCategories, getTags } from '../api/posts'
+import Loading from '../components/Loading'
+import PostCard from '../components/PostCard'
 
 export default function HomePage() {
   const [posts, setPosts] = useState([])
@@ -12,45 +14,27 @@ export default function HomePage() {
 
   useEffect(() => {
     setLoading(true)
-    Promise.all([
-      getPosts({ page, limit: 10 }),
-      getCategories(),
-      getTags(),
-    ]).then(([postsRes, catsRes, tagsRes]) => {
-      setPosts(postsRes.data.data)
-      setPagination(postsRes.data.pagination)
-      setCategories(catsRes.data.data)
-      setTags(tagsRes.data.data)
+    getPosts({ page, limit: 10 }).then(res => {
+      setPosts(res.data.data)
+      setPagination(res.data.pagination)
     }).finally(() => setLoading(false))
   }, [page])
 
-  if (loading) return <div className="text-center py-12">加载中...</div>
+  useEffect(() => {
+    Promise.all([getCategories(), getTags()]).then(([catRes, tagRes]) => {
+      setCategories(catRes.data.data)
+      setTags(tagRes.data.data)
+    })
+  }, [])
+
+  if (loading) return <Loading />
 
   return (
     <div className="flex gap-8">
       <div className="flex-1">
         <h1 className="text-2xl font-bold mb-6">文章列表</h1>
         <div className="flex flex-col gap-4">
-          {posts.map(post => (
-            <article key={post.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                {post.category && <span className="text-blue-600 font-medium">{post.category.name}</span>}
-                <span>·</span>
-                <span>{new Date(post.publishedAt || post.createdAt).toLocaleDateString()}</span>
-              </div>
-              <Link to={`/post/${post.slug}`}>
-                <h2 className="text-xl font-semibold mb-2 hover:text-blue-600">{post.title}</h2>
-              </Link>
-              {post.excerpt && <p className="text-gray-600 dark:text-gray-400 text-sm">{post.excerpt}</p>}
-              {post.tags?.length > 0 && (
-                <div className="flex gap-2 mt-3">
-                  {post.tags.map(tag => (
-                    <span key={tag.id} className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">{tag.name}</span>
-                  ))}
-                </div>
-              )}
-            </article>
-          ))}
+          {posts.map(post => <PostCard key={post.id} post={post} showExcerpt showTags />)}
         </div>
         {pagination && pagination.totalPages > 1 && (
           <div className="flex justify-center gap-2 mt-8">

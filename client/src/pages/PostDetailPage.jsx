@@ -4,6 +4,8 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { getPostBySlug } from '../api/posts'
+import Loading from '../components/Loading'
+import { formatDate } from '../utils/date'
 
 export default function PostDetailPage() {
   const { slug } = useParams()
@@ -19,7 +21,7 @@ export default function PostDetailPage() {
       .finally(() => setLoading(false))
   }, [slug])
 
-  if (loading) return <div className="text-center py-12">加载中...</div>
+  if (loading) return <Loading />
   if (error) return <div className="text-center py-12 text-red-500">{error}</div>
   if (!post) return null
 
@@ -34,7 +36,7 @@ export default function PostDetailPage() {
       <div className="flex items-center gap-3 text-sm text-gray-500 mb-8">
         <span>{post.author?.displayName || '作者'}</span>
         <span>·</span>
-        <span>{new Date(post.publishedAt || post.createdAt).toLocaleDateString()}</span>
+        <span>{formatDate(post.publishedAt || post.createdAt)}</span>
         <span>·</span>
         <span>阅读 {post.viewCount}</span>
       </div>

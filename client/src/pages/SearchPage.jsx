@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { getPosts } from '../api/posts'
+import Loading from '../components/Loading'
+import PostCard from '../components/PostCard'
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -32,15 +34,9 @@ export default function SearchPage() {
       </form>
       {searchParams.get('q') && (
         <div>
-          {loading ? <p>搜索中...</p> : results.length === 0
+          {loading ? <Loading text="搜索中..." /> : results.length === 0
             ? <p className="text-gray-500">没有找到匹配的文章</p>
-            : results.map(post => (
-              <article key={post.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
-                <span className="text-sm text-gray-500">{new Date(post.publishedAt || post.createdAt).toLocaleDateString()}</span>
-                <Link to={`/post/${post.slug}`}><h2 className="text-lg font-semibold hover:text-blue-600">{post.title}</h2></Link>
-                {post.excerpt && <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{post.excerpt}</p>}
-              </article>
-            ))
+            : results.map(post => <PostCard key={post.id} post={post} showExcerpt />)
           }
         </div>
       )}
