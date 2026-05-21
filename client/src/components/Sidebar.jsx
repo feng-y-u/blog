@@ -2,8 +2,22 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getPosts, getCategories, getTags } from '../api/posts'
 import { getNotes } from '../api/note'
+import { useSettings } from '../contexts/SettingsContext'
+
+const SOCIAL_ICONS = {
+  github: '⌂', twitter: '✕', zenn: '◇', qiita: '○',
+  bilibili: '▶', weibo: '◎', email: '✉', website: '◎',
+}
 
 export default function Sidebar() {
+  const { settings } = useSettings()
+  const avatarEmoji = settings?.avatar_emoji || '🌸'
+  const profileName = settings?.profile_name || 'Yuki'
+  const profileSig = settings?.profile_signature || '― コードは詩、アニメは夢 ―'
+  const profileBio = settings?.profile_bio || '全栈开发者 / 动漫爱好者 / 开源贡献者'
+  let socialLinks = {}
+  try { socialLinks = settings?.social_links ? JSON.parse(settings.social_links) : {} } catch { socialLinks = {} }
+  const socialEntries = Object.entries(socialLinks)
   const [stats, setStats] = useState({ posts: '-', notes: '-', categories: '-' })
   const [tags, setTags] = useState([])
   const [categories, setCategories] = useState([])
@@ -26,80 +40,200 @@ export default function Sidebar() {
   }, [])
 
   return (
-    <aside className="flex flex-col gap-5" style={{ width: 'var(--sidebar-w)' }}>
+    <div className="flex flex-col gap-5" style={{ width: 'var(--sidebar-w)' }}>
       {/* 资料卡 */}
-      <div className="rounded-xl p-6 text-center" style={{
-        background: 'var(--card)',
+      <div className="sidebar-card" style={{
+        background: 'var(--surface)',
         border: '1px solid var(--border)',
+        borderRadius: 'var(--radius)',
+        padding: '28px 24px',
         boxShadow: 'var(--shadow)',
+        transition: 'var(--transition)',
       }}>
-        <div className="w-20 h-20 rounded-full mx-auto mb-3 flex items-center justify-center text-2xl" style={{
-          border: '3px solid var(--accent)',
-          background: 'var(--surface)',
-          color: 'var(--accent)',
-        }}>
-          🐱
-        </div>
-        <h3 className="text-xl font-bold" style={{ fontFamily: "'Noto Sans SC', sans-serif" }}>
-          Yuki
-        </h3>
-        <p className="text-sm italic mt-1" style={{ color: 'var(--accent)' }}>
-          写代码的宅
-        </p>
-        <p className="text-xs mt-2" style={{ color: 'var(--fg-secondary)' }}>
-          前端/后端/动漫/游戏
-        </p>
-        <div className="flex justify-center gap-3 mt-4">
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer"
-            className="w-9 h-9 rounded-lg flex items-center justify-center text-sm transition-all hover:scale-110"
-            style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--fg-secondary)' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" /></svg>
-          </a>
-          <a href="mailto:yuki@example.com"
-            className="w-9 h-9 rounded-lg flex items-center justify-center text-sm transition-all hover:scale-110"
-            style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--fg-secondary)' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-          </a>
+        <div className="profile" style={{ textAlign: 'center' }}>
+          {/* 头像 — 渐变边框效果，与原型一致 */}
+          <div style={{
+            width: '88px', height: '88px',
+            borderRadius: '50%',
+            margin: '0 auto 16px',
+            background: 'linear-gradient(135deg, var(--accent-dim), rgba(100, 80, 200, 0.2))',
+            border: '2px solid var(--border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '40px',
+            position: 'relative',
+            overflow: 'hidden',
+          }}>
+            {/* 渐变边框遮罩 */}
+            <div style={{
+              position: 'absolute', inset: 0, borderRadius: '50%',
+              border: '2px solid transparent',
+              background: 'linear-gradient(135deg, var(--accent), rgba(100, 80, 200, 0.4)) border-box',
+              WebkitMask: 'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
+              WebkitMaskComposite: 'xor',
+              maskComposite: 'exclude',
+              pointerEvents: 'none',
+            }} />
+            {avatarEmoji}
+          </div>
+          <div className="profile-name" style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '22px',
+            fontWeight: 700,
+            color: 'var(--fg)',
+            letterSpacing: '0.02em',
+          }}>
+            {profileName}
+          </div>
+          <div className="profile-sig" style={{
+            fontFamily: 'Georgia, Times New Roman, serif',
+            fontStyle: 'italic',
+            fontSize: '14px',
+            color: 'var(--accent)',
+            marginTop: '6px',
+            opacity: 0.9,
+          }}>
+            {profileSig}
+          </div>
+          <div className="profile-bio" style={{
+            fontSize: '13px',
+            color: 'var(--fg-secondary)',
+            marginTop: '10px',
+            lineHeight: 1.5,
+          }}>
+            {profileBio.split('\n').map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
+          </div>
+          <div className="social-links" style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '14px',
+            marginTop: '16px',
+            flexWrap: 'wrap',
+          }}>
+            {socialEntries.map(([key, url]) => (
+              <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="social-link" aria-label={key}
+                style={{
+                  width: '36px', height: '36px', borderRadius: '8px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'var(--fg-secondary)', border: '1px solid var(--border)',
+                  textDecoration: 'none', fontSize: '16px',
+                  transition: 'var(--transition)',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-dim)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'var(--fg-secondary)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateY(0)' }}>
+                {SOCIAL_ICONS[key] || '◎'}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* 统计卡 */}
-      <div className="rounded-xl p-4" style={{
-        background: 'var(--card)',
+      {/* 导航统计 */}
+      <div className="sidebar-card" style={{
+        background: 'var(--surface)',
         border: '1px solid var(--border)',
+        borderRadius: 'var(--radius)',
+        padding: '24px 20px',
         boxShadow: 'var(--shadow)',
+        transition: 'var(--transition)',
       }}>
-        <div className="grid grid-cols-3 gap-2 text-center">
-          <Link to="/" className="block p-2 rounded-lg transition-all hover:scale-105" style={{ background: 'var(--surface)' }}>
-            <div className="text-xl font-bold" style={{ fontFamily: "'Noto Sans SC', sans-serif" }}>{stats.posts}</div>
-            <div className="text-xs" style={{ color: 'var(--fg-muted)' }}>文章</div>
+        <div className="sidebar-section-title" style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '12px',
+          fontWeight: 600,
+          color: 'var(--fg-muted)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+          marginBottom: '12px',
+        }}>
+          导航
+        </div>
+        <div className="nav-stats" style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '10px',
+        }}>
+          <Link to="/" className="nav-stat" style={{
+            textAlign: 'center', padding: '10px 4px',
+            borderRadius: 'var(--radius-sm)',
+            background: 'var(--bg)', cursor: 'pointer',
+            transition: 'var(--transition)', textDecoration: 'none', color: 'inherit',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent-dim)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg)'; e.currentTarget.style.transform = 'translateY(0)' }}>
+            <div className="nav-stat-num" style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '20px', fontWeight: 700, color: 'var(--fg)',
+            }}>{stats.posts}</div>
+            <div className="nav-stat-label" style={{ fontSize: '11px', color: 'var(--fg-secondary)', marginTop: '2px' }}>文章</div>
           </Link>
-          <Link to="/notes" className="block p-2 rounded-lg transition-all hover:scale-105" style={{ background: 'var(--surface)' }}>
-            <div className="text-xl font-bold" style={{ fontFamily: "'Noto Sans SC', sans-serif" }}>{stats.notes}</div>
-            <div className="text-xs" style={{ color: 'var(--fg-muted)' }}>笔记</div>
+          <Link to="/notes" className="nav-stat" style={{
+            textAlign: 'center', padding: '10px 4px',
+            borderRadius: 'var(--radius-sm)',
+            background: 'var(--bg)', cursor: 'pointer',
+            transition: 'var(--transition)', textDecoration: 'none', color: 'inherit',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent-dim)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg)'; e.currentTarget.style.transform = 'translateY(0)' }}>
+            <div className="nav-stat-num" style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '20px', fontWeight: 700, color: 'var(--fg)',
+            }}>{stats.notes}</div>
+            <div className="nav-stat-label" style={{ fontSize: '11px', color: 'var(--fg-secondary)', marginTop: '2px' }}>笔记</div>
           </Link>
-          <Link to="/categories" className="block p-2 rounded-lg transition-all hover:scale-105" style={{ background: 'var(--surface)' }}>
-            <div className="text-xl font-bold" style={{ fontFamily: "'Noto Sans SC', sans-serif" }}>{stats.categories}</div>
-            <div className="text-xs" style={{ color: 'var(--fg-muted)' }}>分类</div>
+          <Link to="/categories" className="nav-stat" style={{
+            textAlign: 'center', padding: '10px 4px',
+            borderRadius: 'var(--radius-sm)',
+            background: 'var(--bg)', cursor: 'pointer',
+            transition: 'var(--transition)', textDecoration: 'none', color: 'inherit',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent-dim)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg)'; e.currentTarget.style.transform = 'translateY(0)' }}>
+            <div className="nav-stat-num" style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '20px', fontWeight: 700, color: 'var(--fg)',
+            }}>{stats.categories}</div>
+            <div className="nav-stat-label" style={{ fontSize: '11px', color: 'var(--fg-secondary)', marginTop: '2px' }}>分类</div>
           </Link>
         </div>
       </div>
 
       {/* 分类列表 */}
       {categories.length > 0 && (
-        <div className="rounded-xl p-4" style={{
-          background: 'var(--card)',
+        <div className="sidebar-card" style={{
+          background: 'var(--surface)',
           border: '1px solid var(--border)',
+          borderRadius: 'var(--radius)',
+          padding: '24px 20px',
           boxShadow: 'var(--shadow)',
+          transition: 'var(--transition)',
         }}>
-          <h4 className="text-sm font-semibold mb-3" style={{ color: 'var(--fg)' }}>分类</h4>
-          <div className="flex flex-col gap-1.5">
+          <div className="sidebar-section-title" style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '12px',
+            fontWeight: 600,
+            color: 'var(--fg-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            marginBottom: '12px',
+          }}>
+            分类
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {categories.map(cat => (
               <Link key={cat.id} to={`/category/${cat.slug}`}
-                className="flex justify-between items-center px-3 py-1.5 rounded-lg text-sm transition-all hover:scale-[1.02]"
-                style={{ color: 'var(--fg-secondary)', background: 'var(--surface)' }}>
+                className="tag" style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '6px 12px', borderRadius: '20px', fontSize: '12px',
+                  color: 'var(--fg-secondary)',
+                  background: 'var(--bg)', border: '1px solid var(--border)',
+                  cursor: 'pointer', transition: 'var(--transition)', textDecoration: 'none',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-dim)' }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'var(--fg-secondary)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg)' }}>
                 <span>{cat.name}</span>
-                <span className="text-xs" style={{ color: 'var(--fg-muted)' }}>{cat._count?.posts || 0}</span>
+                <span style={{ color: 'var(--fg-muted)', fontSize: '11px' }}>{cat._count?.posts || 0}</span>
               </Link>
             ))}
           </div>
@@ -108,24 +242,46 @@ export default function Sidebar() {
 
       {/* 标签云 */}
       {tags.length > 0 && (
-        <div className="rounded-xl p-4" style={{
-          background: 'var(--card)',
+        <div className="sidebar-card" style={{
+          background: 'var(--surface)',
           border: '1px solid var(--border)',
+          borderRadius: 'var(--radius)',
+          padding: '24px 20px',
           boxShadow: 'var(--shadow)',
+          transition: 'var(--transition)',
         }}>
-          <h4 className="text-sm font-semibold mb-3" style={{ color: 'var(--fg)' }}>标签</h4>
-          <div className="flex flex-wrap gap-2">
+          <div className="sidebar-section-title" style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '12px',
+            fontWeight: 600,
+            color: 'var(--fg-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            marginBottom: '12px',
+          }}>
+            热门标签
+          </div>
+          <div className="tag-cloud" style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
             {tags.map((tag, i) => {
-              const size = (tag._count?.posts || 0) > 3 ? 'tag-lg' : (tag._count?.posts || 0) > 0 ? 'tag' : 'tag-sm'
-              const sizes = { 'tag-lg': 'text-sm px-3 py-1.5', 'tag': 'text-xs px-2.5 py-1', 'tag-sm': 'text-[11px] px-2 py-0.5' }
+              const count = tag._count?.posts || 0
+              const sizeClass = count > 3 ? 'tag-lg' : count > 0 ? 'tag' : 'tag-sm'
+              const sizes = { 'tag-lg': { fontSize: '13px', padding: '4px 14px' }, 'tag': { fontSize: '11px', padding: '3px 10px' }, 'tag-sm': { fontSize: '10px', padding: '2px 8px' } }
+              const s = sizes[sizeClass]
               return (
                 <Link key={tag.id} to={`/tag/${tag.slug}`}
-                  className={`${sizes[size]} rounded-full transition-all hover:scale-105`}
-                  style={{
-                    background: 'var(--accent-dim)',
-                    color: 'var(--accent)',
-                    border: '1px solid transparent',
-                  }}>
+                  className="tag" style={{
+                    display: 'inline-block',
+                    ...s,
+                    borderRadius: '20px',
+                    color: 'var(--fg-secondary)',
+                    background: 'var(--bg)',
+                    border: '1px solid var(--border)',
+                    cursor: 'pointer',
+                    transition: 'var(--transition)',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-dim)' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--fg-secondary)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg)' }}>
                   {tag.name}
                 </Link>
               )
@@ -133,6 +289,6 @@ export default function Sidebar() {
           </div>
         </div>
       )}
-    </aside>
+    </div>
   )
 }

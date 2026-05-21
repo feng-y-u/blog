@@ -4,6 +4,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import Layout from './components/Layout'
 import AdminLayout from './components/AdminLayout'
 import Loading from './components/Loading'
+import { SettingsProvider } from './contexts/SettingsContext'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
 const PostDetailPage = lazy(() => import('./pages/PostDetailPage'))
@@ -21,6 +22,7 @@ const CategoryManager = lazy(() => import('./pages/admin/CategoryManager'))
 const TagManager = lazy(() => import('./pages/admin/TagManager'))
 const CommentManager = lazy(() => import('./pages/admin/CommentManager'))
 const NoteManager = lazy(() => import('./pages/admin/NoteManager'))
+const AppearanceSettings = lazy(() => import('./pages/admin/AppearanceSettings'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
 function SuspenseWrapper({ children }) {
@@ -30,6 +32,7 @@ function SuspenseWrapper({ children }) {
 export default function App() {
   return (
     <HelmetProvider>
+      <SettingsProvider>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<SuspenseWrapper><HomePage /></SuspenseWrapper>} />
@@ -51,9 +54,11 @@ export default function App() {
           <Route path="tags" element={<SuspenseWrapper><TagManager /></SuspenseWrapper>} />
           <Route path="comments" element={<SuspenseWrapper><CommentManager /></SuspenseWrapper>} />
           <Route path="notes" element={<SuspenseWrapper><NoteManager /></SuspenseWrapper>} />
+          <Route path="appearance" element={<SuspenseWrapper><AppearanceSettings /></SuspenseWrapper>} />
         </Route>
         <Route path="*" element={<SuspenseWrapper><NotFoundPage /></SuspenseWrapper>} />
       </Routes>
+      </SettingsProvider>
     </HelmetProvider>
   )
 }

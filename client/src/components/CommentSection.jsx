@@ -1,17 +1,23 @@
 import { useState, useEffect, useRef } from 'react'
 import client from '../api/client'
 
-function Avatar({ name }) {
-  const colors = [
-    'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500',
-    'bg-yellow-500', 'bg-red-500', 'bg-indigo-500', 'bg-teal-500',
-  ]
-  const colorIndex = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % colors.length
-  return (
-    <div className={`w-9 h-9 rounded-full ${colors[colorIndex]} flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
-      {name.charAt(0).toUpperCase()}
-    </div>
-  )
+const AVATARS = ['🐱', '🦊', '🐧', '🐰', '🐻', '🐼', '🐨', '🦁']
+const TEXTAREA_CSS = `
+.comment-form textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.comment-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+`
+
+function randomAvatar(name) {
+  const idx = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % AVATARS.length
+  return AVATARS[idx]
 }
 
 function CommentForm({ postId, parentId, onSubmit, placeholder, buttonText }) {
@@ -49,33 +55,64 @@ function CommentForm({ postId, parentId, onSubmit, placeholder, buttonText }) {
     <form onSubmit={handleSubmit} className="comment-form">
       <textarea ref={textareaRef} value={content} onChange={e => { setContent(e.target.value); autoResize() }}
         placeholder={placeholder || '写下你的评论...'}
-        className="w-full min-h-[100px] p-3.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm resize-y focus:outline-none focus:border-blue-400 focus:ring-3 focus:ring-blue-100 dark:focus:ring-blue-900/30 transition-colors" required />
+        style={{
+          width: '100%', minHeight: '100px', padding: '14px 16px',
+          borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)',
+          background: 'var(--bg)', color: 'var(--fg)', fontSize: '14px',
+          fontFamily: 'var(--font-body)', resize: 'vertical', transition: 'var(--transition)',
+        }} required />
       {!parentId && (
         <div className="flex items-center gap-3 mt-3">
           <input type="text" value={authorName} onChange={e => setAuthorName(e.target.value)}
             placeholder="昵称 *" required
-            className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 focus:outline-none focus:border-blue-400" />
+            style={{
+              flex: 1, padding: '8px 12px', fontSize: '13px', borderRadius: 'var(--radius-sm)',
+              border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--fg)',
+              transition: 'var(--transition)',
+            }} />
           <input type="email" value={authorEmail} onChange={e => setAuthorEmail(e.target.value)}
             placeholder="邮箱（可选）"
-            className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 focus:outline-none focus:border-blue-400" />
+            style={{
+              flex: 1, padding: '8px 12px', fontSize: '13px', borderRadius: 'var(--radius-sm)',
+              border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--fg)',
+              transition: 'var(--transition)',
+            }} />
         </div>
       )}
       {parentId && (
-        <div className="mt-3">
-          <input type="text" value={authorName} onChange={e => setAuthorName(e.target.value)}
-            placeholder="昵称 *" required
-            className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 focus:outline-none focus:border-blue-400" />
-        </div>
+        <input type="text" value={authorName} onChange={e => setAuthorName(e.target.value)}
+          placeholder="昵称 *" required
+          style={{
+            width: '100%', padding: '8px 12px', fontSize: '13px', borderRadius: 'var(--radius-sm)',
+            border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--fg)',
+            transition: 'var(--transition)', marginTop: '10px',
+          }} />
       )}
-      <div className="flex justify-between items-center mt-3">
-        <span className="text-xs text-gray-400">{parentId ? '回复此评论' : '评论将等待管理员审核'}</span>
+      <div className="comment-form-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+        <span className="hint" style={{ fontSize: '12px', color: 'var(--fg-muted)' }}>{parentId ? '回复此评论' : '请保持友善，尊重他人'}</span>
         <button type="submit" disabled={submitting}
-          className="px-6 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:opacity-85 disabled:opacity-50 transition-all">
+          className="comment-submit" style={{
+            padding: '8px 24px', borderRadius: 'var(--radius-sm)', border: 'none',
+            background: 'var(--accent)', color: '#fff', fontSize: '14px',
+            fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer',
+            transition: 'var(--transition)', opacity: submitting ? 0.5 : 1,
+          }}
+          onMouseEnter={e => { if (!submitting) { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.boxShadow = '0 0 16px var(--accent-glow)' } }}
+          onMouseLeave={e => { e.currentTarget.style.opacity = submitting ? '0.5' : '1'; e.currentTarget.style.boxShadow = 'none' }}>
           {submitting ? '提交中...' : (buttonText || '发表评论')}
         </button>
       </div>
     </form>
   )
+}
+
+function formatTime(date) {
+  const d = new Date(date)
+  const now = new Date()
+  const diff = now - d
+  if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟前`
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)} 小时前`
+  return d.toLocaleDateString('zh-CN')
 }
 
 function CommentItem({ comment, postId, onReply }) {
@@ -91,36 +128,67 @@ function CommentItem({ comment, postId, onReply }) {
 
   return (
     <div>
-      <div className="flex gap-3.5 py-4 border-b border-gray-100 dark:border-gray-700/50 last:border-b-0">
-        <Avatar name={comment.authorName} />
-        <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+      <div className="comment-item" style={{
+        display: 'flex', gap: '14px', padding: '16px 0',
+        borderBottom: '1px solid var(--border)',
+      }}>
+        <div className="comment-avatar" style={{
+          width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0,
+          background: 'var(--bg)', border: '1px solid var(--border)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '16px',
+        }}>
+          {randomAvatar(comment.authorName)}
+        </div>
+        <div className="comment-body" style={{ flex: 1, minWidth: 0 }}>
+          <div className="comment-author" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--fg)' }}>
             {comment.authorName}
-            <span className="text-xs font-normal text-gray-400 ml-2">{formatTime(comment.createdAt)}</span>
+            <span className="comment-date" style={{ fontSize: '12px', color: 'var(--fg-muted)', marginLeft: '8px', fontWeight: 400 }}>{formatTime(comment.createdAt)}</span>
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1.5 leading-relaxed">{comment.content}</p>
+          <p className="comment-text" style={{
+            fontSize: '14px', color: 'var(--fg-secondary)', marginTop: '6px', lineHeight: 1.6,
+          }}>{comment.content}</p>
           <button onClick={() => setShowReply(!showReply)}
-            className="text-xs text-blue-600 hover:text-blue-700 mt-1.5 inline-block transition-colors">
+            className="comment-reply" style={{
+              fontSize: '12px', color: 'var(--accent)', textDecoration: 'none',
+              marginTop: '6px', display: 'inline-block', cursor: 'pointer',
+              border: 'none', background: 'none', fontFamily: 'var(--font-body)',
+              transition: 'var(--transition)',
+            }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
             {showReply ? '取消回复' : '回复'}
           </button>
         </div>
       </div>
       {showReply && (
-        <div className="ml-12 mt-3 mb-2">
+        <div style={{ marginLeft: '50px', marginTop: '10px', marginBottom: '8px' }}>
           <CommentForm postId={postId} parentId={comment.id} onSubmit={handleReply} placeholder={`回复 ${comment.authorName}...`} buttonText="回复" />
         </div>
       )}
       {replies.length > 0 && (
-        <div className="ml-12">
+        <div style={{ marginLeft: '50px' }}>
           {replies.map(reply => (
-            <div key={reply.id} className="flex gap-3.5 py-3 border-b border-gray-100 dark:border-gray-700/30 last:border-b-0">
-              <Avatar name={reply.authorName} />
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <div key={reply.id} className="comment-item" style={{
+              display: 'flex', gap: '14px', padding: '12px 0',
+              borderBottom: '1px solid var(--border)',
+            }}>
+              <div className="comment-avatar" style={{
+                width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
+                background: 'var(--bg)', border: '1px solid var(--border)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '14px',
+              }}>
+                {randomAvatar(reply.authorName)}
+              </div>
+              <div className="comment-body" style={{ flex: 1, minWidth: 0 }}>
+                <div className="comment-author" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fg)' }}>
                   {reply.authorName}
-                  <span className="text-xs font-normal text-gray-400 ml-2">{formatTime(reply.createdAt)}</span>
+                  <span className="comment-date" style={{ fontSize: '11px', color: 'var(--fg-muted)', marginLeft: '8px', fontWeight: 400 }}>{formatTime(reply.createdAt)}</span>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1.5 leading-relaxed">{reply.content}</p>
+                <p className="comment-text" style={{
+                  fontSize: '13px', color: 'var(--fg-secondary)', marginTop: '4px', lineHeight: 1.6,
+                }}>{reply.content}</p>
               </div>
             </div>
           ))}
@@ -128,15 +196,6 @@ function CommentItem({ comment, postId, onReply }) {
       )}
     </div>
   )
-}
-
-function formatTime(date) {
-  const d = new Date(date)
-  const now = new Date()
-  const diff = now - d
-  if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟前`
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)} 小时前`
-  return d.toLocaleDateString('zh-CN')
 }
 
 export default function CommentSection({ postId }) {
@@ -169,21 +228,23 @@ export default function CommentSection({ postId }) {
 
   const handleReply = handleCreate
 
-  if (loading) return <div className="text-center py-8 text-sm text-gray-400">加载评论中...</div>
+  if (loading) return <div className="text-center py-8" style={{ fontSize: '14px', color: 'var(--fg-muted)' }}>加载评论中...</div>
 
   return (
-    <div className="mt-7 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-8 shadow-sm">
-      <h3 className="text-lg font-bold mb-5">
-        评论
-        <span className="text-sm font-normal text-gray-400 ml-2">（{comments.length} 条）</span>
+    <>
+      <style>{TEXTAREA_CSS}</style>
+      <h3 className="comments-title" style={{
+        fontFamily: 'var(--font-display)', fontSize: '18px', fontWeight: 700, marginBottom: '20px',
+      }}>
+        评论 <span style={{ color: 'var(--fg-secondary)', fontSize: '14px', fontWeight: 400 }}>· {comments.length} 条</span>
       </h3>
 
       <CommentForm postId={postId} onSubmit={handleSubmit} />
 
-      {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
+      {error && <p style={{ color: 'var(--accent)', fontSize: '13px', marginTop: '12px' }}>{error}</p>}
 
       {comments.length > 0 && (
-        <div className="mt-6">
+        <div className="comment-list" style={{ marginTop: '24px' }}>
           {comments.map(comment => (
             <CommentItem key={comment.id} comment={comment} postId={postId} onReply={handleReply} />
           ))}
@@ -191,8 +252,8 @@ export default function CommentSection({ postId }) {
       )}
 
       {comments.length === 0 && !error && (
-        <p className="text-center text-sm text-gray-400 mt-6 py-4">暂无评论，来说点什么吧</p>
+        <p className="text-center" style={{ fontSize: '14px', color: 'var(--fg-muted)', marginTop: '24px', padding: '16px 0' }}>暂无评论，来说点什么吧</p>
       )}
-    </div>
+    </>
   )
 }

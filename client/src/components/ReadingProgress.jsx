@@ -15,7 +15,7 @@ export default function ReadingProgress() {
 
   return (
     <div
-      className="fixed top-14 left-0 h-[3px] z-[9999] transition-[width] duration-100"
+      className="fixed top-0 left-0 h-[3px] z-[9999] transition-[width] duration-100"
       style={{
         width: `${Math.min(progress, 100)}%`,
         background: 'linear-gradient(90deg, var(--accent), #00f5ff)',

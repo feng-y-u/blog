@@ -30,7 +30,21 @@ async function main() {
     prisma.tag.upsert({ where: { name: '随笔' }, update: {}, create: { name: '随笔', slug: 'essay' } }),
   ])
 
-  console.log('Seed completed:', { admin: admin.username, categories: categories.length, tags: tags.length })
+  const defaultSettings = [
+    { key: 'site_title', value: '✦ Yuki\'s Blog' },
+    { key: 'site_subtitle', value: 'コードとアニメの世界' },
+    { key: 'banner_image', value: '' },
+    { key: 'avatar_emoji', value: '🌸' },
+    { key: 'profile_name', value: 'Yuki' },
+    { key: 'profile_signature', value: '― コードは詩、アニメは夢 ―' },
+    { key: 'profile_bio', value: '全栈开发者 / 动漫爱好者 / 开源贡献者' },
+    { key: 'social_links', value: JSON.stringify({ github: 'https://github.com/yuki', twitter: 'https://twitter.com/yuki' }) },
+  ]
+  for (const s of defaultSettings) {
+    await prisma.setting.upsert({ where: { key: s.key }, update: {}, create: s })
+  }
+
+  console.log('Seed completed:', { admin: admin.username, categories: categories.length, tags: tags.length, settings: defaultSettings.length })
 }
 
 main().catch(e => { console.error(e); process.exit(1) }).finally(() => prisma.$disconnect())

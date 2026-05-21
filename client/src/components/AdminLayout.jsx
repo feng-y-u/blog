@@ -28,6 +28,7 @@ export default function AdminLayout() {
           <Link to="/admin/tags" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">标签管理</Link>
           <Link to="/admin/comments" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">评论管理</Link>
           <Link to="/admin/notes" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">笔记管理</Link>
+          <Link to="/admin/appearance" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">外观设置</Link>
         </nav>
         <button onClick={handleLogout} className="text-sm text-gray-500 hover:text-red-500 text-left px-3 py-2">退出登录</button>
       </aside>
