@@ -154,48 +154,26 @@ export default function Sidebar() {
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '10px',
         }}>
-          <Link to="/" className="nav-stat" style={{
-            textAlign: 'center', padding: '10px 4px',
-            borderRadius: 'var(--radius-sm)',
-            background: 'var(--bg)', cursor: 'pointer',
-            transition: 'var(--transition)', textDecoration: 'none', color: 'inherit',
-          }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent-dim)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg)'; e.currentTarget.style.transform = 'translateY(0)' }}>
-            <div className="nav-stat-num" style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '20px', fontWeight: 700, color: 'var(--fg)',
-            }}>{stats.posts}</div>
-            <div className="nav-stat-label" style={{ fontSize: '11px', color: 'var(--fg-secondary)', marginTop: '2px' }}>文章</div>
-          </Link>
-          <Link to="/notes" className="nav-stat" style={{
-            textAlign: 'center', padding: '10px 4px',
-            borderRadius: 'var(--radius-sm)',
-            background: 'var(--bg)', cursor: 'pointer',
-            transition: 'var(--transition)', textDecoration: 'none', color: 'inherit',
-          }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent-dim)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg)'; e.currentTarget.style.transform = 'translateY(0)' }}>
-            <div className="nav-stat-num" style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '20px', fontWeight: 700, color: 'var(--fg)',
-            }}>{stats.notes}</div>
-            <div className="nav-stat-label" style={{ fontSize: '11px', color: 'var(--fg-secondary)', marginTop: '2px' }}>笔记</div>
-          </Link>
-          <Link to="/categories" className="nav-stat" style={{
-            textAlign: 'center', padding: '10px 4px',
-            borderRadius: 'var(--radius-sm)',
-            background: 'var(--bg)', cursor: 'pointer',
-            transition: 'var(--transition)', textDecoration: 'none', color: 'inherit',
-          }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent-dim)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg)'; e.currentTarget.style.transform = 'translateY(0)' }}>
-            <div className="nav-stat-num" style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '20px', fontWeight: 700, color: 'var(--fg)',
-            }}>{stats.categories}</div>
-            <div className="nav-stat-label" style={{ fontSize: '11px', color: 'var(--fg-secondary)', marginTop: '2px' }}>分类</div>
-          </Link>
+          {[
+            { to: '/', label: '文章', key: 'posts' },
+            { to: '/notes', label: '笔记', key: 'notes' },
+            { to: '/categories', label: '分类', key: 'categories' },
+          ].map(({ to, label, key }) => (
+            <Link key={key} to={to} className="nav-stat" style={{
+              textAlign: 'center', padding: '10px 4px',
+              borderRadius: 'var(--radius-sm)',
+              background: 'var(--bg)', cursor: 'pointer',
+              transition: 'var(--transition)', textDecoration: 'none', color: 'inherit',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent-dim)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg)'; e.currentTarget.style.transform = 'translateY(0)' }}>
+              <div className="nav-stat-num" style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '20px', fontWeight: 700, color: 'var(--fg)',
+              }}>{stats[key]}</div>
+              <div className="nav-stat-label" style={{ fontSize: '11px', color: 'var(--fg-secondary)', marginTop: '2px' }}>{label}</div>
+            </Link>
+          ))}
         </div>
       </div>
 

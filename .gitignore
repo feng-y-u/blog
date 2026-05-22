@@ -16,6 +16,7 @@ server/dist/
 
 # Claude local settings
 .claude/
+.superpowers/
 
 # IDE
 .vscode/

@@ -18,6 +18,7 @@ export default function AppearanceSettings() {
   const [form, setForm] = useState({})
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState(null)
+  const [jsonError, setJsonError] = useState(null)
 
   useEffect(() => {
     if (settings) {
@@ -31,10 +32,14 @@ export default function AppearanceSettings() {
 
   function handleChange(key, value) {
     setForm(prev => ({ ...prev, [key]: value }))
+    if (key === 'social_links') {
+      try { JSON.parse(value); setJsonError(null) } catch { setJsonError('JSON 格式无效') }
+    }
   }
 
   async function handleSave(e) {
     e.preventDefault()
+    if (jsonError) return
     setSaving(true)
     setMessage(null)
     try {
@@ -77,6 +82,9 @@ export default function AppearanceSettings() {
             ) : (
               <input type="text" value={form[field.key] || ''} onChange={e => handleChange(field.key, e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700" />
+            )}
+            {field.key === 'social_links' && jsonError && (
+              <p className="text-red-500 text-xs mt-1">{jsonError}</p>
             )}
           </div>
         ))}

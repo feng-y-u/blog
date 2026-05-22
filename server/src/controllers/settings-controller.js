@@ -1,13 +1,15 @@
 const prisma = require('../utils/prisma')
 
+function toObject(rows) {
+  const obj = {}
+  for (const r of rows) obj[r.key] = r.value
+  return obj
+}
+
 exports.getAll = async (req, res, next) => {
   try {
     const settings = await prisma.setting.findMany()
-    const result = {}
-    for (const s of settings) {
-      result[s.key] = s.value
-    }
-    res.json({ data: result })
+    res.json({ data: toObject(settings) })
   } catch (err) {
     next(err)
   }
@@ -16,19 +18,16 @@ exports.getAll = async (req, res, next) => {
 exports.update = async (req, res, next) => {
   try {
     const entries = req.body
-    for (const [key, value] of Object.entries(entries)) {
-      await prisma.setting.upsert({
+    const ops = Object.entries(entries).map(([key, value]) =>
+      prisma.setting.upsert({
         where: { key },
         update: { value: String(value) },
         create: { key, value: String(value) },
       })
-    }
+    )
+    await prisma.$transaction(ops)
     const settings = await prisma.setting.findMany()
-    const result = {}
-    for (const s of settings) {
-      result[s.key] = s.value
-    }
-    res.json({ data: result })
+    res.json({ data: toObject(settings) })
   } catch (err) {
     next(err)
   }

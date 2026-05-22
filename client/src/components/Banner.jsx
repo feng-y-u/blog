@@ -5,6 +5,12 @@ export default function Banner() {
   const title = settings?.site_title || "✦ Yuki's Blog"
   const subtitle = settings?.site_subtitle || 'コードとアニメの世界'
   const hasCustomBanner = settings?.banner_image
+
+  function highlightLastWord(text) {
+    const i = text.lastIndexOf(' ')
+    return i > 0 ? <>{text.slice(0, i)} <span style={{ color: 'var(--accent)' }}>{text.slice(i + 1)}</span></> : text
+  }
+
   return (
     <div style={{
       width: '100%',
@@ -92,10 +98,7 @@ export default function Banner() {
         textShadow: '0 2px 20px rgba(0,0,0,0.5)',
         zIndex: 2, whiteSpace: 'nowrap',
       }}>
-        {(() => {
-          const i = title.lastIndexOf(' ')
-          return i > 0 ? <>{title.slice(0, i)} <span style={{ color: 'var(--accent)' }}>{title.slice(i + 1)}</span></> : title
-        })()}
+        {highlightLastWord(title)}
       </div>
 
       {/* 副标题 */}

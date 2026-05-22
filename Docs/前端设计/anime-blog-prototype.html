@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuki's Blog — コードとアニメの世界</title>
+<title>你好，风予</title>
 <style>
 /* ===== CSS Reset & Variables ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -317,7 +317,7 @@ body {
 /* Navigation Stats */
 .nav-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 .nav-stat {
@@ -703,9 +703,9 @@ body {
 <div class="banner">
   <div class="banner-moon"></div>
   <div class="banner-city"></div>
-  <div class="banner-title">✦ Yuki's <span>Blog</span></div>
-  <div class="banner-subtitle">コードとアニメの世界</div>
+  <div class="banner-title">✦ 你好，<span>风予</span></div>
 </div>
+
 
 <!-- Main Layout -->
 <div class="layout">
@@ -716,33 +716,28 @@ body {
     <div class="sidebar-card">
       <div class="profile">
         <div class="profile-avatar">🌸</div>
-        <div class="profile-name">Yuki</div>
-        <div class="profile-sig">― コードは詩、アニメは夢 ―</div>
-        <div class="profile-bio">全栈开发者 / 动漫爱好者 / 开源贡献者<br>用代码描绘世界，用动画编织梦想</div>
-        <div class="social-links">
-          <a href="#" class="social-link" aria-label="GitHub">⌂</a>
-          <a href="#" class="social-link" aria-label="Twitter">✕</a>
-          <a href="#" class="social-link" aria-label="Zenn">◇</a>
-          <a href="#" class="social-link" aria-label="Qiita">○</a>
-        </div>
+        <div class="profile-name">风予</div>
       </div>
     </div>
 
-    <!-- Navigation Stats -->
     <div class="sidebar-card">
       <div class="sidebar-section-title">导航</div>
       <div class="nav-stats">
         <a href="#" class="nav-stat">
-          <div class="nav-stat-num">12</div>
+          <div class="nav-stat-num">6</div>
           <div class="nav-stat-label">文章</div>
         </a>
         <a href="#" class="nav-stat">
-          <div class="nav-stat-num">8</div>
+          <div class="nav-stat-num">2</div>
           <div class="nav-stat-label">笔记</div>
         </a>
         <a href="#" class="nav-stat">
-          <div class="nav-stat-num">5</div>
+          <div class="nav-stat-num">2</div>
           <div class="nav-stat-label">项目</div>
+        </a>
+        <a href="#" class="nav-stat">
+          <div class="nav-stat-num">2</div>
+          <div class="nav-stat-label">教程</div>
         </a>
       </div>
     </div>
@@ -751,16 +746,13 @@ body {
     <div class="sidebar-card">
       <div class="sidebar-section-title">热门标签</div>
       <div class="tag-cloud">
-        <a href="#" class="tag tag-lg" data-tag="JavaScript">JavaScript</a>
-        <a href="#" class="tag tag-lg" data-tag="Rust">Rust</a>
+        <a href="#" class="tag tag-lg" data-tag="代码">代码</a>
+        <a href="#" class="tag tag-lg" data-tag="娱乐">娱乐</a>
+        <a href="#" class="tag" data-tag="JavaScript">JavaScript</a>
         <a href="#" class="tag" data-tag="API">API</a>
-        <a href="#" class="tag" data-tag="代码">代码</a>
-        <a href="#" class="tag" data-tag="动漫">动漫</a>
-        <a href="#" class="tag tag-sm" data-tag="教程">教程</a>
-        <a href="#" class="tag" data-tag="WebGPU">WebGPU</a>
-        <a href="#" class="tag" data-tag="开源">开源</a>
-        <a href="#" class="tag tag-sm" data-tag="娱乐">娱乐</a>
-        <a href="#" class="tag" data-tag="性能优化">性能优化</a>
+        <a href="#" class="tag" data-tag="教程">教程</a>
+        <a href="#" class="tag tag-sm" data-tag="笔记">笔记</a>
+        <a href="#" class="tag tag-sm" data-tag="项目">项目</a>
       </div>
     </div>
   </aside>
@@ -774,10 +766,9 @@ body {
       <input type="text" id="searchInput" placeholder="搜索文章标题、标签、内容…" autocomplete="off">
       <div class="search-filter-row" id="filterRow">
         <button class="filter-btn active" data-filter="all">全部</button>
-        <button class="filter-btn" data-filter="技术">技术</button>
-        <button class="filter-btn" data-filter="动漫">动漫</button>
+        <button class="filter-btn" data-filter="项目">项目</button>
+        <button class="filter-btn" data-filter="笔记">笔记</button>
         <button class="filter-btn" data-filter="教程">教程</button>
-        <button class="filter-btn" data-filter="开源">开源</button>
       </div>
     </div>
 
@@ -790,144 +781,141 @@ body {
     <!-- Article List -->
     <div class="article-list" id="articleList">
 
-      <!-- Article 1 -->
-      <article class="article-card" data-category="娱乐" data-tags="代码,娱乐,游戏">
+      <!-- Article 1: 妹相随 -->
+      <article class="article-card" data-category="项目" data-tags="代码,娱乐,游戏">
         <div class="article-card-image img-genshin">
           <span class="image-label">🎮 Game Mod</span>
         </div>
         <div class="article-card-body">
           <div class="article-card-meta">
-            <span class="article-card-category">娱乐</span>
-            <span>Yuki</span>
+            <span class="article-card-category">项目</span>
+            <span>风予</span>
             <span>·</span>
-            <span>2026-05-18</span>
+            <span>2025-01-12</span>
             <span>·</span>
-            <span>约 8 分钟</span>
+            <span>约 15 分钟</span>
           </div>
-          <a href="article-detail.html" style="text-decoration:none;color:inherit"><h3 class="article-card-title">妹相随~黑白世界的缤纷冒险~修改器</h3>
+          <a href="article-detail.html" style="text-decoration:none;color:inherit"><h3 class="article-card-title">妹相随～黑白世界的缤纷冒险～修改器</h3>
           <p class="article-card-excerpt">
-            深入解析这款同人游戏的修改器实现原理。从内存扫描到数值注入，从指针追踪到代码注入，一步步拆解游戏修改的完整工作流。附赠一份安全使用修改器的指南，避免被反作弊系统检测。
+            游戏『妹!せいかつ～ファンタジー～』是由いぬすく社团于 2022 年在 DLsite 上发售的一款养成类 SLG。文章介绍如何使用 Lua 进行重构与窗口手绘，完美兼容 DLsite 和 Steam 双平台。修改器基于 Cheat Engine 开发，所有代码已在 GitHub 开源。
           </p>
           <div class="article-card-footer">
             <a href="article-detail.html" class="article-card-readmore">阅读全文 →</a>
             <div class="article-card-tags">
               <span class="tag">代码</span>
               <span class="tag">娱乐</span>
-              <span class="tag">游戏</span>
             </div>
           </div>
         </div>
       </article>
 
-      <!-- Article 2 -->
-      <article class="article-card" data-category="技术" data-tags="Rust,API,性能优化">
-        <div class="article-card-image img-rust">
-          <span class="image-label">🦀 Rust</span>
+      <!-- Article 2: Pixiv 图片小工具 -->
+      <article class="article-card" data-category="项目" data-tags="代码,API,娱乐">
+        <div class="article-card-image img-code">
+          <span class="image-label">🖼 Pixiv</span>
         </div>
         <div class="article-card-body">
           <div class="article-card-meta">
-            <span class="article-card-category">技术</span>
-            <span>Yuki</span>
+            <span class="article-card-category">项目</span>
+            <span>风予</span>
             <span>·</span>
-            <span>2026-05-12</span>
+            <span>2023-12-20</span>
             <span>·</span>
-            <span>约 15 分钟</span>
+            <span>约 10 分钟</span>
           </div>
-          <h3 class="article-card-title">使用 Rust 构建高性能 API 网关</h3>
+          <h3 class="article-card-title">随手做了一个 Pixiv 图片小工具</h3>
           <p class="article-card-excerpt">
-            基于 tokio + hyper 从零搭建一个生产可用的 API 网关。涵盖路由分发、限流熔断、请求认证、日志追踪等核心中间件的实现思路，以及与 Nginx 和 Envoy 的性能对比数据。
+            搭建的 P 站反代服务被人恶意调用，在国内请求了百万张 R18 图片。既然 API 挂掉了，那么再去换一个不就好了？除了通过 API 获取随机图片外，还可以访问首页来查询（关键字、搜图）P 站作品的相关信息。
           </p>
           <div class="article-card-footer">
             <a href="#" class="article-card-readmore">阅读全文 →</a>
             <div class="article-card-tags">
-              <span class="tag">Rust</span>
+              <span class="tag">代码</span>
               <span class="tag">API</span>
-              <span class="tag">性能优化</span>
+              <span class="tag">娱乐</span>
             </div>
           </div>
         </div>
       </article>
 
-      <!-- Article 3 -->
-      <article class="article-card" data-category="教程" data-tags="JavaScript,教程,开源">
-        <div class="article-card-image img-code">
-          <span class="image-label">📦 Vite</span>
+      <!-- Article 3: 获取调用栈 -->
+      <article class="article-card" data-category="笔记" data-tags="代码,JavaScript">
+        <div class="article-card-image img-rust">
+          <span class="image-label">📚 JavaScript</span>
+        </div>
+        <div class="article-card-body">
+          <div class="article-card-meta">
+            <span class="article-card-category">笔记</span>
+            <span>风予</span>
+            <span>·</span>
+            <span>2023-01-04</span>
+            <span>·</span>
+            <span>约 12 分钟</span>
+          </div>
+          <h3 class="article-card-title">如何在 JavaScript 中获取调用栈</h3>
+          <p class="article-card-excerpt">
+            在 Java 中，我们可以通过 getStackTrace() 来获取调用栈信息。若是 PHP 就更简单了。可是，在 JavaScript 中的表现又如何？JavaScript 并没有提供主动获取调用栈的方法，但是我找到了 Error.prototype.stack 这么一个奇怪的东西。
+          </p>
+          <div class="article-card-footer">
+            <a href="#" class="article-card-readmore">阅读全文 →</a>
+            <div class="article-card-tags">
+              <span class="tag">代码</span>
+              <span class="tag">JavaScript</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Article 4: prototype -->
+      <article class="article-card" data-category="笔记" data-tags="代码,JavaScript">
+        <div class="article-card-image img-anime">
+          <span class="image-label">⚙️ JS Core</span>
+        </div>
+        <div class="article-card-body">
+          <div class="article-card-meta">
+            <span class="article-card-category">笔记</span>
+            <span>风予</span>
+            <span>·</span>
+            <span>2022-11-03</span>
+            <span>·</span>
+            <span>约 10 分钟</span>
+          </div>
+          <h3 class="article-card-title">prototype、__proto__ 与 constructor 分析</h3>
+          <p class="article-card-excerpt">
+            在 Javascript 里，所有的数据类型都是「对象」(object)，这一点与 Java 非常相似。但从严格意义上来讲，Javascript 并不是一门面向对象语言，而是基于对象，也可以说是基于原型。那么，Javascript 是如何通过 object 来实现 class 类似表现的？
+          </p>
+          <div class="article-card-footer">
+            <a href="#" class="article-card-readmore">阅读全文 →</a>
+            <div class="article-card-tags">
+              <span class="tag">代码</span>
+              <span class="tag">JavaScript</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Article 5: Steam 美化 -->
+      <article class="article-card" data-category="教程" data-tags="娱乐">
+        <div class="article-card-image img-webgpu">
+          <span class="image-label">🎨 Steam</span>
         </div>
         <div class="article-card-body">
           <div class="article-card-meta">
             <span class="article-card-category">教程</span>
-            <span>Yuki</span>
+            <span>风予</span>
             <span>·</span>
-            <span>2026-05-05</span>
+            <span>2022-12-05</span>
             <span>·</span>
-            <span>约 12 分钟</span>
+            <span>约 8 分钟</span>
           </div>
-          <h3 class="article-card-title">从零实现一个简易的 Vite 插件</h3>
+          <h3 class="article-card-title">手把手教你如何美化 Steam 主页</h3>
           <p class="article-card-excerpt">
-            深入 Vite 插件系统，手写一个自动生成路由配置的插件。从理解 Rollup 钩子到 Vite 独有扩展，从虚拟模块到热更新处理，让你彻底掌握 Vite 插件开发的核心概念。
+            为什么要去美化 steam 主页？爱美之心人皆有之，就算是猛男，也许在内心的某处也有着一颗少女心（笑）。原理看似很简单，但要想真正达到满意的效果却很困难。不管你是想要二等分、五等分甚至十等分，这里都有答案。
           </p>
           <div class="article-card-footer">
             <a href="#" class="article-card-readmore">阅读全文 →</a>
             <div class="article-card-tags">
-              <span class="tag">JavaScript</span>
-              <span class="tag">教程</span>
-              <span class="tag">开源</span>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- Article 4 -->
-      <article class="article-card" data-category="动漫" data-tags="动漫">
-        <div class="article-card-image img-anime">
-          <span class="image-label">🎬 Anime 2026</span>
-        </div>
-        <div class="article-card-body">
-          <div class="article-card-meta">
-            <span class="article-card-category">动漫</span>
-            <span>Yuki</span>
-            <span>·</span>
-            <span>2026-04-28</span>
-            <span>·</span>
-            <span>约 10 分钟</span>
-          </div>
-          <h3 class="article-card-title">2026 年春季新番扫雷报告</h3>
-          <p class="article-card-excerpt">
-            每季度的保留节目。从作画质量、剧情节奏、音乐表现三个维度对本季 20+ 部新番进行评测。重点推荐 5 部必看作品，附上追番时间表和观看平台索引。
-          </p>
-          <div class="article-card-footer">
-            <a href="#" class="article-card-readmore">阅读全文 →</a>
-            <div class="article-card-tags">
-              <span class="tag">动漫</span>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- Article 5 -->
-      <article class="article-card" data-category="技术" data-tags="WebGPU,API,教程">
-        <div class="article-card-image img-webgpu">
-          <span class="image-label">⚡ WebGPU</span>
-        </div>
-        <div class="article-card-body">
-          <div class="article-card-meta">
-            <span class="article-card-category">技术</span>
-            <span>Yuki</span>
-            <span>·</span>
-            <span>2026-04-20</span>
-            <span>·</span>
-            <span>约 20 分钟</span>
-          </div>
-          <h3 class="article-card-title">探索 WebGPU：下一代图形 API 入门</h3>
-          <p class="article-card-excerpt">
-            WebGPU 正在重塑浏览器图形编程的格局。本文从渲染管线、计算着色器、资源绑定三个核心概念入手，通过一个粒子系统的实战案例，带你迈入 WebGPU 的世界。
-          </p>
-          <div class="article-card-footer">
-            <a href="#" class="article-card-readmore">阅读全文 →</a>
-            <div class="article-card-tags">
-              <span class="tag">WebGPU</span>
-              <span class="tag">API</span>
-              <span class="tag">教程</span>
+              <span class="tag">娱乐</span>
             </div>
           </div>
         </div>
@@ -957,7 +945,7 @@ body {
 
 <!-- Footer -->
 <div class="footer">
-  © 2026 Yuki's Blog. Built with  ❤  &nbsp;|&nbsp; Powered by コードとアニメ<br>
+  © 2026 你好，风予. Built with ❤  &nbsp;|&nbsp; Powered by コードとアニメ<br>
   <a href="#">RSS 订阅</a> · <a href="#">关于</a> · <a href="#">友情链接</a>
 </div>
 

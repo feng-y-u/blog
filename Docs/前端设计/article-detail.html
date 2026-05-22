@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>妹相随~黑白世界的缤纷冒险~修改器 — Yuki's Blog</title>
+<title>妹相随～黑白世界的缤纷冒险～修改器 — 你好，风予</title>
 <style>
 /* ===== CSS Reset & Variables ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -241,7 +241,7 @@ body {
 }
 
 .nav-stats {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
 }
 .nav-stat {
   text-align: center; padding: 10px 4px;
@@ -789,9 +789,9 @@ body {
 <div class="banner">
   <div class="banner-moon"></div>
   <div class="banner-city"></div>
-  <div class="banner-title">✦ Yuki's <span>Blog</span></div>
-  <div class="banner-subtitle">コードとアニメの世界</div>
+  <div class="banner-title">✦ 你好，<span>风予</span></div>
 </div>
+
 
 <!-- Main Layout -->
 <div class="layout">
@@ -801,15 +801,7 @@ body {
     <div class="sidebar-card">
       <div class="profile">
         <div class="profile-avatar">🌸</div>
-        <div class="profile-name">Yuki</div>
-        <div class="profile-sig">― コードは詩、アニメは夢 ―</div>
-        <div class="profile-bio">全栈开发者 / 动漫爱好者 / 开源贡献者</div>
-        <div class="social-links">
-          <a href="#" class="social-link" aria-label="GitHub">⌂</a>
-          <a href="#" class="social-link" aria-label="Twitter">✕</a>
-          <a href="#" class="social-link" aria-label="Zenn">◇</a>
-          <a href="#" class="social-link" aria-label="Qiita">○</a>
-        </div>
+        <div class="profile-name">风予</div>
       </div>
     </div>
 
@@ -817,16 +809,20 @@ body {
       <div class="sidebar-section-title">导航</div>
       <div class="nav-stats">
         <a href="anime-blog-prototype.html" class="nav-stat">
-          <div class="nav-stat-num">12</div>
+          <div class="nav-stat-num">6</div>
           <div class="nav-stat-label">文章</div>
         </a>
         <a href="#" class="nav-stat">
-          <div class="nav-stat-num">8</div>
+          <div class="nav-stat-num">2</div>
           <div class="nav-stat-label">笔记</div>
         </a>
         <a href="#" class="nav-stat">
-          <div class="nav-stat-num">5</div>
+          <div class="nav-stat-num">2</div>
           <div class="nav-stat-label">项目</div>
+        </a>
+        <a href="#" class="nav-stat">
+          <div class="nav-stat-num">2</div>
+          <div class="nav-stat-label">教程</div>
         </a>
       </div>
     </div>
@@ -834,14 +830,13 @@ body {
     <div class="sidebar-card">
       <div class="sidebar-section-title">热门标签</div>
       <div class="tag-cloud">
-        <a href="anime-blog-prototype.html" class="tag tag-lg">JavaScript</a>
-        <a href="anime-blog-prototype.html" class="tag tag-lg">Rust</a>
+        <a href="anime-blog-prototype.html" class="tag tag-lg">代码</a>
+        <a href="anime-blog-prototype.html" class="tag tag-lg">娱乐</a>
+        <a href="anime-blog-prototype.html" class="tag">JavaScript</a>
         <a href="anime-blog-prototype.html" class="tag">API</a>
-        <a href="anime-blog-prototype.html" class="tag">代码</a>
-        <a href="anime-blog-prototype.html" class="tag">动漫</a>
-        <a href="anime-blog-prototype.html" class="tag tag-sm">教程</a>
-        <a href="anime-blog-prototype.html" class="tag">WebGPU</a>
-        <a href="anime-blog-prototype.html" class="tag">开源</a>
+        <a href="anime-blog-prototype.html" class="tag">教程</a>
+        <a href="anime-blog-prototype.html" class="tag tag-sm">笔记</a>
+        <a href="anime-blog-prototype.html" class="tag tag-sm">项目</a>
       </div>
     </div>
   </aside>
@@ -857,22 +852,22 @@ body {
 
       <!-- Hero -->
       <div class="article-hero img-genshin">
-        <span class="hero-label">🎮 Game Mod</span>
+        <span class="hero-label">🎮</span>
       </div>
 
       <!-- Header -->
       <div class="article-header">
-        <div class="article-category">娱乐</div>
-        <h1 class="article-title">妹相随~黑白世界的缤纷冒险~修改器</h1>
+        <div class="article-category">项目</div>
+        <h1 class="article-title">妹相随～黑白世界的缤纷冒险～修改器</h1>
         <div class="article-meta">
           <div class="author-avatar">🌸</div>
-          <span>Yuki</span>
+          <span>风予</span>
           <span class="article-meta-sep">·</span>
-          <span>2026-05-18</span>
+          <span>2025-01-12</span>
           <span class="article-meta-sep">·</span>
-          <span>约 8 分钟</span>
+          <span>约 15 分钟</span>
           <span class="article-meta-sep">·</span>
-          <span>阅读量 2.3k</span>
+          <span>已开源</span>
         </div>
       </div>
 
@@ -880,12 +875,12 @@ body {
       <div class="article-toc">
         <div class="article-toc-title">目录</div>
         <ul class="article-toc-list">
-          <li><a href="#s1">前言：什么是游戏修改器？</a></li>
-          <li><a href="#s2">内存扫描与数值定位</a></li>
-          <li><a href="#s3">指针追踪与动态地址</a></li>
-          <li><a href="#s4">代码注入与 Hook 技术</a></li>
-          <li><a href="#s5">修改器的完整工作流</a></li>
-          <li><a href="#s6">安全使用指南</a></li>
+          <li><a href="#s1">前言</a></li>
+          <li><a href="#s2">功能介绍</a></li>
+          <li><a href="#s3">道具修改</a></li>
+          <li><a href="#s4">攻略</a></li>
+          <li><a href="#s5">补充说明</a></li>
+          <li><a href="#s6">更新日志</a></li>
         </ul>
       </div>
 
@@ -893,138 +888,133 @@ body {
       <div class="article-body">
 
         <p>
-          同人游戏的世界总是充满惊喜。<strong>《妹相随~黑白世界的缤纷冒险~》</strong>凭借其独特的水墨画风和感人至深的剧情，在发布后迅速积累了大量粉丝。然而游戏中后期的数值曲线陡峭，让不少玩家望而却步。本文将深入解析这款游戏的修改器实现原理，带你走进游戏内存修改的技术世界。
+          游戏 <strong>『妹!せいかつ～ファンタジー～』</strong>是由 いぬすく 社团于 2022 年在 DLsite 上发售的一款养成类 SLG，在台湾地区也被称为<strong>黑白妹 2</strong>。其中 DLC 已于 Steam 发售，但随之而来的是各种各样的兼容性问题。存档不兼容，就连官方给出的处理方案，都是删除云存档、并重装游戏。
+        </p>
+        <p>
+          在此之前我有很多存档，在游戏中花费了大量的时间和精力。因不想再次重复枯燥的流程，加上近期加班没有多余的游戏时间，便在一气之下做出了这个修改器。
         </p>
 
-        <h2 id="s1">前言：什么是游戏修改器？</h2>
+        <h2 id="s1">前言</h2>
         <p>
-          游戏修改器是一种能够改变游戏运行时数据的工具。它通过读取和写入游戏进程的内存空间，实现对游戏内数值（如金币、血量、经验值等）的实时修改。对于单机游戏而言，这不仅是提升游戏体验的手段，更是一扇通往逆向工程世界的窗口。
+          Steam 游戏 DLC 已于上个月发售，这本应该是件令人兴奋的事，但随之而来的却是各种各样的问题。存档不兼容，神乐官方给出的处理方案都是删除云存档、并重装游戏，来解决游戏中出现的各种 Bug。
         </p>
         <p>
-          在开始之前，我们需要明确：修改器应当仅用于单机游戏，且不建议在联机游戏中使用，以免违反服务条款。本文所有内容仅供技术学习参考。
+          修改器在 V1 时仅支持 Steam 平台，现在 V2 使用了 Lua 进行重构与窗口手绘，已经完美兼容 DLsite 和 Steam 双平台。
         </p>
 
-        <h2 id="s2">内存扫描与数值定位</h2>
+        <h2 id="s2">功能介绍</h2>
+        <div class="inline-img">[截图：修改器主界面 — 简洁窗口布局，右侧功能面板]</div>
+
+        <pre><span class="lang-tag">热键列表</span>
+F1  见面 5 秒结束战斗    战斗阶段直接获得胜利
+F2  AT 力场             免疫战斗时受到的伤害
+F9  砸瓦鲁多            停止游戏内的时间流动
+F10 无限洗澡            洗澡不受次数限制
+F11 无限泡茶            泡茶不受次数限制</pre>
+
         <p>
-          修改器最基础的操作就是"搜索数值"。以游戏中的金币为例，假如当前金币是 100，我们可以通过以下步骤定位其内存地址：
+          在此之前，旧版本无法兼容 DLsite，这其实是神乐的问题。我们打开 Steam 的游戏安装目录可以看到有 <code>Game.exe</code> 和 <code>GamePro.exe</code> 两个运行程序。通过 Steam 内部来启动游戏，执行的是 <code>Game.exe</code> 程序，而你手动执行 <code>GamePro.exe</code> 文件也是可以正常启动游戏的，但它们之间的<strong>基址</strong>并不一致。
         </p>
-        <pre><span class="lang-tag">流程</span>
-1. 打开内存扫描工具（如 Cheat Engine）
-2. 扫描值为 100 的 4 字节整数
-3. 在游戏中改变金币数量（比如花掉一些，变为 80）
-4. 再次扫描值为 80 的 4 字节整数
-5. 重复步骤 2-4，直到筛选出唯一的内存地址</pre>
         <p>
-          这个过程背后是<strong>穷举搜索</strong>：第一次扫描会找到内存中所有值为 100 的地址（可能有数百万个）。每次重新扫描都会大幅缩小范围，通常在 3-4 轮筛选后就能精确定位目标变量。
+          DLsite 日语原版只有 <code>GamePro.exe</code> 一个执行文件，<code>Game.exe</code> 是先前老版本使用的启动器，两者就连程序图标都不一样。
         </p>
+
+        <h3>秒 5</h3>
+        <p>
+          「秒 5」建议在<strong>战斗开始前</strong>或<strong>己方回合</strong>时开启，能避免出现一些意料之外的情况。该功能在开启后，只要进入了战斗阶段，不管是对方的回合还是己方的回合，都会直接获得战斗胜利。
+        </p>
+        <p>
+          部分战斗会有剧情对话，如果此时在对方的回合突然强制获胜，会导致游戏图层异常。不过不会影响游戏运行，会在遇到游戏事件重新绘制 UI 时恢复正常。
+        </p>
+
+        <h3>砸瓦鲁多</h3>
+        <p>
+          时停只会影响在家里的互动时间，公会、逛街等一系列事件会强制切换场景，锁了时间也没用。
+        </p>
+
+        <h3>无限泡茶</h3>
+        <p>
+          是否喝过茶和是否上过厕所在游戏里是两种不同的状态，该功能只会解除泡茶限制，妹妹只会去一趟厕所。
+        </p>
+
+        <h2 id="s3">道具修改</h2>
+        <p>
+          可以通过顶部菜单栏修改各式各样的角色数值以及道具物品。修改器的原理是通过访问游戏的内存实现数据篡改，对于操作系统而言属于敏感操作，误报是正常现象，可以放心使用。
+        </p>
+
         <blockquote>
-          值得注意的是，<strong>现代游戏引擎往往会对数值进行加密或偏移</strong>。有些游戏会在内存中存储实际值的两倍（value * 2），有些会使用 XOR 加密（value XOR key）。这就需要修改器具备"自定义扫描类型"的支持，用公式来匹配。
+          <strong>关于使用修改器的态度，神乐官方给出的解释原文如下：</strong><br>
+          Q：我可以开修改器或者加速游戏吗？<br>
+          A：可以，但是出了 Bug 请自行解决，我们无法提供技术支持。
         </blockquote>
 
-        <div class="inline-img">[示意图：内存扫描流程 — 从 100 到唯一地址的 4 轮筛选过程]</div>
-
-        <h2 id="s3">指针追踪与动态地址</h2>
+        <h2 id="s4">攻略</h2>
         <p>
-          大多数现代游戏都启用了 ASLR（地址空间布局随机化），这意味着每次启动游戏时，变量的内存地址都会发生变化。直接使用绝对地址的修改器会在游戏重启后失效。
-        </p>
-        <p>
-          解决方案是<strong>指针扫描</strong>。游戏通常会用一个全局指针来引用关键数据结构，这个指针的偏移量是固定的。我们需要：
-        </p>
-        <pre><span class="lang-tag">ASM</span>
-// 假设游戏基址为 game.exe+0x123456
-// 通过多层指针解引用找到实际数值
-
-mov rax, [game.exe+0x123456]    ; 一级指针
-mov rax, [rax+0x2A0]            ; 二级指针 + 偏移
-mov rcx, [rax+0x1B8]            ; 三级指针 + 偏移
-mov [rcx+0x50], 9999            ; 最终地址 + 偏移，写入新值</pre>
-        <p>
-          指针扫描工具可以自动遍历内存，找到所有可能的指针路径。在《妹相随》中，角色属性结构体通过 3 层指针 + 偏移量访问，偏移量分别为 0x2A0、0x1B8 和 0x50。
+          在开发反编译的过程中，我发现了许多有意思的事情，虽然算不上什么正经攻略，不过还是希望能给大家带来一些帮助。
         </p>
 
-        <h2 id="s4">代码注入与 Hook 技术</h2>
+        <h3>关于隐藏数值</h3>
         <p>
-          当我们需要实现更复杂的修改功能（如无限跳跃、穿墙、无敌）时，单纯修改内存数值就不够了。这时候需要<strong>代码注入</strong>——将我们自己的汇编代码写入游戏进程，并修改游戏原有的代码流。
+          游戏里对妹妹的大部分操作，都会被记录在案。例如夜晚叫醒妹妹的次数、喂妹妹喝媚药的次数、闯入厕所的次数，以及各种 H 的开发程度等。这类隐藏数值会影响到妹妹的行为、对话，还有胖次界面的人物介绍。
         </p>
         <p>
-          最常见的注入方式是<strong>Detour Hook</strong>（也称作 inline hook）：
+          而这其中有一个 Bug，当在夜袭的时候选择让妹妹趴着用屁股夹住，虽然没有插入，但还是会增加相关 H 的隐藏数值。当该数值达到一定程度时，会解锁很多 Sex 相关剧情。
         </p>
-        <pre><span class="lang-tag">原理</span>
-1. 在目标函数入口处写入一个跳转指令 (JMP)
-2. 跳转到我们预先分配好的"蹦床"代码区
-3. 执行我们的自定义逻辑
-4. 可选：跳回原函数继续执行
-
-例子——锁定玩家血量：
-  - Hook 掉扣血函数
-  - 在蹦床代码中忽略扣血参数
-  - 直接返回，血量永不减少</pre>
         <p>
-          在《妹相随》中，我们使用 Detour Hook 拦截了角色的伤害计算函数。每次游戏尝试扣除血量时，我们的 hook 会检查是否启用了"无敌模式"，如果启用则阻止血量变更。
+          我也有考虑过要不要向作者反馈这个 Bug，但是……我一个给游戏拆了包写修改器的人，跑去联系作者还要求修 Bug，这不太合适吧（
         </p>
 
-        <div class="inline-img">[示意图：Detour Hook 原理 — JMP → 蹦床 → 自定义逻辑 → 返回]</div>
-
-        <h2 id="s5">修改器的完整工作流</h2>
+        <h3>关于避孕药</h3>
         <p>
-          一款完整的修改器通常包含以下模块：
+          这其实是翻译闹出的乌龙，在日语原版里，道具的名字是「アフターピル」，而 Steam 英语版里是「After Pill」，已经讲的很清楚了是<strong>事后药</strong>，而不是事前药，要注意使用时机。
         </p>
-        <ul>
-          <li><strong>进程管理</strong> — 自动检测目标游戏进程，处理进程启动/退出事件</li>
-          <li><strong>内存管理</strong> — 通过指针链或特征码扫描定位关键数据</li>
-          <li><strong>功能模块</strong> — 针对不同游戏需求定制的修改功能</li>
-          <li><strong>热键系统</strong> — 全局快捷键快速开关各项功能</li>
-          <li><strong>配置文件</strong> — 保存用户的自定义设置和按键绑定</li>
-        </ul>
+
+        <h2 id="s5">补充说明</h2>
         <p>
-          以我们开发的修改器为例，其架构如下：
+          修改器使用到了游戏内的拆包资源（侧边图、程序图标、字体、音效等），版权归相关方所属，本项目仅供学习用途，请勿肆意宣传滥用。
         </p>
-        <pre><span class="lang-tag">Python</span>
-class GameTrainer:
-    def __init__(self):
-        self.process = None
-        self.hooks = {}
-        self.features = {
-            'god_mode': False,
-            'max_gold': False,
-            'unlock_all': False,
-        }
 
-    def attach(self, pid):
-        """附加到目标游戏进程"""
-        self.process = Process(pid)
-        self._resolve_pointers()
-        self._install_hooks()
-
-    def _resolve_pointers(self):
-        """解析所有指针链，获取实际地址"""
-        # 基址通过特征码扫描获取
-        base = self.process.scan_pattern("48 8B 05 ?? ?? ?? ?? 48 89 58 08")
-        self.ptr_hp = base + 0x2A0
-        self.ptr_gold = base + 0x1B8
-
-    def set_god_mode(self, enabled):
-        """设置无敌模式"""
-        self.features['god_mode'] = enabled
-        self.process.write(self.ptr_hp_alive, enabled)
-        print(f"☑ 无敌模式: {'ON' if enabled else 'OFF'}")</pre>
-
-        <h2 id="s6">安全使用指南</h2>
+        <h3>关于快捷键为什么要使用 F 区</h3>
         <p>
-          使用修改器时，请务必遵守以下原则：
+          在 V1 时，修改器窗口直接使用了 CE 默认生成模板，快捷键默认数字小键盘。但是 CE 提供的默认模板实在是太丑了，而且我的笔记本和另一个 87 配列键盘压根没有副键盘区，用台式的时候又会经常误触，所以最终在 V2 选择了 F 区的方案。
         </p>
-        <ul>
-          <li><strong>仅在单机游戏中使用</strong>——联机游戏的反作弊系统会检测到修改行为</li>
-          <li><strong>定期备份存档</strong>——不正确的修改可能导致存档损坏</li>
-          <li><strong>不要过度修改</strong>——适度使用修改器可以提升体验，过度则会毁掉游戏乐趣</li>
-          <li><strong>做好源代码管理</strong>——修改器开发涉及底层操作，建议使用版本控制</li>
-        </ul>
-        <blockquote>
-          「修改器是一把双刃剑」。它能让你绕过游戏设计者的意图，也能帮你深入理解计算机系统的工作原理。<strong>用技术探索边界，但不要忘记游戏的本质是快乐。</strong>
-        </blockquote>
         <p>
-          本文只是游戏修改器实现原理的冰山一角。除了基础的内存修改，还有 DLL 注入、Lua 脚本注入、网络数据包修改等更多高级技术等待探索。希望这篇文章能为你打开一扇通往逆向工程世界的大门。
+          在照顾不同键盘用户和防误触的同时，又因为游戏内的功能按键也是 F 区，可以很好地在交互上做到逻辑统一，还顺便给功能区做了点击交互。
         </p>
+
+        <h2 id="s6">更新日志</h2>
+        <pre><span class="lang-tag">v2.0 — 2025-12-21</span>
++ 使用 Lua 进行重构与窗口手绘，代码开源
++ 优化了游戏进程监听逻辑
++ 添加了游戏未启动时的动画
++ 添加了游戏关闭时的图片与标语
++ 添加了侧边栏图片的随机切换
++ 更新了顶部菜单栏列表，可以修改更多数值了
++ 新增了「AT 力场」热键功能
++ 新增了「砸瓦鲁多」热键功能
++ 新增了「无限洗澡」热键功能
++ 新增了「无限泡茶」热键功能
++ 暂时移除了「三倍速」功能
++ 界面交互替换为了游戏素材音效</pre>
+
+        <pre><span class="lang-tag">v1.2 — 2025-02-03</span>
++ 为热键添加激活文本高亮
++ 优化道具栏数量的同步刷新机制
++ 修复字体丢失的问题</pre>
+
+        <pre><span class="lang-tag">v1.1 — 2025-01-21</span>
++ 移除「爆金币」热键功能
++ 移除「0721」热键功能
++ 新增顶部菜单栏，可修改物品数量
++ 优化启动器进程检索逻辑
++ 添加彩蛋</pre>
+
+        <pre><span class="lang-tag">v1.0 — 2025-01-12</span>
++ 添加「0721」热键功能
++ 添加「爆金币」热键功能
++ 添加「三倍速」热键功能
++ 添加「秒 5」热键功能
++ 添加游戏未启动时的弹窗提示</pre>
 
       </div>
 
@@ -1035,12 +1025,10 @@ class GameTrainer:
           <span class="tag">代码</span>
           <span class="tag">娱乐</span>
           <span class="tag">游戏</span>
-          <span class="tag">逆向工程</span>
         </div>
         <div class="article-actions">
+          <a href="https://github.com/xueelf/ImoutoLifeFantasyTrainer" target="_blank" class="article-action-btn" style="text-decoration:none">⬡ GitHub 开源</a>
           <button class="article-action-btn" onclick="alert('已复制链接')">🔗 复制链接</button>
-          <button class="article-action-btn" onclick="alert('收藏成功')">☆ 收藏</button>
-          <button class="article-action-btn" onclick="alert('举报已提交')">⚠ 举报</button>
         </div>
       </div>
     </article>
@@ -1049,11 +1037,11 @@ class GameTrainer:
     <nav class="article-nav">
       <a href="#" class="article-nav-link prev">
         <div class="article-nav-label">← 上一篇</div>
-        <div class="article-nav-title">使用 Rust 构建高性能 API 网关</div>
+        <div class="article-nav-title">随手做了一个 Pixiv 图片小工具</div>
       </a>
       <a href="#" class="article-nav-link next">
         <div class="article-nav-label">下一篇 →</div>
-        <div class="article-nav-title">2026 年春季新番扫雷报告</div>
+        <div class="article-nav-title">如何在 JavaScript 中获取调用栈</div>
       </a>
     </nav>
 
@@ -1075,10 +1063,10 @@ class GameTrainer:
           <div class="comment-body">
             <div class="comment-author">
               NekoChan
-              <span class="comment-date">2026-05-19 14:32</span>
+              <span class="comment-date">2025-01-15 14:32</span>
             </div>
             <div class="comment-text">
-              干货满满！之前一直没搞懂指针链的追踪方法，看了你的图解终于明白了。期待后续的 DLL 注入专题！
+              大佬这个修改器真的牛，用 Lua 重写后界面好看多了。用了 F 区的方案确实很合理，我之前用 87 键一直按小键盘按不到。
             </div>
             <a href="#" class="comment-reply">回复</a>
           </div>
@@ -1088,11 +1076,11 @@ class GameTrainer:
           <div class="comment-avatar">🦊</div>
           <div class="comment-body">
             <div class="comment-author">
-              RustFan
-              <span class="comment-date">2026-05-19 10:15</span>
+              GameDev
+              <span class="comment-date">2025-01-14 10:15</span>
             </div>
             <div class="comment-text">
-              在 Linux 上用 Wine 跑这个游戏，用你的方法配合 Wine 的调试工具也能实现类似的功能。补充一点：Wine 环境下指针解析需要额外处理 PE 映射偏移。
+              关于隐藏数值的发现太有趣了…… 难怪我什么都没做就解锁了一些奇怪的事件。建议在修改器里加一个「隐藏数值查看器」的功能，方便测试。
             </div>
             <a href="#" class="comment-reply">回复</a>
           </div>
@@ -1102,11 +1090,11 @@ class GameTrainer:
           <div class="comment-avatar">🐧</div>
           <div class="comment-body">
             <div class="comment-author">
-              PixelMaster
-              <span class="comment-date">2026-05-18 22:08</span>
+              SteamUser
+              <span class="comment-date">2025-01-13 22:08</span>
             </div>
             <div class="comment-text">
-              那个特征码模式 `48 8B 05 ?? ?? ?? ?? 48 89 58 08` 在最新版 v1.3 似乎变了，我查到的是 `48 8B 0D ?? ?? ?? ?? 48 89 48 08`，是不是热更新修补过了？
+              AT 力场好评！之前有些 Boss 战怎么都打不过，开了这个之后虽然打得慢但至少不会死了。不过秒 5 在我的电脑上确实会出图层问题，用 AT 力场就完美解决。
             </div>
             <a href="#" class="comment-reply">回复</a>
           </div>
@@ -1119,7 +1107,7 @@ class GameTrainer:
 
 <!-- Footer -->
 <div class="footer">
-  © 2026 Yuki's Blog. Built with ❤ &nbsp;|&nbsp; Powered by コードとアニメ<br>
+  © 2026 你好，风予. Built with ❤ &nbsp;|&nbsp; Powered by コードとアニメ<br>
   <a href="anime-blog-prototype.html">首页</a> · <a href="#">RSS 订阅</a> · <a href="#">关于</a> · <a href="#">友情链接</a>
 </div>
 
@@ -1166,7 +1154,8 @@ document.querySelectorAll('.article-toc-list a').forEach(link => {
     const id = link.getAttribute('href').slice(1);
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const top = el.getBoundingClientRect().top + window.scrollY - 24;
+      window.scrollTo({ top, behavior: 'smooth' });
     }
   });
 });
