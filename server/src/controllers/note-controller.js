@@ -1,24 +1,16 @@
-const prisma = require('../utils/prisma')
-const fs = require('fs/promises')
+const noteService = require('../services/note-service')
 
 async function listPublic(req, res, next) {
   try {
-    let { page = 1, limit = 20 } = req.query
-    page = +page; limit = Math.min(+limit, 100)
-
-    const [data, total] = await Promise.all([
-      prisma.note.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
-        select: { id: true, title: true, categoryId: true, category: { select: { id: true, name: true, slug: true } }, createdAt: true, updatedAt: true },
-        orderBy: { updatedAt: 'desc' },
-      }),
-      prisma.note.count(),
-    ])
-
+    const result = await noteService.listPublic(req.query)
     res.json({
-      data,
-      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      data: result.data,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        totalPages: Math.ceil(result.total / result.limit),
+      },
     })
   } catch (err) {
     next(err)
@@ -27,25 +19,15 @@ async function listPublic(req, res, next) {
 
 async function list(req, res, next) {
   try {
-    let { page = 1, limit = 20, categoryId } = req.query
-    page = +page; limit = Math.min(+limit, 100)
-    const where = {}
-    if (categoryId) where.categoryId = +categoryId
-
-    const [data, total] = await Promise.all([
-      prisma.note.findMany({
-        where,
-        skip: (page - 1) * limit,
-        take: limit,
-        select: { id: true, title: true, categoryId: true, category: { select: { id: true, name: true, slug: true } }, createdAt: true, updatedAt: true },
-        orderBy: { updatedAt: 'desc' },
-      }),
-      prisma.note.count({ where }),
-    ])
-
+    const result = await noteService.list(req.query)
     res.json({
-      data,
-      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      data: result.data,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        totalPages: Math.ceil(result.total / result.limit),
+      },
     })
   } catch (err) {
     next(err)
@@ -55,10 +37,7 @@ async function list(req, res, next) {
 async function getById(req, res, next) {
   try {
     const id = +req.params.id
-    const note = await prisma.note.findUnique({
-      where: { id },
-      include: { category: { select: { id: true, name: true, slug: true } } },
-    })
+    const note = await noteService.getById(id)
     if (!note) return res.status(404).json({ error: '笔记不存在' })
     res.json({ data: note })
   } catch (err) {
@@ -68,29 +47,10 @@ async function getById(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    let title, content, categoryId
-
-    if (req.file) {
-      title = req.file.originalname.replace(/\.md$/i, '')
-      content = await fs.readFile(req.file.path, 'utf-8')
-      categoryId = req.body.categoryId ? +req.body.categoryId : null
-    } else {
-      title = req.body.title
-      content = req.body.content
-      categoryId = req.body.categoryId ? +req.body.categoryId : null
-    }
-
-    if (!title || !content) {
-      return res.status(400).json({ error: '标题和内容不能为空' })
-    }
-
-    const note = await prisma.note.create({
-      data: { title, content, categoryId, filePath: req.file?.path },
-      include: { category: { select: { id: true, name: true, slug: true } } },
-    })
-
+    const note = await noteService.create({ ...req.body, file: req.file })
     res.status(201).json({ data: note })
   } catch (err) {
+    if (err.statusCode) return res.status(err.statusCode).json({ error: err.message })
     next(err)
   }
 }
@@ -98,21 +58,8 @@ async function create(req, res, next) {
 async function update(req, res, next) {
   try {
     const id = +req.params.id
-    const { title, content, categoryId } = req.body
-    const existing = await prisma.note.findUnique({ where: { id } })
-    if (!existing) return res.status(404).json({ error: '笔记不存在' })
-
-    const data = {}
-    if (title !== undefined) data.title = title
-    if (content !== undefined) data.content = content
-    if (categoryId !== undefined) data.categoryId = categoryId || null
-
-    const note = await prisma.note.update({
-      where: { id },
-      data,
-      include: { category: { select: { id: true, name: true, slug: true } } },
-    })
-
+    const note = await noteService.update(id, req.body)
+    if (!note) return res.status(404).json({ error: '笔记不存在' })
     res.json({ data: note })
   } catch (err) {
     next(err)
@@ -122,7 +69,8 @@ async function update(req, res, next) {
 async function remove(req, res, next) {
   try {
     const id = +req.params.id
-    await prisma.note.delete({ where: { id } })
+    const ok = await noteService.remove(id)
+    if (!ok) return res.status(404).json({ error: '笔记不存在' })
     res.json({ data: { id } })
   } catch (err) {
     next(err)
@@ -132,7 +80,7 @@ async function remove(req, res, next) {
 async function exportNote(req, res, next) {
   try {
     const id = +req.params.id
-    const note = await prisma.note.findUnique({ where: { id } })
+    const note = await noteService.getForExport(id)
     if (!note) return res.status(404).json({ error: '笔记不存在' })
 
     const filename = encodeURIComponent(note.title.replace(/[/\\?%*:|"<>]/g, '_')) + '.md'

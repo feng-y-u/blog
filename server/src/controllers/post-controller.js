@@ -1,47 +1,17 @@
-const prisma = require('../utils/prisma')
-const { uniqueSlug } = require('../utils/slugify')
-const { POST_STATUS } = require('../constants')
-
-function reshapeTags(post) {
-  return { ...post, tags: (post.tags || []).map(pt => pt.tag) }
-}
+const postService = require('../services/post-service')
 
 async function list(req, res, next) {
   try {
-    let { page = 1, limit = 10, category, tag, status, search } = req.query
-    page = +page; limit = Math.min(+limit, 100)
-    const where = {}
-
-    if (category) where.category = { slug: category }
-    if (tag) where.tags = { some: { tag: { slug: tag } } }
-    if (status) where.status = status
-    else if (!req.user) where.status = POST_STATUS.PUBLISHED
-    if (search) {
-      where.OR = [
-        { title: { contains: search } },
-        { content: { contains: search } },
-      ]
-    }
-
-    const [data, total] = await Promise.all([
-      prisma.post.findMany({
-        where,
-        skip: (page - 1) * limit,
-        take: limit,
-        include: {
-          category: { select: { id: true, name: true, slug: true } },
-          tags: { include: { tag: { select: { id: true, name: true, slug: true } } } },
-          author: { select: { id: true, displayName: true } },
-        },
-        orderBy: { publishedAt: 'desc' },
-      }),
-      prisma.post.count({ where }),
-    ])
-
+    const result = await postService.list({ ...req.query, user: req.user })
     res.set('Cache-Control', 'public, max-age=300')
     res.json({
-      data: data.map(reshapeTags),
-      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      data: result.data,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        totalPages: Math.ceil(result.total / result.limit),
+      },
     })
   } catch (err) {
     next(err)
@@ -50,21 +20,9 @@ async function list(req, res, next) {
 
 async function getBySlug(req, res, next) {
   try {
-    const post = await prisma.post.findUnique({
-      where: { slug: req.params.slug },
-      include: {
-        category: { select: { id: true, name: true, slug: true } },
-        tags: { include: { tag: { select: { id: true, name: true, slug: true } } } },
-        author: { select: { id: true, displayName: true, avatar: true } },
-      },
-    })
-    if (!post || (post.status !== POST_STATUS.PUBLISHED && !req.user)) {
-      return res.status(404).json({ error: '文章不存在' })
-    }
-
-    await prisma.post.update({ where: { id: post.id }, data: { viewCount: { increment: 1 } } })
-
-    res.json({ data: reshapeTags(post) })
+    const post = await postService.getBySlug(req.params.slug, req.user)
+    if (!post) return res.status(404).json({ error: '文章不存在' })
+    res.json({ data: post })
   } catch (err) {
     next(err)
   }
@@ -75,21 +33,11 @@ async function create(req, res, next) {
     const { title, content, excerpt, coverImage, status, categoryId, tagIds } = req.body
     if (!title || !content) return res.status(400).json({ error: '标题和内容不能为空' })
 
-    const slug = await uniqueSlug(prisma, 'post', title)
-
-    const post = await prisma.post.create({
-      data: {
-        title, slug, content, excerpt, coverImage,
-        status: status || POST_STATUS.DRAFT,
-        publishedAt: status === POST_STATUS.PUBLISHED ? new Date() : null,
-        categoryId: categoryId || null,
-        authorId: req.user.sub,
-        tags: tagIds?.length ? { create: tagIds.map(tagId => ({ tagId })) } : undefined,
-      },
-      include: { category: true, tags: { include: { tag: true } } },
+    const post = await postService.create({
+      title, content, excerpt, coverImage, status, categoryId, tagIds,
+      authorId: req.user.sub,
     })
-
-    res.status(201).json({ data: reshapeTags(post) })
+    res.status(201).json({ data: post })
   } catch (err) {
     next(err)
   }
@@ -98,35 +46,9 @@ async function create(req, res, next) {
 async function update(req, res, next) {
   try {
     const id = +req.params.id
-    const { title, content, excerpt, coverImage, status, categoryId, tagIds } = req.body
-    const existing = await prisma.post.findUnique({ where: { id } })
-    if (!existing) return res.status(404).json({ error: '文章不存在' })
-
-    const data = {}
-    if (title !== undefined) data.title = title
-    if (content !== undefined) data.content = content
-    if (excerpt !== undefined) data.excerpt = excerpt
-    if (coverImage !== undefined) data.coverImage = coverImage
-    if (status !== undefined) {
-      data.status = status
-      if (status === POST_STATUS.PUBLISHED && !existing.publishedAt) data.publishedAt = new Date()
-    }
-    if (categoryId !== undefined) data.categoryId = categoryId || null
-
-    if (tagIds !== undefined) {
-      await prisma.postTag.deleteMany({ where: { postId: id } })
-      if (tagIds.length) {
-        await prisma.postTag.createMany({ data: tagIds.map(tagId => ({ postId: id, tagId })) })
-      }
-    }
-
-    const post = await prisma.post.update({
-      where: { id },
-      data,
-      include: { category: true, tags: { include: { tag: true } } },
-    })
-
-    res.json({ data: reshapeTags(post) })
+    const post = await postService.update(id, req.body)
+    if (!post) return res.status(404).json({ error: '文章不存在' })
+    res.json({ data: post })
   } catch (err) {
     next(err)
   }
@@ -135,7 +57,8 @@ async function update(req, res, next) {
 async function remove(req, res, next) {
   try {
     const id = +req.params.id
-    await prisma.post.delete({ where: { id } })
+    const ok = await postService.remove(id)
+    if (!ok) return res.status(404).json({ error: '文章不存在' })
     res.json({ data: { id } })
   } catch (err) {
     next(err)
@@ -146,20 +69,9 @@ async function updateStatus(req, res, next) {
   try {
     const id = +req.params.id
     const { status } = req.body
-    if (!Object.values(POST_STATUS).includes(status)) {
-      return res.status(400).json({ error: '无效的状态值' })
-    }
-
-    const data = { status }
-    if (status === POST_STATUS.PUBLISHED) data.publishedAt = new Date()
-
-    const post = await prisma.post.update({
-      where: { id },
-      data,
-      include: { category: true, tags: { include: { tag: true } } },
-    })
-
-    res.json({ data: reshapeTags(post) })
+    const post = await postService.updateStatus(id, status)
+    if (!post) return res.status(404).json({ error: '文章不存在' })
+    res.json({ data: post })
   } catch (err) {
     next(err)
   }
@@ -168,15 +80,9 @@ async function updateStatus(req, res, next) {
 async function getById(req, res, next) {
   try {
     const id = +req.params.id
-    const post = await prisma.post.findUnique({
-      where: { id },
-      include: {
-        category: true,
-        tags: { include: { tag: true } },
-      },
-    })
+    const post = await postService.getById(id)
     if (!post) return res.status(404).json({ error: '文章不存在' })
-    res.json({ data: reshapeTags(post) })
+    res.json({ data: post })
   } catch (err) {
     next(err)
   }
@@ -185,19 +91,8 @@ async function getById(req, res, next) {
 async function getAdjacentPosts(req, res, next) {
   try {
     const id = +req.params.id
-    const [prev, next] = await Promise.all([
-      prisma.post.findFirst({
-        where: { id: { lt: id }, status: POST_STATUS.PUBLISHED },
-        orderBy: { id: 'desc' },
-        select: { id: true, title: true, slug: true },
-      }),
-      prisma.post.findFirst({
-        where: { id: { gt: id }, status: POST_STATUS.PUBLISHED },
-        orderBy: { id: 'asc' },
-        select: { id: true, title: true, slug: true },
-      }),
-    ])
-    res.json({ data: { prev, next } })
+    const result = await postService.getAdjacentPosts(id)
+    res.json({ data: result })
   } catch (err) {
     next(err)
   }

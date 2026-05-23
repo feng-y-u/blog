@@ -4,4 +4,10 @@ const POST_STATUS = {
   ARCHIVED: 'archived',
 }
 
-module.exports = { POST_STATUS }
+const COMMENT_STATUS = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  REJECTED: 'rejected',
+}
+
+module.exports = { POST_STATUS, COMMENT_STATUS }

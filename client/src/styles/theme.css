@@ -10,11 +10,13 @@
   --accent: #00d4ff;
   --accent-dim: rgba(0, 212, 255, 0.12);
   --accent-glow: rgba(0, 212, 255, 0.08);
+  --accent-pink: #ff6b9d;
+  --accent-pink-dim: rgba(255, 107, 157, 0.15);
   --radius: 12px;
   --radius-sm: 8px;
   --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.15);
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
-  --banner-h: 280px;
+  --banner-h: 200px;
   --sidebar-w: 300px;
   --article-font-size: 16px;
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -35,9 +37,11 @@
   --accent: #0088cc;
   --accent-dim: rgba(0, 136, 204, 0.1);
   --accent-glow: rgba(0, 136, 204, 0.06);
+  --accent-pink: #e85d8a;
+  --accent-pink-dim: rgba(232, 93, 138, 0.12);
   --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
-  --banner-h: 280px;
+  --banner-h: 200px;
   --sidebar-w: 300px;
   --article-font-size: 16px;
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
