@@ -6,12 +6,12 @@ import Loading from '../components/Loading'
 
 function highlightText(text, keyword) {
   if (!keyword) return text
-  const parts = text.split(new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'))
-  return parts.map((part, i) =>
+  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return text.split(new RegExp(`(${escaped})`, 'gi')).map((part, i) =>
     part.toLowerCase() === keyword.toLowerCase()
-      ? `<mark class="bg-yellow-200 dark:bg-yellow-800 rounded px-0.5">${part}</mark>`
+      ? <mark key={i} className="bg-yellow-200 dark:bg-yellow-800 rounded px-0.5">{part}</mark>
       : part
-  ).join('')
+  )
 }
 
 function HighlightedPostCard({ post, keyword }) {
@@ -23,12 +23,14 @@ function HighlightedPostCard({ post, keyword }) {
         <span>{new Date(post.publishedAt || post.createdAt).toLocaleDateString()}</span>
       </div>
       <a href={`/post/${post.slug}`} className="block">
-        <h2 className="text-xl font-semibold mb-2 hover:text-blue-600"
-          dangerouslySetInnerHTML={{ __html: highlightText(post.title, keyword) }} />
+        <h2 className="text-xl font-semibold mb-2 hover:text-blue-600">
+          {highlightText(post.title, keyword)}
+        </h2>
       </a>
       {post.excerpt && (
-        <p className="text-gray-600 dark:text-gray-400 text-sm"
-          dangerouslySetInnerHTML={{ __html: highlightText(post.excerpt, keyword) }} />
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
+          {highlightText(post.excerpt, keyword)}
+        </p>
       )}
     </article>
   )

@@ -20,8 +20,11 @@ const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const allowed = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
-    cb(null, allowed.includes(path.extname(file.originalname).toLowerCase()))
+    const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    const extOk = allowedExts.includes(path.extname(file.originalname).toLowerCase())
+    const mimeOk = allowedMimes.includes(file.mimetype)
+    cb(null, extOk && mimeOk)
   },
 })
 

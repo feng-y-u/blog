@@ -19,6 +19,10 @@ async function listByPost(req, res, next) {
   }
 }
 
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
 async function create(req, res, next) {
   try {
     const postId = +req.params.postId
@@ -39,9 +43,9 @@ async function create(req, res, next) {
     const comment = await prisma.comment.create({
       data: {
         postId,
-        authorName,
+        authorName: escapeHtml(authorName),
         authorEmail,
-        content,
+        content: escapeHtml(content),
         parentId: parentId ? +parentId : null,
         status: 'pending',
       },

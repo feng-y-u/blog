@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const cors = require('cors')
 const helmet = require('helmet')
 const morgan = require('morgan')
@@ -7,7 +8,16 @@ const errorHandler = require('./middleware/error')
 
 const app = express()
 
-app.use(cors())
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? ['https://flowyu.xyz', 'https://www.flowyu.xyz', 'https://blog.flowyu.xyz']
+  : ['http://localhost:5173']
+
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) cb(null, true)
+    else cb(new Error('Not allowed by CORS'))
+  },
+}))
 app.use(helmet())
 app.use(morgan('dev'))
 app.use(express.json())
@@ -44,6 +54,21 @@ app.post('/api/upload', auth, upload.single('image'), uploadImage)
 app.get('/api/sitemap', sitemap)
 app.get('/robots.txt', robots)
 app.get('/api/feed', rss)
+
+if (process.env.NODE_ENV === 'production') {
+  const clientDist = process.env.CLIENT_DIST_DIR || path.join(__dirname, '../../client/dist')
+  const indexPath = path.join(clientDist, 'index.html')
+  app.use(express.static(clientDist, {
+    maxAge: '1y',
+    immutable: true,
+    dotfiles: 'deny',
+    index: false,
+  }))
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next()
+    res.sendFile(indexPath, err => { if (err) next(err) })
+  })
+}
 
 app.use(errorHandler)
 
