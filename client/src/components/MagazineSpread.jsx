@@ -1,0 +1,210 @@
+import { useRef, useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import ParticleCanvas from './ParticleCanvas'
+
+const JAPANESE_CHARS = {
+  tech: '構築',
+  anime: '春',
+  rust: '記録',
+  default: '誌',
+}
+
+function getJapaneseChar(post) {
+  const cat = post.category?.name?.toLowerCase() || ''
+  if (cat.includes('rust') || cat.includes('tech')) return JAPANESE_CHARS.tech
+  if (cat.includes('anime') || cat.includes('动漫') || cat.includes('新番')) return JAPANESE_CHARS.anime
+  return JAPANESE_CHARS.default
+}
+
+function scrambleText(finalText, onUpdate, onDone) {
+  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ'
+  let current = finalText.split('')
+  let frame = 0
+  const maxFrames = 20
+
+  function tick() {
+    if (frame >= maxFrames) {
+      onUpdate(finalText)
+      onDone?.()
+      return
+    }
+    const progress = frame / maxFrames
+    const flipped = current.map((ch, i) => {
+      if (ch === ' ' || i / current.length < progress) return ch
+      return chars[Math.floor(Math.random() * chars.length)]
+    })
+    onUpdate(flipped.join(''))
+    frame++
+    requestAnimationFrame(tick)
+  }
+  tick()
+}
+
+export default function MagazineSpread({ post, index, isVisible }) {
+  const [displayTitle, setDisplayTitle] = useState(post.title)
+  const [scrambled, setScrambled] = useState(false)
+  const titleRef = useRef(null)
+  const isLeft = index % 2 === 0
+  const japaneseChar = getJapaneseChar(post)
+
+  useEffect(() => {
+    if (isVisible && !scrambled) {
+      setScrambled(true)
+      const timer = setTimeout(() => {
+        scrambleText(post.title, setDisplayTitle)
+      }, 300 + index * 150)
+      return () => clearTimeout(timer)
+    }
+  }, [isVisible, post.title, index, scrambled])
+
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        height: '100vh',
+        scrollSnapAlign: 'start',
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'var(--bg)',
+      }}
+    >
+      {/* 左栏：文字 */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '64px 48px',
+        background: 'var(--bg)',
+        order: isLeft ? 1 : 2,
+      }}>
+        {/* 分类 + 日期 */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '10px',
+          marginBottom: '16px',
+        }}>
+          {post.category && (
+            <span style={{
+              fontSize: '11px', fontWeight: 600,
+              color: 'var(--accent-pink)',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+            }}>
+              {post.category.name}
+            </span>
+          )}
+          <span style={{ fontSize: '11px', color: 'var(--fg-muted)' }}>
+            {new Date(post.publishedAt || post.createdAt).toLocaleDateString('zh-CN', {
+              year: 'numeric', month: '2-digit', day: '2-digit',
+            })}
+          </span>
+        </div>
+
+        {/* 标题 */}
+        <h2
+          ref={titleRef}
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(28px, 3.2vw, 40px)',
+            fontWeight: 800,
+            lineHeight: 1.1,
+            letterSpacing: '-0.02em',
+            color: 'var(--fg)',
+            margin: '0 0 16px',
+            maxWidth: '420px',
+          }}
+        >
+          {displayTitle}
+        </h2>
+
+        {/* 摘要 */}
+        <p style={{
+          fontSize: '13px',
+          lineHeight: 1.8,
+          color: 'var(--fg-secondary)',
+          margin: '0 0 20px',
+          maxWidth: '380px',
+        }}>
+          {post.excerpt || (post.content ? post.content.replace(/[#*`\[\]()>|\\]/g, '').slice(0, 150) : '')}
+        </p>
+
+        {/* 标签 */}
+        {post.tags?.length > 0 && (
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
+            {post.tags.slice(0, 4).map(tag => (
+              <span key={tag.id} style={{
+                fontSize: '10px', padding: '3px 10px',
+                borderRadius: '20px',
+                border: '1px solid var(--accent-pink-dim)',
+                color: 'var(--accent-pink)',
+                letterSpacing: '0.02em',
+              }}>
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* 阅读按钮 */}
+        <Link
+          to={`/post/${post.slug}`}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            fontSize: '12px', fontWeight: 600,
+            color: 'var(--accent-pink)',
+            textDecoration: 'none',
+            padding: '8px 0',
+            borderBottom: '1px solid transparent',
+            transition: 'var(--transition)',
+            width: 'fit-content',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderBottomColor = 'var(--accent-pink-dim)' }}
+          onMouseLeave={e => { e.currentTarget.style.borderBottomColor = 'transparent' }}
+        >
+          Read article
+          <span style={{ fontSize: '16px', lineHeight: 1 }}>→</span>
+        </Link>
+      </div>
+
+      {/* 右栏：视觉区 */}
+      <div style={{
+        position: 'relative',
+        background: 'var(--surface)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        order: isLeft ? 2 : 1,
+      }}>
+        <ParticleCanvas colorKey={post.category?.name || 'default'} />
+
+        {/* 日文大文字 */}
+        <div style={{
+          fontSize: 'clamp(60px, 8vw, 110px)',
+          fontWeight: 900,
+          color: 'rgba(232,93,138,0.06)',
+          fontFamily: "'Noto Serif JP', 'Yu Mincho', serif",
+          userSelect: 'none',
+          letterSpacing: '-0.03em',
+          position: 'relative',
+          zIndex: 1,
+          lineHeight: 1,
+        }}>
+          {japaneseChar}
+        </div>
+
+        {/* 底部装饰 */}
+        <div style={{
+          position: 'absolute',
+          bottom: '36px',
+          right: isLeft ? '36px' : undefined,
+          left: isLeft ? undefined : '36px',
+          width: '64px',
+          height: '2px',
+          background: 'linear-gradient(90deg, var(--accent-pink-dim), var(--accent-cyan-dim))',
+          borderRadius: '1px',
+        }} />
+      </div>
+    </div>
+  )
+}

@@ -1,3 +1,34 @@
+:root {
+  --bg: #ffffff;
+  --surface: #fafafc;
+  --card: #ffffff;
+  --card-hover: #f8f8fc;
+  --border: #f0f0f0;
+  --fg: #1a1a1a;
+  --fg-secondary: #888888;
+  --fg-muted: #bbbbbb;
+  --accent-pink: #e85d8a;
+  --accent-pink-dim: rgba(232,93,138,0.08);
+  --accent-cyan: #0099cc;
+  --accent-cyan-dim: rgba(0,153,204,0.08);
+  /* 兼容别名 */
+  --accent: var(--accent-pink);
+  --accent-dim: var(--accent-pink-dim);
+  --accent-glow: var(--accent-pink-dim);
+  --sidebar-w: 280px;
+  --nav-bg: rgba(255,255,255,0.85);
+  --modal-overlay: rgba(255,255,255,0.75);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.06);
+  --article-font-size: 16px;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+}
+
 :root[data-theme="dark"] {
   --bg: #0d0d14;
   --surface: #16161f;
@@ -7,42 +38,19 @@
   --fg: #e4e4ed;
   --fg-secondary: #8888a0;
   --fg-muted: #5c5c70;
-  --accent: #00d4ff;
-  --accent-dim: rgba(0, 212, 255, 0.12);
-  --accent-glow: rgba(0, 212, 255, 0.08);
   --accent-pink: #ff6b9d;
-  --accent-pink-dim: rgba(255, 107, 157, 0.15);
-  --radius: 12px;
-  --radius-sm: 8px;
+  --accent-pink-dim: rgba(255,107,157,0.15);
+  --accent-cyan: #00b8e6;
+  --accent-cyan-dim: rgba(0,184,230,0.12);
+  /* 兼容别名 */
+  --accent: var(--accent-pink);
+  --accent-dim: var(--accent-pink-dim);
+  --accent-glow: var(--accent-pink-dim);
+  --sidebar-w: 280px;
+  --nav-bg: rgba(13,13,20,0.85);
+  --modal-overlay: rgba(13,13,20,0.8);
   --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.15);
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
-  --banner-h: 200px;
-  --sidebar-w: 300px;
-  --article-font-size: 16px;
-  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
-}
-
-:root[data-theme="light"] {
-  --bg: #f0f0f5;
-  --surface: #ffffff;
-  --card: #ffffff;
-  --card-hover: #f8f8fc;
-  --border: #e0e0ea;
-  --fg: #1a1a2e;
-  --fg-secondary: #6b6b80;
-  --fg-muted: #9999aa;
-  --accent: #0088cc;
-  --accent-dim: rgba(0, 136, 204, 0.1);
-  --accent-glow: rgba(0, 136, 204, 0.06);
-  --accent-pink: #e85d8a;
-  --accent-pink-dim: rgba(232, 93, 138, 0.12);
-  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
-  --banner-h: 200px;
-  --sidebar-w: 300px;
   --article-font-size: 16px;
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;

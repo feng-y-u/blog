@@ -1,67 +1,86 @@
+import { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import Banner from './Banner'
+import Navbar from './Navbar'
 import Sidebar from './Sidebar'
-import ThemeToggle from './ThemeToggle'
+import SearchModal from './SearchModal'
 
-const SIDEBAR_PATHS = ['/', '/categories', '/category/', '/tags', '/tag/', '/search']
+const SIDEBAR_PATHS = ['/categories', '/category/', '/tags', '/tag/', '/search']
 
 export default function Layout() {
   const location = useLocation()
+  const isHome = location.pathname === '/'
   const showSidebar = SIDEBAR_PATHS.some(p => location.pathname.startsWith(p))
+  const [searchOpen, setSearchOpen] = useState(false)
+
+  // ⌘K / Ctrl+K 快捷键
+  useEffect(() => {
+    function handleKey(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        setSearchOpen(prev => !prev)
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [])
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)', color: 'var(--fg)' }}>
-      <ThemeToggle />
+      <Navbar onSearchOpen={() => setSearchOpen(true)} />
 
-      {/* Banner */}
-      <Banner />
+      {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
 
-      {/* 主内容区：两栏布局 — 与原型一致 margin-top: -40px, z-index: 3 */}
-      <div style={{
-        display: 'flex',
-        maxWidth: '1400px',
-        margin: '0 auto',
-        padding: '0 24px',
-        gap: '32px',
-        position: 'relative',
-        marginTop: '-40px',
-        zIndex: 3,
-      }}>
-        <main style={{ flex: 1, minWidth: 0 }}>
-          <Outlet />
+      {/* 主内容 */}
+      {isHome ? (
+        /* 首页：全屏无容器约束 */
+        <main style={{ paddingTop: '56px' /* navbar height */ }}>
+          <Outlet context={{ onSearchOpen: () => setSearchOpen(true) }} />
         </main>
-        {showSidebar && (
-          <aside className="sidebar" style={{
-            width: 'var(--sidebar-w)',
-            flexShrink: 0,
-            position: 'sticky',
-            top: '24px',
-            alignSelf: 'flex-start',
-            maxHeight: 'calc(100vh - 48px)',
-            overflowY: 'auto',
-          }}>
-            <Sidebar />
-          </aside>
-        )}
-      </div>
+      ) : (
+        /* 其他页面：带容器和侧边栏 */
+        <div style={{
+          display: 'flex',
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '88px 24px 48px',
+          gap: '32px',
+        }}>
+          <main style={{ flex: 1, minWidth: 0 }}>
+            <Outlet />
+          </main>
+          {showSidebar && (
+            <aside className="sidebar" style={{
+              width: '280px',
+              flexShrink: 0,
+              position: 'sticky',
+              top: '80px',
+              alignSelf: 'flex-start',
+              maxHeight: 'calc(100vh - 96px)',
+              overflowY: 'auto',
+            }}>
+              <Sidebar />
+            </aside>
+          )}
+        </div>
+      )}
 
-      {/* 页脚 — 与原型一致 */}
+      {/* 页脚 */}
       <footer className="footer" style={{
         textAlign: 'center',
         padding: '32px 24px 48px',
         color: 'var(--fg-muted)',
         fontSize: '13px',
         borderTop: '1px solid var(--border)',
-        marginTop: '20px',
+        marginTop: isHome ? '0' : '20px',
       }}>
         &copy; {new Date().getFullYear()} Yuki's Blog. Built with ❤ &nbsp;|&nbsp; Powered by コードとアニメ<br />
-        <Link to="/" style={{ color: 'var(--accent)', textDecoration: 'none', margin: '0 4px' }}>首页</Link>
+        <Link to="/" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>首页</Link>
         {' · '}
-        <a href="/api/feed" style={{ color: 'var(--accent)', textDecoration: 'none', margin: '0 4px' }}>RSS 订阅</a>
+        <a href="/api/feed" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>RSS 订阅</a>
         {' · '}
-        <a href="#" style={{ color: 'var(--accent)', textDecoration: 'none', margin: '0 4px' }}>关于</a>
+        <a href="#" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>关于</a>
         {' · '}
-        <a href="#" style={{ color: 'var(--accent)', textDecoration: 'none', margin: '0 4px' }}>友情链接</a>
+        <a href="#" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>友情链接</a>
       </footer>
     </div>
   )
