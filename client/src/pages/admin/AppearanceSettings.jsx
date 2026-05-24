@@ -10,7 +10,7 @@ const FIELDS = [
   { key: 'profile_name', label: '显示名称', type: 'text' },
   { key: 'profile_signature', label: '个性签名', type: 'text' },
   { key: 'profile_bio', label: '个人简介（支持 \\n 换行）', type: 'textarea' },
-  { key: 'social_links', label: '社交链接（JSON 格式，如 {"github":"https://github.com/xxx","twitter":"https://twitter.com/xxx"}）', type: 'textarea' },
+  { key: 'social_links', label: '社交链接（JSON 格式，如 {"github":"https://github.com/xxx","bilibili":"https://space.bilibili.com/xxx"}）', type: 'textarea' },
 ]
 
 export default function AppearanceSettings() {
@@ -99,7 +99,7 @@ export default function AppearanceSettings() {
         <div className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded">
           <div className="text-4xl">{form.avatar_emoji || '🌸'}</div>
           <div>
-            <div className="font-bold text-lg">{form.profile_name || 'Yuki'}</div>
+            <div className="font-bold text-lg">{form.profile_name || '风予'}</div>
             <div className="text-sm text-gray-500 italic">{form.profile_signature || ''}</div>
             <div className="text-sm text-gray-400 mt-1">{form.site_title || ''}</div>
           </div>

@@ -18,6 +18,9 @@ server/dist/
 .claude/
 .superpowers/
 
+# CodeGraph index
+.codegraph/
+
 # IDE
 .vscode/
 .idea/

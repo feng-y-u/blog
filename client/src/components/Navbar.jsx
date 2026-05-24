@@ -10,6 +10,7 @@ function getInitialTheme() {
 
 export default function Navbar({ onSearchOpen }) {
   const location = useLocation()
+  const isHome = location.pathname === '/'
   const isPostPage = location.pathname.startsWith('/post/')
   const [theme, setTheme] = useState(getInitialTheme)
   const [scrolled, setScrolled] = useState(false)
@@ -41,10 +42,10 @@ export default function Navbar({ onSearchOpen }) {
       justifyContent: 'space-between',
       padding: '0 32px',
       height: '56px',
-      background: scrolled ? 'var(--nav-bg)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(12px)' : 'none',
-      WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
-      borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
+      background: isHome || scrolled ? 'var(--nav-bg)' : 'transparent',
+      backdropFilter: isHome || scrolled ? 'blur(12px)' : 'none',
+      WebkitBackdropFilter: isHome || scrolled ? 'blur(12px)' : 'none',
+      borderBottom: isHome || scrolled ? '1px solid var(--border)' : '1px solid transparent',
       transition: 'var(--transition)',
     }}>
       {/* 左侧 */}
@@ -68,7 +69,7 @@ export default function Navbar({ onSearchOpen }) {
             color: 'var(--fg)', fontSize: '12px',
             letterSpacing: '0.15em', fontWeight: 600,
           }}>
-            YUKI'S BLOG
+            风予'S BLOG
           </span>
         </Link>
       </div>

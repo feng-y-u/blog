@@ -33,12 +33,12 @@ export default function Layout() {
       {/* 主内容 */}
       {isHome ? (
         /* 首页：全屏无容器约束 */
-        <main style={{ paddingTop: '56px' /* navbar height */ }}>
+        <main className="page-enter" key={location.key} style={{ paddingTop: '56px' /* navbar height */ }}>
           <Outlet context={{ onSearchOpen: () => setSearchOpen(true) }} />
         </main>
       ) : (
         /* 其他页面：带容器和侧边栏 */
-        <div style={{
+        <div className="page-enter" key={location.key} style={{
           display: 'flex',
           maxWidth: '1200px',
           margin: '0 auto',
@@ -64,24 +64,24 @@ export default function Layout() {
         </div>
       )}
 
-      {/* 页脚 */}
-      <footer className="footer" style={{
-        textAlign: 'center',
-        padding: '32px 24px 48px',
-        color: 'var(--fg-muted)',
-        fontSize: '13px',
-        borderTop: '1px solid var(--border)',
-        marginTop: isHome ? '0' : '20px',
-      }}>
-        &copy; {new Date().getFullYear()} Yuki's Blog. Built with ❤ &nbsp;|&nbsp; Powered by コードとアニメ<br />
-        <Link to="/" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>首页</Link>
-        {' · '}
-        <a href="/api/feed" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>RSS 订阅</a>
-        {' · '}
-        <a href="#" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>关于</a>
-        {' · '}
-        <a href="#" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>友情链接</a>
-      </footer>
+      {/* 页脚 — 首页的 footer 已放在 HomePage 滚动容器内 */}
+      {!isHome && (
+        <footer className="footer" style={{
+          textAlign: 'center',
+          padding: '32px 24px 48px',
+          color: 'var(--fg-muted)',
+          fontSize: '13px',
+          borderTop: '1px solid var(--border)',
+          marginTop: '20px',
+        }}>
+          &copy; {new Date().getFullYear()} 风予's Blog. Built with ❤ &nbsp;|&nbsp; Powered by コードとアニメ<br />
+          <Link to="/" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>首页</Link>
+          {' · '}
+          <a href="#" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>关于</a>
+          {' · '}
+          <a href="#" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>友情链接</a>
+        </footer>
+      )}
     </div>
   )
 }

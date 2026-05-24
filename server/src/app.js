@@ -36,7 +36,6 @@ const auth = require('./middleware/auth')
 const upload = require('./middleware/upload')
 const { uploadImage } = require('./controllers/upload-controller')
 const settingsRoutes = require('./routes/settings')
-const { rss } = require('./controllers/feed-controller')
 const { sitemap, robots } = require('./controllers/sitemap-controller')
 
 app.use('/uploads', express.static('uploads'))
@@ -53,7 +52,6 @@ app.use('/api/settings', settingsRoutes)
 app.post('/api/upload', auth, upload.single('image'), uploadImage)
 app.get('/api/sitemap', sitemap)
 app.get('/robots.txt', robots)
-app.get('/api/feed', rss)
 
 if (process.env.NODE_ENV === 'production') {
   const clientDist = process.env.CLIENT_DIST_DIR || path.join(__dirname, '../../client/dist')

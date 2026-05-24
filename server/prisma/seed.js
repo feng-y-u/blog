@@ -31,17 +31,15 @@ async function main() {
   ])
 
   const defaultSettings = [
-    { key: 'site_title', value: '✦ Yuki\'s Blog' },
+    { key: 'site_title', value: '✦ 风予\'s Blog' },
     { key: 'site_subtitle', value: 'コードとアニメの世界' },
     { key: 'banner_image', value: '' },
     { key: 'avatar_emoji', value: '🌸' },
-    { key: 'profile_name', value: 'Yuki' },
-    { key: 'profile_signature', value: '― コードは詩、アニメは夢 ―' },
-    { key: 'profile_bio', value: '全栈开发者 / 动漫爱好者 / 开源贡献者' },
-    { key: 'social_links', value: JSON.stringify({ github: 'https://github.com/yuki', twitter: 'https://twitter.com/yuki' }) },
+    { key: 'profile_name', value: '风予' },
+    { key: 'social_links', value: JSON.stringify({ github: 'https://github.com/feng-y-u', bilibili: 'https://space.bilibili.com/635562556' }) },
   ]
   for (const s of defaultSettings) {
-    await prisma.setting.upsert({ where: { key: s.key }, update: {}, create: s })
+    await prisma.setting.upsert({ where: { key: s.key }, update: { value: s.value }, create: s })
   }
 
   console.log('Seed completed:', { admin: admin.username, categories: categories.length, tags: tags.length, settings: defaultSettings.length })

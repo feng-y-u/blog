@@ -211,7 +211,7 @@ export default function PostDetailPage() {
           fontSize: '13px',
           color: 'var(--fg-secondary)',
         }}>
-          <span>{post.author?.displayName || 'Yuki'}</span>
+          <span>{post.author?.displayName || '风予'}</span>
           <span>·</span>
           <span>阅读量 {post.viewCount}</span>
           <span style={{ marginLeft: 'auto', display: 'flex', gap: '4px', alignItems: 'center' }}>

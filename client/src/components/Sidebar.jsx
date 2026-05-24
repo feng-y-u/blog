@@ -3,18 +3,18 @@ import { Link } from 'react-router-dom'
 import { getPosts, getCategories, getTags } from '../api/posts'
 import { getNotes } from '../api/note'
 import { useSettings } from '../contexts/SettingsContext'
+import avatarImg from '../assets/avatar.jpg'
 
 const SOCIAL_ICONS = {
-  github: '⌂', twitter: '✕', zenn: '◇', qiita: '○',
-  bilibili: '▶', weibo: '◎', email: '✉', website: '◎',
+  github: <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>,
+  bilibili: <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><ellipse cx="6.5" cy="6" rx="3.2" ry="3.8"/><ellipse cx="17.5" cy="6" rx="3.2" ry="3.8"/><rect x="2" y="5" width="20" height="16" rx="4"/><path d="M10 9.5v6l5-3-5-3z"/></svg>,
+  twitter: '✕', zenn: '◇', qiita: '○',
+  weibo: '◎', email: '✉', website: '◎',
 }
 
 export default function Sidebar() {
   const { settings } = useSettings()
-  const avatarEmoji = settings?.avatar_emoji || '🌸'
-  const profileName = settings?.profile_name || 'Yuki'
-  const profileSig = settings?.profile_signature || '― コードは詩、アニメは夢 ―'
-  const profileBio = settings?.profile_bio || '全栈开发者 / 动漫爱好者 / 开源贡献者'
+  const profileName = '风予'
   let socialLinks = {}
   try { socialLinks = settings?.social_links ? JSON.parse(settings.social_links) : {} } catch { socialLinks = {} }
   const socialEntries = Object.entries(socialLinks)
@@ -51,31 +51,17 @@ export default function Sidebar() {
         transition: 'var(--transition)',
       }}>
         <div className="profile" style={{ textAlign: 'center' }}>
-          {/* 头像 — 渐变边框效果，与原型一致 */}
+          {/* 头像 */}
           <div style={{
             width: '88px', height: '88px',
             borderRadius: '50%',
             margin: '0 auto 16px',
-            background: 'linear-gradient(135deg, var(--accent-dim), rgba(100, 80, 200, 0.2))',
             border: '2px solid var(--border)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '40px',
             position: 'relative',
             overflow: 'hidden',
           }}>
-            {/* 渐变边框遮罩 */}
-            <div style={{
-              position: 'absolute', inset: 0, borderRadius: '50%',
-              border: '2px solid transparent',
-              background: 'linear-gradient(135deg, var(--accent), rgba(100, 80, 200, 0.4)) border-box',
-              WebkitMask: 'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
-              WebkitMaskComposite: 'xor',
-              maskComposite: 'exclude',
-              pointerEvents: 'none',
-            }} />
-            {avatarEmoji}
+            <img src={avatarImg} alt={profileName}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           </div>
           <div className="profile-name" style={{
             fontFamily: 'var(--font-display)',
@@ -85,24 +71,6 @@ export default function Sidebar() {
             letterSpacing: '0.02em',
           }}>
             {profileName}
-          </div>
-          <div className="profile-sig" style={{
-            fontFamily: 'Georgia, Times New Roman, serif',
-            fontStyle: 'italic',
-            fontSize: '14px',
-            color: 'var(--accent)',
-            marginTop: '6px',
-            opacity: 0.9,
-          }}>
-            {profileSig}
-          </div>
-          <div className="profile-bio" style={{
-            fontSize: '13px',
-            color: 'var(--fg-secondary)',
-            marginTop: '10px',
-            lineHeight: 1.5,
-          }}>
-            {profileBio.split('\n').map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
           </div>
           <div className="social-links" style={{
             display: 'flex',
