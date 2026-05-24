@@ -66,12 +66,12 @@ async function getById(id) {
 }
 
 async function create(data) {
-  const { title, content, excerpt, coverImage, status, categoryId, tagIds, authorId } = data
+  const { title, content, excerpt, coverImage, jpChar, status, categoryId, tagIds, authorId } = data
   const slug = await uniqueSlug(prisma, 'post', title)
 
   const post = await prisma.post.create({
     data: {
-      title, slug, content, excerpt, coverImage,
+      title, slug, content, excerpt, coverImage, jpChar,
       status: status || POST_STATUS.DRAFT,
       publishedAt: status === POST_STATUS.PUBLISHED ? new Date() : null,
       categoryId: categoryId || null,
@@ -85,7 +85,7 @@ async function create(data) {
 }
 
 async function update(id, data) {
-  const { title, content, excerpt, coverImage, status, categoryId, tagIds } = data
+  const { title, content, excerpt, coverImage, jpChar, status, categoryId, tagIds } = data
   const existing = await prisma.post.findUnique({ where: { id } })
   if (!existing) return null
 
@@ -94,6 +94,7 @@ async function update(id, data) {
   if (content !== undefined) updateData.content = content
   if (excerpt !== undefined) updateData.excerpt = excerpt
   if (coverImage !== undefined) updateData.coverImage = coverImage
+  if (jpChar !== undefined) updateData.jpChar = jpChar || null
   if (status !== undefined) {
     updateData.status = status
     if (status === POST_STATUS.PUBLISHED && !existing.publishedAt) updateData.publishedAt = new Date()

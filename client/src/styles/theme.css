@@ -7,10 +7,10 @@
   --fg: #1a1a1a;
   --fg-secondary: #888888;
   --fg-muted: #bbbbbb;
-  --accent-pink: #e85d8a;
-  --accent-pink-dim: rgba(232,93,138,0.08);
-  --accent-cyan: #0099cc;
-  --accent-cyan-dim: rgba(0,153,204,0.08);
+  --accent-pink: #E72D48;
+  --accent-pink-dim: rgba(231,45,72,0.08);
+  --accent-cyan: #F1DDDF;
+  --accent-cyan-dim: rgba(241,221,223,0.4);
   /* 兼容别名 */
   --accent: var(--accent-pink);
   --accent-dim: var(--accent-pink-dim);
@@ -38,10 +38,10 @@
   --fg: #e4e4ed;
   --fg-secondary: #8888a0;
   --fg-muted: #5c5c70;
-  --accent-pink: #ff6b9d;
-  --accent-pink-dim: rgba(255,107,157,0.15);
-  --accent-cyan: #00b8e6;
-  --accent-cyan-dim: rgba(0,184,230,0.12);
+  --accent-pink: #ff4d6a;
+  --accent-pink-dim: rgba(255,77,106,0.25);
+  --accent-cyan: #d4b8bc;
+  --accent-cyan-dim: rgba(212,184,188,0.15);
   /* 兼容别名 */
   --accent: var(--accent-pink);
   --accent-dim: var(--accent-pink-dim);

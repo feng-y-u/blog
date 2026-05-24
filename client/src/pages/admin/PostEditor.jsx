@@ -12,6 +12,7 @@ export default function PostEditor() {
   const [content, setContent] = useState('')
   const [excerpt, setExcerpt] = useState('')
   const [coverImage, setCoverImage] = useState('')
+  const [jpChar, setJpChar] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [selectedTags, setSelectedTags] = useState([])
   const [categories, setCategories] = useState([])
@@ -33,13 +34,14 @@ export default function PostEditor() {
       setContent(post.content)
       setExcerpt(post.excerpt || '')
       setCoverImage(post.coverImage || '')
+      setJpChar(post.jpChar || '')
       setCategoryId(post.categoryId || '')
       setSelectedTags(post.tags?.map(t => t.id) || [])
     })
   }, [id, isEdit])
 
   async function handleSave(status) {
-    const data = { title, content, excerpt, coverImage, status, categoryId: categoryId || null, tagIds: selectedTags }
+    const data = { title, content, excerpt, coverImage, jpChar: jpChar || null, status, categoryId: categoryId || null, tagIds: selectedTags }
     try {
       if (isEdit) {
         await updatePost(id, data)
@@ -153,6 +155,13 @@ export default function PostEditor() {
             <input type="text" value={coverImage} onChange={e => setCoverImage(e.target.value)} placeholder="https://..."
               className="w-full px-3 py-2 rounded text-sm"
               style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
+          </div>
+          <div className="rounded-xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
+            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--fg)' }}>杂志装饰字</label>
+            <input type="text" value={jpChar} onChange={e => setJpChar(e.target.value.slice(0, 2))} placeholder="默认 → 按分类自动"
+              maxLength={2} className="w-full px-3 py-2 rounded text-sm"
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
+            <p className="text-xs mt-1" style={{ color: 'var(--fg-muted)' }}>日文汉字，1-2 字符，显示在杂志跨页右侧</p>
           </div>
         </div>
       </div>

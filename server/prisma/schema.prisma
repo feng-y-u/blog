@@ -51,6 +51,7 @@ model Post {
   content     String
   excerpt     String?
   coverImage  String?   @map("cover_image")
+  jpChar      String?   @map("jp_char")
   status      String    @default("draft")
   viewCount   Int       @default(0) @map("view_count")
   publishedAt DateTime? @map("published_at")

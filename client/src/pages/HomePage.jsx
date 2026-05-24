@@ -45,6 +45,12 @@ export default function HomePage({ onSearchOpen }) {
   const featured = posts.slice(0, FEATURED_COUNT)
   const rest = posts.slice(FEATURED_COUNT)
 
+  // 两篇一组，每组一页
+  const pairs = []
+  for (let i = 0; i < featured.length; i += 2) {
+    pairs.push(featured.slice(i, i + 2))
+  }
+
   if (loading) return <Loading />
 
   return (
@@ -59,28 +65,110 @@ export default function HomePage({ onSearchOpen }) {
         <div
           ref={snapRef}
           style={{
-            width: '100vw',
-            marginLeft: 'calc(-50vw + 50%)',
+            maxWidth: '1400px',
+            margin: '0 auto',
+            padding: '0 96px',
             height: '100vh',
             overflowY: 'scroll',
             scrollSnapType: 'y mandatory',
             scrollBehavior: 'smooth',
           }}
         >
-          {featured.map((post, i) => (
-            <div key={post.id} data-index={i}>
-              <MagazineSpread
-                post={post}
-                index={i}
-                isVisible={i === visibleIndex}
-              />
+          {pairs.map((pair, pageIdx) => (
+            <div key={pageIdx} data-index={pageIdx} style={{ scrollSnapAlign: 'start', position: 'relative' }}>
+              {/* 左侧：文章编号 — 每篇一个 */}
+              <div style={{
+                position: 'absolute',
+                left: '-96px',
+                top: 0,
+                width: '96px',
+                height: '100vh',
+                pointerEvents: 'none',
+              }}>
+                {pair.map((post, i) => (
+                  <div key={post.id} style={{
+                    height: pair.length === 2 ? '50vh' : '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}>
+                    <span style={{
+                      fontSize: i === 0 && pair.length === 2 ? '20px' : '28px',
+                      fontWeight: 800,
+                      color: 'var(--accent-pink-dim)',
+                      lineHeight: 1,
+                      letterSpacing: '-0.03em',
+                    }}>
+                      {String(pageIdx * 2 + i + 1).padStart(2, '0')}
+                    </span>
+                    <span style={{
+                      fontSize: '9px',
+                      color: 'var(--fg-muted)',
+                      letterSpacing: '0.15em',
+                      writingMode: 'vertical-rl',
+                      height: '48px',
+                      opacity: 0.6,
+                    }}>
+                      {post.category?.name || 'ARTICLE'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* 右侧：页码 */}
+              <div style={{
+                position: 'absolute',
+                right: '-96px',
+                top: 0,
+                width: '96px',
+                height: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                paddingBottom: '36px',
+                pointerEvents: 'none',
+              }}>
+                <span style={{
+                  fontSize: '10px',
+                  color: 'var(--fg-muted)',
+                  letterSpacing: '0.1em',
+                  fontFeatureSettings: "'tnum' 1",
+                }}>
+                  — {String(pageIdx + 1).padStart(3, '0')} —
+                </span>
+              </div>
+
+              {pair.length === 2 ? (
+                /* 两篇一组，每篇 50vh */
+                <div style={{ height: '100vh' }}>
+                  {pair.map((post, i) => (
+                    <MagazineSpread
+                      key={post.id}
+                      post={post}
+                      index={pageIdx * 2 + i}
+                      isVisible={pageIdx === visibleIndex}
+                      compact
+                    />
+                  ))}
+                </div>
+              ) : (
+                /* 单篇（奇数篇数时兜底），全高 */
+                <MagazineSpread
+                  post={pair[0]}
+                  index={pageIdx * 2}
+                  isVisible={pageIdx === visibleIndex}
+                />
+              )}
             </div>
           ))}
         </div>
       )}
 
       {/* 页码指示器 */}
-      {featured.length > 1 && (
+      {pairs.length > 1 && (
         <div style={{
           position: 'fixed',
           right: '24px',
@@ -91,7 +179,7 @@ export default function HomePage({ onSearchOpen }) {
           gap: '8px',
           zIndex: 10,
         }}>
-          {featured.map((_, i) => (
+          {pairs.map((_, i) => (
             <button
               key={i}
               onClick={() => {
@@ -108,7 +196,7 @@ export default function HomePage({ onSearchOpen }) {
                 transition: 'var(--transition)',
                 transform: i === visibleIndex ? 'scale(1.3)' : 'scale(1)',
               }}
-              aria-label={`第 ${i + 1} 篇文章`}
+              aria-label={`第 ${i + 1} 页`}
             />
           ))}
         </div>

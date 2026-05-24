@@ -30,11 +30,11 @@ async function getBySlug(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    const { title, content, excerpt, coverImage, status, categoryId, tagIds } = req.body
+    const { title, content, excerpt, coverImage, jpChar, status, categoryId, tagIds } = req.body
     if (!title || !content) return res.status(400).json({ error: '标题和内容不能为空' })
 
     const post = await postService.create({
-      title, content, excerpt, coverImage, status, categoryId, tagIds,
+      title, content, excerpt, coverImage, jpChar, status, categoryId, tagIds,
       authorId: req.user.sub,
     })
     res.status(201).json({ data: post })

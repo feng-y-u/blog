@@ -40,12 +40,12 @@ function scrambleText(finalText, onUpdate, onDone) {
   tick()
 }
 
-export default function MagazineSpread({ post, index, isVisible }) {
+export default function MagazineSpread({ post, index, isVisible, compact }) {
   const [displayTitle, setDisplayTitle] = useState(post.title)
   const [scrambled, setScrambled] = useState(false)
   const titleRef = useRef(null)
   const isLeft = index % 2 === 0
-  const japaneseChar = getJapaneseChar(post)
+  const japaneseChar = post.jpChar || getJapaneseChar(post)
 
   useEffect(() => {
     if (isVisible && !scrambled) {
@@ -61,27 +61,34 @@ export default function MagazineSpread({ post, index, isVisible }) {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        height: '100vh',
-        scrollSnapAlign: 'start',
+        gridTemplateColumns: compact ? '1.2fr 0.8fr' : '1fr 1fr',
+        height: compact ? '50vh' : '100vh',
+        scrollSnapAlign: compact ? 'none' : 'start',
         position: 'relative',
         overflow: 'hidden',
-        background: 'var(--bg)',
+        background: 'var(--surface)',
       }}
     >
+      {/* 全背景粒子 */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+        <ParticleCanvas colorKey={post.category?.name || 'default'} />
+      </div>
+
       {/* 左栏：文字 */}
       <div style={{
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        padding: '64px 48px',
+        padding: compact ? '24px 32px' : '64px 48px',
         background: 'var(--bg)',
         order: isLeft ? 1 : 2,
+        position: 'relative',
+        zIndex: 1,
       }}>
         {/* 分类 + 日期 */}
         <div style={{
           display: 'flex', alignItems: 'center', gap: '10px',
-          marginBottom: '16px',
+          marginBottom: compact ? '8px' : '16px',
         }}>
           {post.category && (
             <span style={{
@@ -105,33 +112,35 @@ export default function MagazineSpread({ post, index, isVisible }) {
           ref={titleRef}
           style={{
             fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(28px, 3.2vw, 40px)',
+            fontSize: compact ? 'clamp(18px, 2vw, 24px)' : 'clamp(28px, 3.2vw, 40px)',
             fontWeight: 800,
             lineHeight: 1.1,
             letterSpacing: '-0.02em',
             color: 'var(--fg)',
-            margin: '0 0 16px',
-            maxWidth: '420px',
+            margin: compact ? '0 0 8px' : '0 0 16px',
+            maxWidth: compact ? '100%' : '420px',
           }}
         >
           {displayTitle}
         </h2>
 
-        {/* 摘要 */}
-        <p style={{
-          fontSize: '13px',
-          lineHeight: 1.8,
-          color: 'var(--fg-secondary)',
-          margin: '0 0 20px',
-          maxWidth: '380px',
-        }}>
-          {post.excerpt || (post.content ? post.content.replace(/[#*`\[\]()>|\\]/g, '').slice(0, 150) : '')}
-        </p>
+        {/* 摘要 — compact 模式下隐藏 */}
+        {!compact && (
+          <p style={{
+            fontSize: '13px',
+            lineHeight: 1.8,
+            color: 'var(--fg-secondary)',
+            margin: '0 0 20px',
+            maxWidth: '380px',
+          }}>
+            {post.excerpt || (post.content ? post.content.replace(/[#*`\[\]()>|\\]/g, '').slice(0, 150) : '')}
+          </p>
+        )}
 
         {/* 标签 */}
         {post.tags?.length > 0 && (
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
-            {post.tags.slice(0, 4).map(tag => (
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: compact ? '12px' : '24px' }}>
+            {post.tags.slice(0, compact ? 2 : 4).map(tag => (
               <span key={tag.id} style={{
                 fontSize: '10px', padding: '3px 10px',
                 borderRadius: '20px',
@@ -169,20 +178,19 @@ export default function MagazineSpread({ post, index, isVisible }) {
       {/* 右栏：视觉区 */}
       <div style={{
         position: 'relative',
-        background: 'var(--surface)',
+        zIndex: 1,
+        background: 'transparent',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
         order: isLeft ? 2 : 1,
       }}>
-        <ParticleCanvas colorKey={post.category?.name || 'default'} />
-
         {/* 日文大文字 */}
         <div style={{
-          fontSize: 'clamp(60px, 8vw, 110px)',
+          fontSize: compact ? 'clamp(36px, 5vw, 64px)' : 'clamp(60px, 8vw, 110px)',
           fontWeight: 900,
-          color: 'rgba(232,93,138,0.06)',
+          color: 'var(--accent-pink-dim)',
           fontFamily: "'Noto Serif JP', 'Yu Mincho', serif",
           userSelect: 'none',
           letterSpacing: '-0.03em',
