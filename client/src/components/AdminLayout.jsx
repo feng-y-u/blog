@@ -17,22 +17,22 @@ export default function AdminLayout() {
   if (!token) return null
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex">
-      <aside className="w-56 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 flex flex-col">
-        <Link to="/admin" className="text-lg font-bold mb-6">管理后台</Link>
-        <nav className="flex flex-col gap-2 flex-1">
-          <Link to="/admin" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">仪表盘</Link>
-          <Link to="/admin/posts" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">文章管理</Link>
-          <Link to="/admin/posts/new" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">写文章</Link>
-          <Link to="/admin/categories" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">分类管理</Link>
-          <Link to="/admin/tags" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">标签管理</Link>
-          <Link to="/admin/comments" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">评论管理</Link>
-          <Link to="/admin/notes" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">笔记管理</Link>
-          <Link to="/admin/appearance" className="text-sm px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">外观设置</Link>
+    <div className="admin-layout">
+      <aside className="admin-sidebar">
+        <Link to="/admin" className="admin-sidebar-title">管理后台</Link>
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+          <Link to="/admin" className="admin-nav-link">仪表盘</Link>
+          <Link to="/admin/posts" className="admin-nav-link">文章管理</Link>
+          <Link to="/admin/posts/new" className="admin-nav-link">写文章</Link>
+          <Link to="/admin/categories" className="admin-nav-link">分类管理</Link>
+          <Link to="/admin/tags" className="admin-nav-link">标签管理</Link>
+          <Link to="/admin/comments" className="admin-nav-link">评论管理</Link>
+          <Link to="/admin/notes" className="admin-nav-link">笔记管理</Link>
+          <Link to="/admin/appearance" className="admin-nav-link">外观设置</Link>
         </nav>
-        <button onClick={handleLogout} className="text-sm text-gray-500 hover:text-red-500 text-left px-3 py-2">退出登录</button>
+        <button onClick={handleLogout} className="admin-logout-btn">退出登录</button>
       </aside>
-      <main className="flex-1 p-6 overflow-auto">
+      <main className="admin-content">
         <Outlet />
       </main>
     </div>

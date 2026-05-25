@@ -1,0 +1,120 @@
+/* ===== Search Page ===== */
+
+/* Search input */
+.search-input-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+.search-input-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--fg-muted);
+  width: 20px;
+  height: 20px;
+}
+.search-input {
+  width: 100%;
+  padding: 14px 16px 14px 48px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 14px;
+  font-family: var(--font-body);
+  outline: none;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+.search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+/* Category filter buttons */
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.filter-btn {
+  padding: 6px 14px;
+  font-size: 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: var(--transition);
+}
+.filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.filter-btn.active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Search results */
+.search-result-count {
+  font-size: 14px;
+  color: var(--fg-muted);
+  margin-bottom: 16px;
+}
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Highlighted search result card */
+.result-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  transition: var(--transition);
+}
+.result-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+.result-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--fg-muted);
+  margin-bottom: 8px;
+}
+.result-card-category {
+  color: var(--accent);
+  font-weight: 500;
+}
+.result-card-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--fg);
+  text-decoration: none;
+}
+.result-card-title:hover {
+  color: var(--accent);
+}
+.result-card-excerpt {
+  font-size: 14px;
+  color: var(--fg-secondary);
+  line-height: 1.6;
+}
+mark {
+  background: #fef08a;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+:root[data-theme="dark"] mark {
+  background: #854d0e;
+  color: #fef08a;
+}

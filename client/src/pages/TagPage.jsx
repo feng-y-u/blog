@@ -1,18 +1,25 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getPosts } from '../api/posts'
+import { getPosts, getTags } from '../api/posts'
 import Loading from '../components/Loading'
 import PostCard from '../components/PostCard'
 
 export default function TagPage() {
   const { slug } = useParams()
   const [posts, setPosts] = useState([])
+  const [tag, setTag] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setLoading(true)
-    getPosts({ tag: slug, limit: 50 })
-      .then(res => setPosts(res.data.data))
+    Promise.all([
+      getPosts({ tag: slug, limit: 50 }),
+      getTags(),
+    ])
+      .then(([postsRes, tagsRes]) => {
+        setPosts(postsRes.data.data)
+        setTag(tagsRes.data.data.find(t => t.slug === slug) || null)
+      })
       .finally(() => setLoading(false))
   }, [slug])
 
@@ -20,11 +27,24 @@ export default function TagPage() {
 
   return (
     <div>
-      <Link to="/tags" className="text-sm text-gray-500 hover:text-blue-600 mb-4 inline-block">← 所有标签</Link>
-      <h1 className="text-2xl font-bold mb-6">标签：{slug}</h1>
-      <div className="flex flex-col gap-4">
+      <Link to="/tags" className="back-link">← 所有标签</Link>
+
+      {/* 标签头部卡片 */}
+      <div className="card" style={{ padding: '24px', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+          <h1 className="page-title" style={{ marginBottom: 0 }}>#{tag?.name || slug}</h1>
+          <span style={{ fontSize: '13px', color: 'var(--fg-muted)' }}>{tag?._count?.posts || posts.length} 篇文章</span>
+        </div>
+        <div style={{
+          marginTop: '16px', height: '2px',
+          background: 'linear-gradient(90deg, var(--accent-pink-dim), var(--accent-cyan-dim))',
+          borderRadius: '1px',
+        }} />
+      </div>
+
+      <div className="post-list">
         {posts.map(post => <PostCard key={post.id} post={post} />)}
-        {posts.length === 0 && <p className="text-gray-500">该标签下暂无文章</p>}
+        {posts.length === 0 && <p style={{ color: 'var(--fg-secondary)' }}>该标签下暂无文章</p>}
       </div>
     </div>
   )

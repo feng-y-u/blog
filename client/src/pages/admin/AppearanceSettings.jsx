@@ -58,50 +58,53 @@ export default function AppearanceSettings() {
   }
 
   if (!settings) {
-    return <div className="text-center py-8 text-gray-500">加载中...</div>
+    return <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--fg-secondary)' }}>加载中...</div>
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">外观设置</h1>
+      <h1 className="admin-page-title">外观设置</h1>
 
       {message && (
-        <div className={`p-3 rounded mb-4 ${message.type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}`}>
+        <div className="admin-card" style={{
+          padding: '12px',
+          background: message.type === 'success' ? 'rgba(0,153,204,0.1)' : 'rgba(232,93,138,0.1)',
+          border: message.type === 'success' ? '1px solid var(--accent-cyan)' : '1px solid var(--accent-pink)',
+          color: message.type === 'success' ? 'var(--accent-cyan)' : 'var(--accent-pink)',
+        }}>
           {message.text}
         </div>
       )}
 
-      <form onSubmit={handleSave} className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-5 max-w-2xl">
+      <form onSubmit={handleSave} className="admin-card" style={{ maxWidth: '672px' }}>
         {FIELDS.map(field => (
-          <div key={field.key}>
-            <label className="block text-sm font-medium mb-1">{field.label}</label>
+          <div key={field.key} style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: 'var(--fg)' }}>{field.label}</label>
             {field.type === 'textarea' ? (
               <textarea value={form[field.key] || ''} onChange={e => handleChange(field.key, e.target.value)}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 font-mono text-sm" />
+                rows={3} className="admin-textarea" style={{ fontFamily: 'var(--font-mono)', fontSize: '13px' }} />
             ) : (
               <input type="text" value={form[field.key] || ''} onChange={e => handleChange(field.key, e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700" />
+                className="admin-input" />
             )}
             {field.key === 'social_links' && jsonError && (
-              <p className="text-red-500 text-xs mt-1">{jsonError}</p>
+              <p style={{ color: 'var(--accent-pink)', fontSize: '12px', marginTop: '4px' }}>{jsonError}</p>
             )}
           </div>
         ))}
-        <button type="submit" disabled={saving}
-          className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
+        <button type="submit" disabled={saving} className="admin-btn admin-btn-primary" style={{ opacity: saving ? 0.5 : 1 }}>
           {saving ? '保存中...' : '保存设置'}
         </button>
       </form>
 
-      <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow p-6 max-w-2xl">
-        <h2 className="font-semibold mb-3">预览</h2>
-        <div className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded">
-          <div className="text-4xl">{form.avatar_emoji || '🌸'}</div>
+      <div className="admin-card" style={{ maxWidth: '672px', marginTop: '32px' }}>
+        <h2 className="admin-card-title">预览</h2>
+        <div style={{ display: 'flex', gap: '16px', padding: '16px', border: '1px solid var(--border)', borderRadius: '8px' }}>
+          <div style={{ fontSize: '36px' }}>{form.avatar_emoji || '🌸'}</div>
           <div>
-            <div className="font-bold text-lg">{form.profile_name || '风予'}</div>
-            <div className="text-sm text-gray-500 italic">{form.profile_signature || ''}</div>
-            <div className="text-sm text-gray-400 mt-1">{form.site_title || ''}</div>
+            <div style={{ fontWeight: 700, fontSize: '18px', color: 'var(--fg)' }}>{form.profile_name || '风予'}</div>
+            <div style={{ fontSize: '13px', color: 'var(--fg-secondary)', fontStyle: 'italic' }}>{form.profile_signature || ''}</div>
+            <div style={{ fontSize: '13px', color: 'var(--fg-muted)', marginTop: '4px' }}>{form.site_title || ''}</div>
           </div>
         </div>
       </div>

@@ -1,18 +1,25 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getPosts } from '../api/posts'
+import { getPosts, getCategoryBySlug } from '../api/posts'
 import Loading from '../components/Loading'
 import PostCard from '../components/PostCard'
 
 export default function CategoryPage() {
   const { slug } = useParams()
   const [posts, setPosts] = useState([])
+  const [category, setCategory] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setLoading(true)
-    getPosts({ category: slug, limit: 50 })
-      .then(res => setPosts(res.data.data))
+    Promise.all([
+      getPosts({ category: slug, limit: 50 }),
+      getCategoryBySlug(slug),
+    ])
+      .then(([postsRes, catRes]) => {
+        setPosts(postsRes.data.data)
+        setCategory(catRes.data.data)
+      })
       .finally(() => setLoading(false))
   }, [slug])
 
@@ -20,11 +27,29 @@ export default function CategoryPage() {
 
   return (
     <div>
-      <Link to="/categories" className="text-sm text-gray-500 hover:text-blue-600 mb-4 inline-block">← 所有分类</Link>
-      <h1 className="text-2xl font-bold mb-6">分类：{slug}</h1>
-      <div className="flex flex-col gap-4">
+      <Link to="/categories" className="back-link">← 所有分类</Link>
+
+      {/* 分类头部卡片 */}
+      {category && (
+        <div className="card" style={{ padding: '24px', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+            <h1 className="page-title" style={{ marginBottom: 0 }}>{category.name}</h1>
+            <span style={{ fontSize: '13px', color: 'var(--fg-muted)' }}>{category._count?.posts || posts.length} 篇文章</span>
+          </div>
+          {category.description && (
+            <p style={{ fontSize: '13px', color: 'var(--fg-secondary)', marginTop: '8px' }}>{category.description}</p>
+          )}
+          <div style={{
+            marginTop: '16px', height: '2px',
+            background: 'linear-gradient(90deg, var(--accent-pink-dim), var(--accent-cyan-dim))',
+            borderRadius: '1px',
+          }} />
+        </div>
+      )}
+
+      <div className="post-list">
         {posts.map(post => <PostCard key={post.id} post={post} />)}
-        {posts.length === 0 && <p className="text-gray-500">该分类下暂无文章</p>}
+        {posts.length === 0 && <p style={{ color: 'var(--fg-secondary)' }}>该分类下暂无文章</p>}
       </div>
     </div>
   )

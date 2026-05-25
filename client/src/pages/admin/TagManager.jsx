@@ -30,38 +30,40 @@ export default function TagManager() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">标签管理</h1>
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow mb-6">
-        <h2 className="font-semibold mb-3">{editing ? '编辑标签' : '新增标签'}</h2>
-        <div className="flex gap-2">
-          <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="标签名称" className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700" />
-          <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded">{editing ? '更新' : '创建'}</button>
-          {editing && <button onClick={() => { setEditing(null); setName('') }} className="px-4 py-2 border rounded">取消</button>}
+      <h1 className="admin-page-title">标签管理</h1>
+      <div className="admin-card">
+        <h2 className="admin-card-title">{editing ? '编辑标签' : '新增标签'}</h2>
+        <div className="admin-form-row">
+          <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="标签名称" className="admin-input admin-input-flex" />
+          <button onClick={handleSave} className="admin-btn admin-btn-primary">{editing ? '更新' : '创建'}</button>
+          {editing && <button onClick={() => { setEditing(null); setName('') }} className="admin-btn">取消</button>}
         </div>
       </div>
-      <table className="w-full bg-white dark:bg-gray-800 rounded-lg shadow">
-        <thead>
-          <tr className="border-b border-gray-200 dark:border-gray-700">
-            <th className="text-left p-3">名称</th>
-            <th className="text-left p-3">Slug</th>
-            <th className="text-left p-3">文章数</th>
-            <th className="text-left p-3">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tags.map(tag => (
-            <tr key={tag.id} className="border-b border-gray-100 dark:border-gray-700">
-              <td className="p-3">{tag.name}</td>
-              <td className="p-3 text-sm text-gray-500">{tag.slug}</td>
-              <td className="p-3 text-sm">{tag._count?.posts || 0}</td>
-              <td className="p-3 flex gap-2">
-                <button onClick={() => { setEditing(tag.id); setName(tag.name) }} className="text-sm text-green-600 hover:underline">编辑</button>
-                <button onClick={() => handleDelete(tag.id)} className="text-sm text-red-600 hover:underline">删除</button>
-              </td>
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>名称</th>
+              <th>Slug</th>
+              <th>文章数</th>
+              <th>操作</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {tags.map(tag => (
+              <tr key={tag.id}>
+                <td style={{ color: 'var(--fg)' }}>{tag.name}</td>
+                <td style={{ fontSize: '13px', color: 'var(--fg-secondary)' }}>{tag.slug}</td>
+                <td style={{ fontSize: '13px' }}>{tag._count?.posts || 0}</td>
+                <td style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => { setEditing(tag.id); setName(tag.name) }} style={{ fontSize: '13px', color: '#22c55e', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>编辑</button>
+                  <button onClick={() => handleDelete(tag.id)} style={{ fontSize: '13px', color: 'var(--accent-pink)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>删除</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

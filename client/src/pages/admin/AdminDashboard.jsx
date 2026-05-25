@@ -30,8 +30,8 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">仪表盘</h1>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      <h1 className="admin-page-title">仪表盘</h1>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '16px', marginBottom: '32px' }}>
         <StatCard label="文章总数" value={stats.posts} />
         <StatCard label="分类数" value={stats.categories} />
         <StatCard label="标签数" value={stats.tags} />
@@ -41,18 +41,18 @@ export default function AdminDashboard() {
       </div>
 
       {recentComments.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="font-semibold mb-4">待审核评论</h2>
-          <div className="space-y-3">
+        <div className="admin-card">
+          <h2 className="admin-card-title">待审核评论</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {recentComments.map(c => (
-              <div key={c.id} className="flex items-start gap-3 pb-3 border-b border-gray-100 dark:border-gray-700 last:border-0">
-                <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+              <div key={c.id} style={{ display: 'flex', gap: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--border)' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--accent-pink)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '12px', fontWeight: 700, flexShrink: 0 }}>
                   {c.authorName.charAt(0).toUpperCase()}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium">{c.authorName}</div>
-                  <p className="text-sm text-gray-500 truncate">{c.content}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">on {c.post?.title || '未知文章'}</p>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--fg)' }}>{c.authorName}</div>
+                  <p style={{ fontSize: '13px', color: 'var(--fg-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.content}</p>
+                  <p style={{ fontSize: '12px', color: 'var(--fg-muted)', marginTop: '2px' }}>on {c.post?.title || '未知文章'}</p>
                 </div>
               </div>
             ))}
@@ -65,9 +65,9 @@ export default function AdminDashboard() {
 
 function StatCard({ label, value, highlight }) {
   return (
-    <div className={`bg-white dark:bg-gray-800 p-4 rounded-lg shadow ${highlight ? 'ring-2 ring-yellow-400' : ''}`}>
-      <div className="text-2xl font-bold">{value}</div>
-      <div className="text-sm text-gray-500">{label}</div>
+    <div className="admin-card" style={highlight ? { borderColor: 'var(--accent-pink)' } : {}}>
+      <div style={{ fontSize: '24px', fontWeight: 700, color: 'var(--fg)' }}>{value}</div>
+      <div style={{ fontSize: '13px', color: 'var(--fg-secondary)' }}>{label}</div>
     </div>
   )
 }

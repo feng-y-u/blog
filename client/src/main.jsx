@@ -4,6 +4,11 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import './styles/index.css'
 import './styles/theme.css'
+import './styles/common.css'
+import './styles/article.css'
+import './styles/sidebar.css'
+import './styles/search.css'
+import './styles/admin.css'
 
 // 主题初始化：防止页面闪烁
 const savedTheme = localStorage.getItem('blog-theme') || 'light'

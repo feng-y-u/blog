@@ -1,0 +1,226 @@
+/* ===== Admin Layout ===== */
+.admin-layout {
+  min-height: 100vh;
+  display: flex;
+  background: var(--bg);
+}
+.admin-sidebar {
+  width: 224px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.admin-sidebar-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: var(--fg);
+  display: block;
+  text-decoration: none;
+}
+.admin-nav-link {
+  display: block;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: var(--fg-secondary);
+  text-decoration: none;
+  transition: var(--transition);
+}
+.admin-nav-link:hover {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+.admin-sidebar-spacer {
+  flex: 1;
+}
+.admin-logout-btn {
+  font-size: 13px;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  text-align: left;
+  border-radius: 6px;
+  transition: var(--transition);
+  font-family: var(--font-body);
+}
+.admin-logout-btn:hover {
+  color: var(--accent-pink);
+}
+.admin-content {
+  flex: 1;
+  padding: 24px;
+  overflow: auto;
+}
+
+/* ===== Admin Page Components ===== */
+.admin-page-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: var(--fg);
+}
+.admin-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+.admin-card-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--fg);
+  font-size: 14px;
+}
+.admin-form-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: flex-start;
+}
+.admin-input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 13px;
+  font-family: var(--font-body);
+}
+.admin-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.admin-input-flex {
+  flex: 1;
+}
+.admin-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 13px;
+  font-family: var(--font-body);
+  resize: vertical;
+}
+.admin-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ===== Admin Buttons ===== */
+.admin-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--fg-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font-body);
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.admin-btn:hover {
+  border-color: var(--accent-dim);
+  color: var(--accent);
+}
+.admin-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+}
+.admin-btn-primary:hover {
+  opacity: 0.9;
+  color: #fff;
+}
+.admin-btn-danger {
+  background: var(--accent-pink);
+  color: #fff;
+  border: 1px solid var(--accent-pink);
+}
+.admin-btn-danger:hover {
+  opacity: 0.9;
+  color: #fff;
+}
+.admin-btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+/* ===== Admin Table ===== */
+.admin-table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.admin-table th {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--fg);
+  font-size: 12px;
+}
+.admin-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg-secondary);
+}
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+.admin-table tr:hover td {
+  background: var(--accent-dim);
+}
+
+/* ===== Admin Error / Empty ===== */
+.admin-error {
+  color: var(--accent-pink);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+.admin-empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--fg-muted);
+  font-size: 14px;
+}
+
+/* ===== Status Badge ===== */
+.admin-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.admin-badge-draft {
+  background: var(--accent-dim);
+  color: var(--fg-secondary);
+}
+.admin-badge-published {
+  background: rgba(0, 153, 204, 0.15);
+  color: var(--accent-cyan);
+}
+
+/* ===== Animations ===== */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

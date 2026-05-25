@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react'
 import client from '../api/client'
 import Loading from '../components/Loading'
-import { formatDate } from '../utils/date'
+import { formatTime } from '../utils/date'
+
+function stripMarkdown(text) {
+  return text.replace(/[#*`\[\]()>|\\-]/g, '').replace(/\n{2,}/g, '\n').trim()
+}
 
 export default function NotesPage() {
   const [notes, setNotes] = useState([])
@@ -23,26 +27,39 @@ export default function NotesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">笔记</h1>
+      <h1 className="page-title">笔记</h1>
       {notes.length === 0 ? (
-        <p className="text-gray-500 text-center py-12">暂无笔记</p>
+        <p className="loading">暂无笔记</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="notes-grid">
           {notes.map(note => (
-            <div key={note.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:shadow-md transition-shadow">
-              <h2 className="text-lg font-semibold mb-2">{note.title}</h2>
-              <div className="flex items-center gap-3 text-sm text-gray-500">
-                {note.category && <span className="text-blue-600 font-medium">{note.category.name}</span>}
-                <span>{formatDate(note.updatedAt)}</span>
+            <div key={note.id} className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '10px' }}>{note.title}</h2>
+              <p style={{
+                fontSize: '13px', color: 'var(--fg-secondary)', lineHeight: 1.7,
+                flex: 1, marginBottom: '16px',
+                display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}>
+                {stripMarkdown(note.content).slice(0, 120)}
+              </p>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '12px',
+                fontSize: '12px', color: 'var(--fg-muted)',
+                borderTop: '1px solid var(--border)', paddingTop: '12px',
+              }}>
+                {note.category && <span style={{ color: 'var(--accent-pink)', fontWeight: 500 }}>{note.category.name}</span>}
+                <span>{formatTime(note.updatedAt)}</span>
+                <span style={{ marginLeft: 'auto', fontSize: '14px' }}>→</span>
               </div>
             </div>
           ))}
         </div>
       )}
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-8">
+        <div className="pagination">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-            <button key={p} onClick={() => setPage(p)} className={`px-3 py-1 rounded ${page === p ? 'bg-blue-600 text-white' : 'border border-gray-300 dark:border-gray-600'}`}>{p}</button>
+            <button key={p} onClick={() => setPage(p)} className={`pagination-btn${page === p ? ' active' : ''}`}>{p}</button>
           ))}
         </div>
       )}

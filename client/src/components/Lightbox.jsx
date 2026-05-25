@@ -8,8 +8,8 @@ export default function Lightbox({ src, onClose }) {
   }, [onClose])
 
   return (
-    <div className="fixed inset-0 z-[9998] bg-black/80 flex items-center justify-center" onClick={onClose}>
-      <img src={src} className="max-w-[90vw] max-h-[90vh] object-contain" onClick={e => e.stopPropagation()} alt="preview" />
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
+      <img src={src} style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain' }} onClick={e => e.stopPropagation()} alt="preview" />
     </div>
   )
 }

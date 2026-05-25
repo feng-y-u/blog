@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 import Navbar from './Navbar'
 import Sidebar from './Sidebar'
 import SearchModal from './SearchModal'
+import SiteFooter from './SiteFooter'
 
 const SIDEBAR_PATHS = ['/categories', '/category/', '/tags', '/tag/', '/search']
 
@@ -48,40 +49,12 @@ export default function Layout() {
           <main style={{ flex: 1, minWidth: 0 }}>
             <Outlet />
           </main>
-          {showSidebar && (
-            <aside className="sidebar" style={{
-              width: '280px',
-              flexShrink: 0,
-              position: 'sticky',
-              top: '80px',
-              alignSelf: 'flex-start',
-              maxHeight: 'calc(100vh - 96px)',
-              overflowY: 'auto',
-            }}>
-              <Sidebar />
-            </aside>
-          )}
+          {showSidebar && <Sidebar />}
         </div>
       )}
 
       {/* 页脚 — 首页的 footer 已放在 HomePage 滚动容器内 */}
-      {!isHome && (
-        <footer className="footer" style={{
-          textAlign: 'center',
-          padding: '32px 24px 48px',
-          color: 'var(--fg-muted)',
-          fontSize: '13px',
-          borderTop: '1px solid var(--border)',
-          marginTop: '20px',
-        }}>
-          &copy; {new Date().getFullYear()} 风予's Blog. Built with ❤ &nbsp;|&nbsp; Powered by コードとアニメ<br />
-          <Link to="/" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>首页</Link>
-          {' · '}
-          <a href="#" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>关于</a>
-          {' · '}
-          <a href="#" style={{ color: 'var(--accent-pink)', textDecoration: 'none', margin: '0 4px' }}>友情链接</a>
-        </footer>
-      )}
+      {!isHome && <SiteFooter simple />}
     </div>
   )
 }

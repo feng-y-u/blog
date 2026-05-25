@@ -63,67 +63,66 @@ export default function NoteManager() {
     } catch (err) { alert('导出失败') }
   }
 
-  if (loading) return <div className="text-gray-500">加载中...</div>
+  if (loading) return <div style={{ color: 'var(--fg-secondary)' }}>加载中...</div>
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">笔记管理</h1>
-        <button onClick={() => setShowUpload(!showUpload)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
-          上传笔记
-        </button>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <h1 className="admin-page-title" style={{ marginBottom: 0 }}>笔记管理</h1>
+        <button onClick={() => setShowUpload(!showUpload)} className="admin-btn admin-btn-primary">上传笔记</button>
       </div>
 
       {showUpload && (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow mb-6 border-2 border-dashed border-gray-300 dark:border-gray-600">
-          <p className="text-sm text-gray-500 mb-3">选择 .md 文件上传</p>
-          <input ref={fileRef} type="file" accept=".md" onChange={handleFileUpload} className="text-sm" />
+        <div className="admin-card" style={{ border: '2px dashed var(--border)' }}>
+          <p style={{ fontSize: '13px', color: 'var(--fg-secondary)', marginBottom: '12px' }}>选择 .md 文件上传</p>
+          <input ref={fileRef} type="file" accept=".md" onChange={handleFileUpload} style={{ fontSize: '13px' }} />
         </div>
       )}
 
       {editing && (
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow mb-6">
-          <h2 className="font-semibold mb-3">编辑笔记</h2>
+        <div className="admin-card">
+          <h2 className="admin-card-title">编辑笔记</h2>
           <input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)}
-            placeholder="笔记标题" className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 mb-2" />
+            placeholder="笔记标题" className="admin-input" style={{ marginBottom: '8px' }} />
           <textarea value={editContent} onChange={e => setEditContent(e.target.value)}
             placeholder="笔记内容（Markdown）" rows={12}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 font-mono text-sm resize-y" />
-          <div className="flex gap-2 mt-2">
-            <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded text-sm">保存</button>
-            <button onClick={() => setEditing(null)} className="px-4 py-2 border rounded text-sm">取消</button>
+            className="admin-textarea" style={{ fontFamily: 'var(--font-mono)', fontSize: '13px' }} />
+          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+            <button onClick={handleSave} className="admin-btn admin-btn-primary">保存</button>
+            <button onClick={() => setEditing(null)} className="admin-btn">取消</button>
           </div>
         </div>
       )}
 
       {notes.length === 0 ? (
-        <p className="text-gray-500 text-center py-12">暂无笔记，点击"上传笔记"添加</p>
+        <p className="admin-empty">暂无笔记，点击"上传笔记"添加</p>
       ) : (
-        <table className="w-full bg-white dark:bg-gray-800 rounded-lg shadow">
-          <thead>
-            <tr className="border-b border-gray-200 dark:border-gray-700">
-              <th className="text-left p-3">标题</th>
-              <th className="text-left p-3">分类</th>
-              <th className="text-left p-3">更新时间</th>
-              <th className="text-left p-3">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {notes.map(note => (
-              <tr key={note.id} className="border-b border-gray-100 dark:border-gray-700">
-                <td className="p-3 font-medium">{note.title}</td>
-                <td className="p-3 text-sm text-gray-500">{note.category?.name || '-'}</td>
-                <td className="p-3 text-sm text-gray-500">{new Date(note.updatedAt).toLocaleDateString('zh-CN')}</td>
-                <td className="p-3 flex gap-2">
-                  <button onClick={() => handleEdit(note)} className="text-sm text-green-600 hover:underline">编辑</button>
-                  <button onClick={() => handleExport(note.id)} className="text-sm text-blue-600 hover:underline">导出</button>
-                  <button onClick={() => handleDelete(note.id)} className="text-sm text-red-600 hover:underline">删除</button>
-                </td>
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>标题</th>
+                <th>分类</th>
+                <th>更新时间</th>
+                <th>操作</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {notes.map(note => (
+                <tr key={note.id}>
+                  <td style={{ fontWeight: 500, color: 'var(--fg)' }}>{note.title}</td>
+                  <td style={{ fontSize: '13px', color: 'var(--fg-secondary)' }}>{note.category?.name || '-'}</td>
+                  <td style={{ fontSize: '13px', color: 'var(--fg-secondary)' }}>{new Date(note.updatedAt).toLocaleDateString('zh-CN')}</td>
+                  <td style={{ display: 'flex', gap: '8px' }}>
+                    <button onClick={() => handleEdit(note)} style={{ fontSize: '13px', color: '#22c55e', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>编辑</button>
+                    <button onClick={() => handleExport(note.id)} style={{ fontSize: '13px', color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>导出</button>
+                    <button onClick={() => handleDelete(note.id)} style={{ fontSize: '13px', color: 'var(--accent-pink)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>删除</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

@@ -6,7 +6,7 @@ function reshapeTags(post) {
   return { ...post, tags: (post.tags || []).map(pt => pt.tag) }
 }
 
-async function list({ page = 1, limit = 10, category, tag, status, search, user } = {}) {
+async function list({ page = 1, limit = 3, category, tag, status, search, user } = {}) {
   page = +page; limit = Math.min(+limit, 100)
   const where = {}
 

@@ -33,36 +33,47 @@ export default function PostManager() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">文章管理</h1>
-        <Link to="/admin/posts/new" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">写文章</Link>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <h1 className="admin-page-title" style={{ marginBottom: 0 }}>文章管理</h1>
+        <Link to="/admin/posts/new" className="admin-btn admin-btn-primary">写文章</Link>
       </div>
-      <table className="w-full bg-white dark:bg-gray-800 rounded-lg shadow">
-        <thead>
-          <tr className="border-b border-gray-200 dark:border-gray-700">
-            <th className="text-left p-3">标题</th>
-            <th className="text-left p-3">分类</th>
-            <th className="text-left p-3">状态</th>
-            <th className="text-left p-3">发布时间</th>
-            <th className="text-left p-3">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          {posts.map(post => (
-            <tr key={post.id} className="border-b border-gray-100 dark:border-gray-700">
-              <td className="p-3">{post.title}</td>
-              <td className="p-3 text-sm text-gray-500">{post.category?.name || '-'}</td>
-              <td className="p-3"><span className={`text-xs px-2 py-1 rounded ${post.status === 'published' ? 'bg-green-100 text-green-700' : post.status === 'draft' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>{post.status}</span></td>
-              <td className="p-3 text-sm text-gray-500">{post.publishedAt ? formatDate(post.publishedAt) : '-'}</td>
-              <td className="p-3 flex gap-2">
-                <button onClick={() => handleToggleStatus(post)} className="text-sm text-blue-600 hover:underline">{post.status === 'published' ? '归档' : '发布'}</button>
-                <Link to={`/admin/posts/${post.id}/edit`} className="text-sm text-green-600 hover:underline">编辑</Link>
-                <button onClick={() => handleDelete(post.id)} className="text-sm text-red-600 hover:underline">删除</button>
-              </td>
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>标题</th>
+              <th>分类</th>
+              <th>状态</th>
+              <th>发布时间</th>
+              <th>操作</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {posts.map(post => (
+              <tr key={post.id}>
+                <td style={{ color: 'var(--fg)' }}>{post.title}</td>
+                <td style={{ fontSize: '13px', color: 'var(--fg-secondary)' }}>{post.category?.name || '-'}</td>
+                <td>
+                  <span className={`admin-badge ${post.status === 'published' ? 'admin-badge-published' : 'admin-badge-draft'}`}>
+                    {post.status === 'published' ? '已发布' : '草稿'}
+                  </span>
+                </td>
+                <td style={{ fontSize: '13px', color: 'var(--fg-secondary)' }}>{post.publishedAt ? formatDate(post.publishedAt) : '-'}</td>
+                <td style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => handleToggleStatus(post)}
+                    style={{ fontSize: '13px', color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)' }}>
+                    {post.status === 'published' ? '归档' : '发布'}
+                  </button>
+                  <Link to={`/admin/posts/${post.id}/edit`}
+                    style={{ fontSize: '13px', color: '#22c55e', textDecoration: 'underline' }}>编辑</Link>
+                  <button onClick={() => handleDelete(post.id)}
+                    style={{ fontSize: '13px', color: 'var(--accent-pink)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)' }}>删除</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
