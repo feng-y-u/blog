@@ -40,12 +40,14 @@ function scrambleText(finalText, onUpdate, onDone) {
   tick()
 }
 
-export default function MagazineSpread({ post, index, isVisible, compact }) {
+export default function MagazineSpread({ post, index, isVisible, compact, compactHeight }) {
   const [displayTitle, setDisplayTitle] = useState(post.title)
   const [scrambled, setScrambled] = useState(false)
+  const [coverError, setCoverError] = useState(false)
   const titleRef = useRef(null)
   const isLeft = index % 2 === 0
   const japaneseChar = post.jpChar || getJapaneseChar(post)
+  const hasCover = post.coverImage && !coverError
 
   useEffect(() => {
     if (isVisible && !scrambled) {
@@ -62,7 +64,7 @@ export default function MagazineSpread({ post, index, isVisible, compact }) {
       style={{
         display: 'grid',
         gridTemplateColumns: compact ? '1.2fr 0.8fr' : '1fr 1fr',
-        height: compact ? '50vh' : '100vh',
+        height: compactHeight || (compact ? '50vh' : '100vh'),
         scrollSnapAlign: compact ? 'none' : 'start',
         position: 'relative',
         overflow: 'hidden',
@@ -186,17 +188,44 @@ export default function MagazineSpread({ post, index, isVisible, compact }) {
         overflow: 'hidden',
         order: isLeft ? 2 : 1,
       }}>
+        {/* 封面图背景 */}
+        {hasCover && (
+          <>
+            <img
+              src={post.coverImage}
+              alt=""
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                opacity: isVisible ? 1 : 0,
+                transition: 'opacity 0.6s ease-out, transform 0.8s ease-out',
+                transform: isVisible ? 'scale(1)' : 'scale(1.08)',
+              }}
+              onError={() => setCoverError(true)}
+            />
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(135deg, rgba(232,93,138,0.35), rgba(0,153,204,0.25))',
+            }} />
+          </>
+        )}
+
         {/* 日文大文字 */}
         <div style={{
           fontSize: compact ? 'clamp(36px, 5vw, 64px)' : 'clamp(60px, 8vw, 110px)',
           fontWeight: 900,
-          color: 'var(--accent-pink-dim)',
+          color: hasCover ? 'rgba(255,255,255,0.9)' : 'var(--accent-pink-dim)',
           fontFamily: "'Noto Serif JP', 'Yu Mincho', serif",
           userSelect: 'none',
           letterSpacing: '-0.03em',
           position: 'relative',
           zIndex: 1,
           lineHeight: 1,
+          textShadow: hasCover ? '0 2px 20px rgba(0,0,0,0.3)' : 'none',
         }}>
           {japaneseChar}
         </div>
@@ -212,6 +241,21 @@ export default function MagazineSpread({ post, index, isVisible, compact }) {
           background: 'linear-gradient(90deg, var(--accent-pink-dim), var(--accent-cyan-dim))',
           borderRadius: '1px',
         }} />
+
+        {/* Compact 模式分割线 */}
+        {compact && (
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: '48px',
+            right: '48px',
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, var(--accent-pink-dim), transparent)',
+            opacity: 0.2,
+            zIndex: 2,
+            pointerEvents: 'none',
+          }} />
+        )}
       </div>
     </div>
   )
