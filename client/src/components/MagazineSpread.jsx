@@ -204,6 +204,7 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
                 transition: 'opacity 0.6s ease-out, transform 0.8s ease-out',
                 transform: isVisible ? 'scale(1)' : 'scale(1.08)',
               }}
+              loading="lazy" decoding="async"
               onError={() => setCoverError(true)}
             />
             <div style={{
@@ -215,7 +216,7 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
         )}
 
         {/* 日文大文字 */}
-        <div style={{
+        <div aria-hidden="true" style={{
           fontSize: compact ? 'clamp(36px, 5vw, 64px)' : 'clamp(60px, 8vw, 110px)',
           fontWeight: 900,
           color: hasCover ? 'rgba(255,255,255,0.9)' : 'var(--accent-pink-dim)',
