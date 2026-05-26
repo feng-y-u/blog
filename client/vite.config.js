@@ -17,8 +17,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          editor: ['@blocknote/core', '@blocknote/react', '@blocknote/mantine'],
-          mantine: ['@mantine/core', '@mantine/hooks', '@mantine/notifications'],
+          editor: ['@blocknote/core', '@blocknote/react', '@blocknote/mantine', '@mantine/core', '@mantine/hooks', '@mantine/notifications'],
         },
       },
     },

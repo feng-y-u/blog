@@ -4,13 +4,36 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 const NAV_ITEMS = [
   { to: '/admin', label: '仪表盘', emoji: '📊', exact: true },
   { to: '/admin/posts', label: '文章管理', emoji: '📝' },
-  { to: '/admin/posts/new', label: '写文章', emoji: '✏️' },
+  { to: '/admin/posts/new', label: '写文章', emoji: '✏️', prefetch: true },
   { to: '/admin/categories', label: '分类管理', emoji: '🏷️' },
   { to: '/admin/tags', label: '标签管理', emoji: '🔖' },
   { to: '/admin/comments', label: '评论管理', emoji: '💬' },
   { to: '/admin/notes', label: '笔记管理', emoji: '📓' },
   { to: '/admin/appearance', label: '外观设置', emoji: '🎨' },
 ]
+
+function prefetchEditor() {
+  import('../pages/admin/PostEditor')
+}
+
+const ADMIN_PAGE_LOADERS = [
+  () => import('../pages/admin/PostManager'),
+  () => import('../pages/admin/PostEditor'),
+  () => import('../pages/admin/CategoryManager'),
+  () => import('../pages/admin/TagManager'),
+  () => import('../pages/admin/CommentManager'),
+  () => import('../pages/admin/NoteManager'),
+  () => import('../pages/admin/AppearanceSettings'),
+]
+
+function prefetchAdminPages() {
+  const cb = () => ADMIN_PAGE_LOADERS.forEach(fn => fn())
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(cb, { timeout: 3000 })
+  } else {
+    setTimeout(cb, 2000)
+  }
+}
 
 export default function AdminLayout() {
   const navigate = useNavigate()
@@ -19,6 +42,7 @@ export default function AdminLayout() {
 
   useEffect(() => {
     if (!token) navigate('/login', { replace: true })
+    prefetchAdminPages()
   }, [token, navigate])
 
   function handleLogout() {
@@ -43,6 +67,7 @@ export default function AdminLayout() {
               key={item.to}
               to={item.to}
               className={`admin-nav-link${isActive(item) ? ' active' : ''}`}
+              onMouseEnter={item.prefetch ? prefetchEditor : undefined}
             >
               <span>{item.emoji}</span>
               <span>{item.label}</span>
