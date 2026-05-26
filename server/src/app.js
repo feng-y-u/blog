@@ -10,7 +10,7 @@ const app = express()
 
 const allowedOrigins = process.env.NODE_ENV === 'production'
   ? ['https://flowyu.xyz', 'https://www.flowyu.xyz', 'https://blog.flowyu.xyz']
-  : ['http://localhost:5173']
+  : ['http://localhost:5173', 'http://localhost:5174']
 
 app.use(cors({
   origin: (origin, cb) => {

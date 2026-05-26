@@ -3,7 +3,6 @@ const tagService = require('../services/tag-service')
 async function list(req, res, next) {
   try {
     const data = await tagService.list()
-    res.set('Cache-Control', 'public, max-age=300')
     res.json({ data })
   } catch (err) {
     next(err)

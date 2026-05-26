@@ -65,7 +65,7 @@ async function update(id, { title, content, categoryId }) {
   const data = {}
   if (title !== undefined) data.title = title
   if (content !== undefined) data.content = content
-  if (categoryId !== undefined) data.categoryId = categoryId || null
+  if (categoryId !== undefined) data.categoryId = categoryId ? +categoryId : null
 
   return prisma.note.update({
     where: { id },

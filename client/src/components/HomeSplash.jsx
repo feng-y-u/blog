@@ -1,12 +1,16 @@
 import { useRef, useEffect } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useSettings } from '../contexts/SettingsContext'
 import glowImg from '../assets/glow.jpg'
 import SnowEffect from './SnowEffect'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export default function HomeSplash({ scroller }) {
+  const { settings } = useSettings()
+  const subtitle = settings?.site_subtitle || '记录技术与热爱的角落'
+  const siteTitle = settings?.site_title || "风予's Blog"
   const splashRef = useRef(null)
   const snowProgress = useRef(0)
 
@@ -42,9 +46,9 @@ export default function HomeSplash({ scroller }) {
       <SnowEffect progressRef={snowProgress} />
       <div className="splash-content">
         <span className="splash-badge">✦ BLOG ✦</span>
-        <h1 className="splash-title">风予's Blog</h1>
+        <h1 className="splash-title">{siteTitle}</h1>
         <div className="splash-divider" />
-        <p className="splash-subtitle">记录技术与热爱的角落</p>
+        <p className="splash-subtitle">{subtitle}</p>
       </div>
       <div className="splash-scroll-hint">SCROLL ↓</div>
     </div>

@@ -36,6 +36,8 @@ async function main() {
     { key: 'banner_image', value: '' },
     { key: 'avatar_emoji', value: '🌸' },
     { key: 'profile_name', value: '风予' },
+    { key: 'profile_signature', value: 'コードとアニメが大好き' },
+    { key: 'profile_bio', value: '全栈开发者 / 动漫爱好者' },
     { key: 'social_links', value: JSON.stringify({ github: 'https://github.com/feng-y-u', bilibili: 'https://space.bilibili.com/635562556' }) },
   ]
   for (const s of defaultSettings) {

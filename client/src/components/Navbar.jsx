@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useSettings } from '../contexts/SettingsContext'
 
 function getInitialTheme() {
   if (typeof window !== 'undefined') {
@@ -9,11 +10,13 @@ function getInitialTheme() {
 }
 
 export default function Navbar({ onSearchOpen }) {
+  const { settings } = useSettings()
   const location = useLocation()
   const isHome = location.pathname === '/'
   const isPostPage = location.pathname.startsWith('/post/')
   const [theme, setTheme] = useState(getInitialTheme)
   const [scrolled, setScrolled] = useState(false)
+  const siteTitle = settings?.site_title || "风予'S BLOG"
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -69,7 +72,7 @@ export default function Navbar({ onSearchOpen }) {
             color: 'var(--fg)', fontSize: '12px',
             letterSpacing: '0.15em', fontWeight: 600,
           }}>
-            风予'S BLOG
+            {siteTitle}
           </span>
         </Link>
       </div>

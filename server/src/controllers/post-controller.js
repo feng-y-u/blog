@@ -3,7 +3,6 @@ const postService = require('../services/post-service')
 async function list(req, res, next) {
   try {
     const result = await postService.list({ ...req.query, user: req.user })
-    res.set('Cache-Control', 'public, max-age=300')
     res.json({
       data: result.data,
       pagination: {

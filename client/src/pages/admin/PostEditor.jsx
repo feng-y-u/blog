@@ -25,7 +25,7 @@ export default function PostEditor() {
   const [excerpt, setExcerpt] = useState('')
   const [coverImage, setCoverImage] = useState('')
   const [jpChar, setJpChar] = useState('')
-  const [categoryId, setCategoryId] = useState('')
+  const [categoryId, setCategoryId] = useState('5')
   const [selectedTags, setSelectedTags] = useState([])
   const [categories, setCategories] = useState([])
   const [tags, setTags] = useState([])
@@ -33,6 +33,7 @@ export default function PostEditor() {
   const [loading, setLoading] = useState(true)
 
   const mdFileRef = useRef(null)
+  const coverInputRef = useRef(null)
 
   useEffect(() => {
     Promise.all([getCategories(), getTags()]).then(([catRes, tagRes]) => {
@@ -62,7 +63,7 @@ export default function PostEditor() {
       setExcerpt(post.excerpt || '')
       setCoverImage(post.coverImage || '')
       setJpChar(post.jpChar || '')
-      setCategoryId(post.categoryId || '')
+      setCategoryId(String(post.categoryId || '5'))
       setSelectedTags(post.tags?.map(t => t.id) || [])
       if (post.content && editor) {
         const blocks = await editor.tryParseMarkdownToBlocks(post.content)
@@ -71,6 +72,13 @@ export default function PostEditor() {
     }).catch(() => setToast({ type: 'error', text: '加载文章失败' }))
       .finally(() => setLoading(false))
   }, [id, isEdit, editor])
+
+  // Auto-default jpChar to "其他" when no category selected
+  useEffect(() => {
+    if (!categoryId && !jpChar) {
+      setJpChar('其他')
+    }
+  }, [categoryId])
 
   async function handleSave(status) {
     const content = await editor.blocksToMarkdownLossy()
@@ -190,7 +198,7 @@ export default function PostEditor() {
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: 'var(--fg)' }}>分类</label>
             <select value={categoryId} onChange={e => setCategoryId(e.target.value)}
               style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', fontSize: '13px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--fg)' }}>
-              <option value="">无分类</option>
+              <option value="5">其他</option>
               {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
             </select>
           </div>
@@ -208,22 +216,40 @@ export default function PostEditor() {
             </div>
           </div>
           <div className="admin-card">
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: 'var(--fg)' }}>封面图 URL</label>
-            <input type="text" value={coverImage} onChange={e => setCoverImage(e.target.value)} placeholder="https://..."
-              style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', fontSize: '13px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--fg)', boxSizing: 'border-box' }} />
-            {coverImage && (
-              <div style={{ marginTop: '8px', borderRadius: '8px', overflow: 'hidden', height: '120px', background: 'var(--surface)', border: '1px solid var(--border)' }}>
-                <img src={coverImage} alt="封面预览" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                  onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'block' }}
-                />
-                <div style={{ display: 'none', padding: '16px', fontSize: '12px', color: 'var(--fg-muted)', textAlign: 'center' }}>图片加载失败</div>
-              </div>
-            )}
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '8px', color: 'var(--fg)' }}>封面图</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {coverImage ? (
+                <div style={{ borderRadius: '8px', overflow: 'hidden', height: '140px', background: 'var(--surface)', border: '1px solid var(--border)', position: 'relative' }}>
+                  <img src={coverImage} alt="封面预览" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'block' }}
+                  />
+                  <div style={{ display: 'none', padding: '32px 16px', fontSize: '12px', color: 'var(--fg-muted)', textAlign: 'center' }}>图片加载失败</div>
+                  <button onClick={() => setCoverImage('')}
+                    style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '11px', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+                    删除
+                  </button>
+                </div>
+              ) : (
+                <div onClick={() => coverInputRef.current?.click()}
+                  style={{ borderRadius: '8px', height: '100px', background: 'var(--surface)', border: '2px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', cursor: 'pointer', color: 'var(--fg-muted)', fontSize: '12px' }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  点击上传封面图
+                </div>
+              )}
+              <input ref={coverInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={async e => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                try {
+                  const res = await uploadImage(file)
+                  setCoverImage(res.data.data.url)
+                } catch { setToast({ type: 'error', text: '封面上传失败' }) }
+                e.target.value = ''
+              }} />
+            </div>
           </div>
           <div className="admin-card">
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: 'var(--fg)' }}>杂志装饰字</label>
-            <input type="text" value={jpChar} onChange={e => setJpChar(e.target.value.slice(0, 2))} placeholder="默认 → 按分类自动"
-              maxLength={2}
+            <input type="text" value={jpChar} onChange={e => setJpChar(e.target.value)} placeholder="默认 → 按分类自动"
               style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', fontSize: '13px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--fg)', boxSizing: 'border-box' }} />
             <p style={{ fontSize: '12px', marginTop: '4px', color: 'var(--fg-muted)' }}>日文汉字，1-2 字符，显示在杂志跨页右侧</p>
           </div>

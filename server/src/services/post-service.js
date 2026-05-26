@@ -71,11 +71,10 @@ async function create(data) {
 
   const post = await prisma.post.create({
     data: {
-      title, slug, content, excerpt, coverImage, jpChar,
+      title, slug, content, excerpt, coverImage, jpChar, authorId,
       status: status || POST_STATUS.DRAFT,
       publishedAt: status === POST_STATUS.PUBLISHED ? new Date() : null,
-      categoryId: categoryId || null,
-      authorId,
+      categoryId: categoryId ? parseInt(categoryId, 10) : null,
       tags: tagIds?.length ? { create: tagIds.map(tagId => ({ tagId })) } : undefined,
     },
     include: { category: true, tags: { include: { tag: true } } },
@@ -99,7 +98,7 @@ async function update(id, data) {
     updateData.status = status
     if (status === POST_STATUS.PUBLISHED && !existing.publishedAt) updateData.publishedAt = new Date()
   }
-  if (categoryId !== undefined) updateData.categoryId = categoryId || null
+  if (categoryId !== undefined) updateData.categoryId = categoryId ? parseInt(categoryId, 10) : null
 
   if (tagIds !== undefined) {
     await prisma.postTag.deleteMany({ where: { postId: id } })
