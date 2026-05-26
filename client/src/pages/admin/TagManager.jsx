@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react'
 import { getTags, createTag, updateTag, deleteTag } from '../../api/posts'
+import AdminToast from '../../components/AdminToast'
+import ConfirmModal from '../../components/ConfirmModal'
+import Loading from '../../components/Loading'
 
 export default function TagManager() {
   const [tags, setTags] = useState([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
   const [name, setName] = useState('')
+  const [toast, setToast] = useState(null)
+  const [confirmDelete, setConfirmDelete] = useState(null)
 
   function load() {
     setLoading(true)
@@ -15,22 +20,30 @@ export default function TagManager() {
 
   async function handleSave() {
     try {
-      if (editing) await updateTag(editing, { name })
-      else await createTag({ name })
+      if (editing) {
+        await updateTag(editing, { name })
+        setToast('已更新')
+      } else {
+        await createTag({ name })
+        setToast('已创建')
+      }
       setName(''); setEditing(null)
       load()
-    } catch (err) { alert('操作失败') }
+    } catch { setToast({ type: 'error', text: '操作失败' }) }
   }
 
   async function handleDelete(id) {
-    if (!confirm('确定删除？')) return
-    await deleteTag(id)
-    load()
+    setConfirmDelete({ id })
   }
+
+  if (loading) return <Loading />
 
   return (
     <div>
-      <h1 className="admin-page-title">标签管理</h1>
+      <AdminToast message={toast?.text} type={toast?.type} onClose={() => setToast(null)} />
+      <div className="admin-page-header">
+        <h1 className="admin-page-title">标签管理</h1>
+      </div>
       <div className="admin-card">
         <h2 className="admin-card-title">{editing ? '编辑标签' : '新增标签'}</h2>
         <div className="admin-form-row">
@@ -55,15 +68,33 @@ export default function TagManager() {
                 <td style={{ color: 'var(--fg)' }}>{tag.name}</td>
                 <td style={{ fontSize: '13px', color: 'var(--fg-secondary)' }}>{tag.slug}</td>
                 <td style={{ fontSize: '13px' }}>{tag._count?.posts || 0}</td>
-                <td style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={() => { setEditing(tag.id); setName(tag.name) }} style={{ fontSize: '13px', color: '#22c55e', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>编辑</button>
-                  <button onClick={() => handleDelete(tag.id)} style={{ fontSize: '13px', color: 'var(--accent-pink)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>删除</button>
+                <td>
+                  <div className="admin-actions">
+                    <button onClick={() => { setEditing(tag.id); setName(tag.name) }} className="admin-action-edit">编辑</button>
+                    <button onClick={() => handleDelete(tag.id)} className="admin-action-delete">删除</button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      <ConfirmModal
+        open={!!confirmDelete}
+        title="确认删除"
+        message="确定删除此标签？"
+        confirmText="删除"
+        danger
+        onConfirm={async () => {
+          try {
+            await deleteTag(confirmDelete.id)
+            setToast('已删除')
+            load()
+          } catch { setToast({ type: 'error', text: '删除失败' }) }
+          setConfirmDelete(null)
+        }}
+        onCancel={() => setConfirmDelete(null)}
+      />
     </div>
   )
 }

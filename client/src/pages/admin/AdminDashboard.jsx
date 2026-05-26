@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { getPosts, getCategories, getTags } from '../../api/posts'
 import client from '../../api/client'
 import { getNotes } from '../../api/note'
+import Loading from '../../components/Loading'
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ posts: '-', categories: '-', tags: '-', comments: '-', pendingComments: '-', notes: '-' })
   const [recentComments, setRecentComments] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     Promise.all([
@@ -25,8 +27,10 @@ export default function AdminDashboard() {
         notes: notesRes.data.pagination.total,
       })
       setRecentComments(pendingRes.data.data)
-    }).catch(() => {})
+    }).catch(() => {}).finally(() => setLoading(false))
   }, [])
+
+  if (loading) return <Loading />
 
   return (
     <div>

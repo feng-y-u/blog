@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import client from '../../api/client'
+import AdminToast from '../../components/AdminToast'
+import ConfirmModal from '../../components/ConfirmModal'
+import Loading from '../../components/Loading'
 
 const STATUS_MAP = { pending: '待审核', approved: '已批准', rejected: '已驳回' }
 
@@ -9,6 +12,8 @@ export default function CommentManager() {
   const [filter, setFilter] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [toast, setToast] = useState(null)
+  const [confirmDelete, setConfirmDelete] = useState(null)
 
   function load() {
     setLoading(true)
@@ -24,19 +29,25 @@ export default function CommentManager() {
   useEffect(load, [page, filter])
 
   async function handleUpdate(id, data) {
-    await client.put(`/comments/${id}`, data)
-    load()
+    try {
+      await client.put(`/comments/${id}`, data)
+      setToast(data.status === 'approved' ? '已批准' : '已驳回')
+      load()
+    } catch { setToast({ type: 'error', text: '操作失败' }) }
   }
 
   async function handleDelete(id) {
-    if (!confirm('确定删除此评论？')) return
-    await client.delete(`/comments/${id}`)
-    load()
+    setConfirmDelete({ id })
   }
+
+  if (loading) return <Loading />
 
   return (
     <div>
-      <h1 className="admin-page-title">评论管理</h1>
+      <AdminToast message={toast?.text} type={toast?.type} onClose={() => setToast(null)} />
+      <div className="admin-page-header">
+        <h1 className="admin-page-title">评论管理</h1>
+      </div>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
         {['', 'pending', 'approved', 'rejected'].map(s => (
@@ -70,23 +81,21 @@ export default function CommentManager() {
                 </td>
                 <td style={{ fontSize: '13px', color: 'var(--fg-secondary)', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{comment.content}</td>
                 <td>
-                  <span className={`admin-badge ${comment.status === 'approved' ? 'admin-badge-published' : comment.status === 'rejected' ? 'admin-badge-draft' : ''}`}
-                    style={comment.status === 'pending' ? { background: 'var(--accent-dim)', color: 'var(--fg-secondary)' } : {}}>
+                  <span className={`admin-badge ${comment.status === 'approved' ? 'admin-badge-published' : comment.status === 'rejected' ? 'admin-badge-draft' : 'admin-badge-pending'}`}>
                     {STATUS_MAP[comment.status]}
                   </span>
                 </td>
                 <td style={{ fontSize: '13px', color: 'var(--fg-secondary)' }}>{new Date(comment.createdAt).toLocaleDateString('zh-CN')}</td>
-                <td style={{ display: 'flex', gap: '8px' }}>
-                  {comment.status === 'pending' && (
-                    <>
-                      <button onClick={() => handleUpdate(comment.id, { status: 'approved' })}
-                        style={{ fontSize: '13px', color: '#22c55e', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>批准</button>
-                      <button onClick={() => handleUpdate(comment.id, { status: 'rejected' })}
-                        style={{ fontSize: '13px', color: '#eab308', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>驳回</button>
-                    </>
-                  )}
-                  <button onClick={() => handleDelete(comment.id)}
-                    style={{ fontSize: '13px', color: 'var(--accent-pink)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>删除</button>
+                <td>
+                  <div className="admin-actions">
+                    {comment.status === 'pending' && (
+                      <>
+                        <button onClick={() => handleUpdate(comment.id, { status: 'approved' })} className="admin-action-publish">批准</button>
+                        <button onClick={() => handleUpdate(comment.id, { status: 'rejected' })} className="admin-action-delete">驳回</button>
+                      </>
+                    )}
+                    <button onClick={() => handleDelete(comment.id)} className="admin-action-delete">删除</button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -103,6 +112,22 @@ export default function CommentManager() {
             className="admin-btn" style={{ opacity: page >= totalPages ? 0.4 : 1 }}>下一页</button>
         </div>
       )}
+      <ConfirmModal
+        open={!!confirmDelete}
+        title="确认删除"
+        message="确定删除此评论？此操作不可撤销。"
+        confirmText="删除"
+        danger
+        onConfirm={async () => {
+          try {
+            await client.delete(`/comments/${confirmDelete.id}`)
+            setToast('已删除')
+            load()
+          } catch { setToast({ type: 'error', text: '删除失败' }) }
+          setConfirmDelete(null)
+        }}
+        onCancel={() => setConfirmDelete(null)}
+      />
     </div>
   )
 }

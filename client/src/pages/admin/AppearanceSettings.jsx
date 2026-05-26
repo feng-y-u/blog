@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSettings } from '../../contexts/SettingsContext'
 import { updateSettings } from '../../api/settings'
+import Loading from '../../components/Loading'
 
 const FIELDS = [
   { key: 'site_title', label: '网站标题', type: 'text' },
@@ -58,7 +59,7 @@ export default function AppearanceSettings() {
   }
 
   if (!settings) {
-    return <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--fg-secondary)' }}>加载中...</div>
+    return <Loading />
   }
 
   return (
@@ -66,12 +67,7 @@ export default function AppearanceSettings() {
       <h1 className="admin-page-title">外观设置</h1>
 
       {message && (
-        <div className="admin-card" style={{
-          padding: '12px',
-          background: message.type === 'success' ? 'rgba(0,153,204,0.1)' : 'rgba(232,93,138,0.1)',
-          border: message.type === 'success' ? '1px solid var(--accent-cyan)' : '1px solid var(--accent-pink)',
-          color: message.type === 'success' ? 'var(--accent-cyan)' : 'var(--accent-pink)',
-        }}>
+        <div className="admin-card" style={{ padding: '12px' }}>
           {message.text}
         </div>
       )}

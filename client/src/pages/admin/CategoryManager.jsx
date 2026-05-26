@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '../../api/posts'
+import AdminToast from '../../components/AdminToast'
+import ConfirmModal from '../../components/ConfirmModal'
+import Loading from '../../components/Loading'
 
 export default function CategoryManager() {
   const [categories, setCategories] = useState([])
@@ -7,6 +10,8 @@ export default function CategoryManager() {
   const [editing, setEditing] = useState(null)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [toast, setToast] = useState(null)
+  const [confirmDelete, setConfirmDelete] = useState(null)
 
   function load() {
     setLoading(true)
@@ -18,12 +23,14 @@ export default function CategoryManager() {
     try {
       if (editing) {
         await updateCategory(editing, { name, description })
+        setToast('已更新')
       } else {
         await createCategory({ name, description })
+        setToast('已创建')
       }
       setName(''); setDescription(''); setEditing(null)
       load()
-    } catch (err) { alert('操作失败') }
+    } catch { setToast({ type: 'error', text: '操作失败' }) }
   }
 
   function handleEdit(cat) {
@@ -33,14 +40,17 @@ export default function CategoryManager() {
   }
 
   async function handleDelete(id) {
-    if (!confirm('确定删除？')) return
-    await deleteCategory(id)
-    load()
+    setConfirmDelete({ id })
   }
+
+  if (loading) return <Loading />
 
   return (
     <div>
-      <h1 className="admin-page-title">分类管理</h1>
+      <AdminToast message={toast?.text} type={toast?.type} onClose={() => setToast(null)} />
+      <div className="admin-page-header">
+        <h1 className="admin-page-title">分类管理</h1>
+      </div>
       <div className="admin-card">
         <h2 className="admin-card-title">{editing ? '编辑分类' : '新增分类'}</h2>
         <div className="admin-form-row">
@@ -68,15 +78,33 @@ export default function CategoryManager() {
                 <td style={{ fontSize: '13px', color: 'var(--fg-secondary)' }}>{cat.slug}</td>
                 <td style={{ fontSize: '13px', color: 'var(--fg-secondary)' }}>{cat.description || '-'}</td>
                 <td style={{ fontSize: '13px' }}>{cat._count?.posts || 0}</td>
-                <td style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={() => handleEdit(cat)} style={{ fontSize: '13px', color: '#22c55e', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>编辑</button>
-                  <button onClick={() => handleDelete(cat.id)} style={{ fontSize: '13px', color: 'var(--accent-pink)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)', textDecoration: 'underline' }}>删除</button>
+                <td>
+                  <div className="admin-actions">
+                    <button onClick={() => handleEdit(cat)} className="admin-action-edit">编辑</button>
+                    <button onClick={() => handleDelete(cat.id)} className="admin-action-delete">删除</button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      <ConfirmModal
+        open={!!confirmDelete}
+        title="确认删除"
+        message="确定删除此分类？相关文章将变为未分类。"
+        confirmText="删除"
+        danger
+        onConfirm={async () => {
+          try {
+            await deleteCategory(confirmDelete.id)
+            setToast('已删除')
+            load()
+          } catch { setToast({ type: 'error', text: '删除失败' }) }
+          setConfirmDelete(null)
+        }}
+        onCancel={() => setConfirmDelete(null)}
+      />
     </div>
   )
 }
