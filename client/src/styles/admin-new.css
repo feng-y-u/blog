@@ -158,18 +158,21 @@
 }
 .admin-action-edit {
   color: #22c55e;
+  transition: color 0.15s;
 }
 .admin-action-edit:hover {
   color: #16a34a;
 }
 .admin-action-publish {
   color: var(--accent);
+  transition: color 0.15s;
 }
 .admin-action-publish:hover {
   color: #0077aa;
 }
 .admin-action-delete {
   color: var(--accent-pink);
+  transition: color 0.15s;
 }
 .admin-action-delete:hover {
   color: #d94a7a;
