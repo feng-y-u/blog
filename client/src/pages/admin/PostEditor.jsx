@@ -1,15 +1,27 @@
-import { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { useCreateBlockNote } from '@blocknote/react'
+import { BlockNoteView } from '@blocknote/mantine'
+import '@blocknote/mantine/style.css'
 import { getPost, createPost, updatePost, getCategories, getTags } from '../../api/posts'
 import { uploadImage } from '../../api/upload'
+import AdminToast from '../../components/AdminToast'
 
 export default function PostEditor() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const isEdit = Boolean(id)
-  const textareaRef = useRef(null)
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
+  const editor = useCreateBlockNote({
+    uploadFile: async (file) => {
+      if (!file.type.startsWith('image/')) return ''
+      const res = await uploadImage(file)
+      return res.data.data.url
+    },
+  })
+  const loadingRef = useRef(false)
+
+  const [title, setTitle] = useState(searchParams.get('title') || '')
   const [excerpt, setExcerpt] = useState('')
   const [coverImage, setCoverImage] = useState('')
   const [jpChar, setJpChar] = useState('')
@@ -17,101 +29,151 @@ export default function PostEditor() {
   const [selectedTags, setSelectedTags] = useState([])
   const [categories, setCategories] = useState([])
   const [tags, setTags] = useState([])
-  const [uploading, setUploading] = useState(false)
+  const [toast, setToast] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  const mdFileRef = useRef(null)
 
   useEffect(() => {
     Promise.all([getCategories(), getTags()]).then(([catRes, tagRes]) => {
       setCategories(catRes.data.data)
       setTags(tagRes.data.data)
     })
+    // Check for note conversion pre-fill from sessionStorage
+    const noteContent = sessionStorage.getItem('convert-note-content')
+    if (noteContent && !isEdit) {
+      const noteTitle = sessionStorage.getItem('convert-note-title') || ''
+      if (noteTitle) setTitle(noteTitle)
+      sessionStorage.removeItem('convert-note-title')
+      sessionStorage.removeItem('convert-note-content')
+      if (editor) {
+        editor.tryParseMarkdownToBlocks(noteContent).then(blocks => {
+          editor.replaceBlocks(editor.document, blocks)
+        })
+      }
+    }
   }, [])
 
   useEffect(() => {
-    if (!isEdit) return
-    getPost(id).then(res => {
+    if (!isEdit) { setLoading(false); return }
+    getPost(id).then(async res => {
       const post = res.data.data
       setTitle(post.title)
-      setContent(post.content)
       setExcerpt(post.excerpt || '')
       setCoverImage(post.coverImage || '')
       setJpChar(post.jpChar || '')
       setCategoryId(post.categoryId || '')
       setSelectedTags(post.tags?.map(t => t.id) || [])
-    })
-  }, [id, isEdit])
+      if (post.content && editor) {
+        const blocks = await editor.tryParseMarkdownToBlocks(post.content)
+        editor.replaceBlocks(editor.document, blocks)
+      }
+    }).catch(() => setToast({ type: 'error', text: '加载文章失败' }))
+      .finally(() => setLoading(false))
+  }, [id, isEdit, editor])
 
   async function handleSave(status) {
-    const data = { title, content, excerpt, coverImage, jpChar: jpChar || null, status, categoryId: categoryId || null, tagIds: selectedTags }
+    const content = await editor.blocksToMarkdownLossy()
+    const data = {
+      title, content, excerpt, coverImage,
+      jpChar: jpChar || null,
+      status,
+      categoryId: categoryId || null,
+      tagIds: selectedTags,
+    }
     try {
       if (isEdit) {
         await updatePost(id, data)
+        setToast({ type: 'success', text: '已保存' })
       } else {
         await createPost(data)
+        setToast({ type: 'success', text: '已发布' })
+        navigate('/admin/posts')
       }
-      navigate('/admin/posts')
     } catch (err) {
-      alert('保存失败: ' + (err.response?.data?.error || err.message))
+      setToast({ type: 'error', text: '保存失败: ' + (err.response?.data?.error || err.message) })
     }
   }
+
+  const saveDraft = useCallback(() => handleSave('draft'), [title, excerpt, coverImage, jpChar, categoryId, selectedTags, isEdit, id, navigate, editor])
+
+  useEffect(() => {
+    function handleKey(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault()
+        if (!loadingRef.current) {
+          loadingRef.current = true
+          saveDraft().finally(() => { loadingRef.current = false })
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [saveDraft])
 
   function toggleTag(tagId) {
     setSelectedTags(prev => prev.includes(tagId) ? prev.filter(t => t !== tagId) : [...prev, tagId])
   }
 
-  async function handleImageUpload(e) {
+  async function handleMdUpload(e) {
     const file = e.target.files?.[0]
-    if (!file) return
-    setUploading(true)
-    try {
-      const res = await uploadImage(file)
-      const url = res.data.data.url
-      const ta = textareaRef.current
-      if (ta) {
-        const start = ta.selectionStart
-        const end = ta.selectionEnd
-        const imgMarkdown = `\n![图片](${url})\n`
-        setContent(prev => prev.substring(0, start) + imgMarkdown + prev.substring(end))
-        setTimeout(() => {
-          ta.focus()
-          ta.selectionStart = ta.selectionEnd = start + imgMarkdown.length
-        }, 0)
-      } else {
-        setContent(prev => prev + `\n![图片](${url})\n`)
-      }
-    } catch (err) {
-      alert('上传失败: ' + (err.response?.data?.error || err.message))
-    } finally {
-      setUploading(false)
-      e.target.value = ''
+    if (!file || !file.name.endsWith('.md')) {
+      setToast({ type: 'error', text: '请上传 .md 文件' })
+      return
     }
+    const text = await file.text()
+    const titleMatch = text.match(/^#\s+(.+)/m)
+    if (titleMatch && !title) setTitle(titleMatch[1].trim())
+    if (editor) {
+      const blocks = await editor.tryParseMarkdownToBlocks(text)
+      editor.insertBlocks(blocks, editor.document[editor.document.length - 1], 'after')
+    }
+    e.target.value = ''
+    setToast({ type: 'success', text: '已导入 ' + file.name })
+  }
+
+  if (loading) {
+    return (
+      <div>
+        <h1 className="admin-page-title">{isEdit ? '编辑文章' : '写文章'}</h1>
+        <div className="loading">
+          <div className="skeleton-card">
+            <div className="skeleton-line skeleton-line-sm" />
+            <div className="skeleton-line skeleton-line-lg" />
+            <div className="skeleton-line skeleton-line-md" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div>
+      <AdminToast message={toast?.text} type={toast?.type} onClose={() => setToast(null)} />
       <h1 className="admin-page-title">{isEdit ? '编辑文章' : '写文章'}</h1>
+
       <div style={{ display: 'flex', gap: '16px', height: 'calc(100vh - 12rem)' }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px', minWidth: 0 }}>
           <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="文章标题"
             style={{ width: '100%', padding: '8px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '18px', fontWeight: 600, background: 'var(--card)', color: 'var(--fg)', boxSizing: 'border-box' }} />
-          {/* 工具栏 */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', borderBottom: 'none' }}>
-            <button onClick={() => document.getElementById('image-input').click()} disabled={uploading}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', padding: '6px 12px', borderRadius: '8px', background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--fg-secondary)', cursor: 'pointer', opacity: uploading ? 0.5 : 1, fontFamily: 'var(--font-body)' }}
-              title="插入图片">
-              {uploading ? (
-                <span style={{ display: 'inline-block', width: '16px', height: '16px', border: '2px solid var(--border)', borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
-              ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
-              )}
-              {uploading ? '上传中...' : '图片'}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+            <button onClick={() => mdFileRef.current?.click()}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', padding: '6px 12px', borderRadius: '8px', background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--fg-secondary)', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              上传 .md
             </button>
-            <input id="image-input" type="file" accept="image/jpeg,image/png,image/gif,image/webp" style={{ display: 'none' }} onChange={handleImageUpload} />
+            <input ref={mdFileRef} type="file" accept=".md" style={{ display: 'none' }} onChange={handleMdUpload} />
+            <span style={{ flex: 1 }} />
+            <span style={{ fontSize: '12px', color: 'var(--fg-muted)' }}>支持 / 命令插入块 · 拖拽图片上传</span>
           </div>
-          <textarea ref={textareaRef} value={content} onChange={e => setContent(e.target.value)}
-            placeholder="正文（Markdown）"
-            style={{ flex: 1, width: '100%', padding: '16px', fontFamily: 'var(--font-mono)', fontSize: '13px', resize: 'none', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px', background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--fg)', boxSizing: 'border-box' }} />
+
+          <div style={{ flex: 1, overflow: 'auto', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--card)' }}>
+            <BlockNoteView editor={editor} theme="light" style={{ height: '100%' }} />
+          </div>
+
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button onClick={() => handleSave('draft')}
+            <button onClick={saveDraft}
               style={{ padding: '8px 16px', borderRadius: '8px', background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--fg-secondary)', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-body)' }}>
               保存草稿
             </button>
@@ -119,10 +181,12 @@ export default function PostEditor() {
               style={{ padding: '8px 16px', borderRadius: '8px', background: 'var(--accent)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-body)' }}>
               发布
             </button>
+            <span style={{ fontSize: '12px', color: 'var(--fg-muted)', alignSelf: 'center', marginLeft: '8px' }}>Ctrl+S 保存草稿</span>
           </div>
         </div>
-        <div style={{ width: '320px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ borderRadius: '12px', padding: '16px', background: 'var(--card)', border: '1px solid var(--border)' }}>
+
+        <div style={{ width: '320px', display: 'flex', flexDirection: 'column', gap: '16px', flexShrink: 0 }}>
+          <div className="admin-card">
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: 'var(--fg)' }}>分类</label>
             <select value={categoryId} onChange={e => setCategoryId(e.target.value)}
               style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', fontSize: '13px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--fg)' }}>
@@ -130,7 +194,7 @@ export default function PostEditor() {
               {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
             </select>
           </div>
-          <div style={{ borderRadius: '12px', padding: '16px', background: 'var(--card)', border: '1px solid var(--border)' }}>
+          <div className="admin-card">
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '8px', color: 'var(--fg)' }}>标签</label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {tags.map(tag => (
@@ -143,7 +207,7 @@ export default function PostEditor() {
               ))}
             </div>
           </div>
-          <div style={{ borderRadius: '12px', padding: '16px', background: 'var(--card)', border: '1px solid var(--border)' }}>
+          <div className="admin-card">
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: 'var(--fg)' }}>封面图 URL</label>
             <input type="text" value={coverImage} onChange={e => setCoverImage(e.target.value)} placeholder="https://..."
               style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', fontSize: '13px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--fg)', boxSizing: 'border-box' }} />
@@ -156,7 +220,7 @@ export default function PostEditor() {
               </div>
             )}
           </div>
-          <div style={{ borderRadius: '12px', padding: '16px', background: 'var(--card)', border: '1px solid var(--border)' }}>
+          <div className="admin-card">
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: 'var(--fg)' }}>杂志装饰字</label>
             <input type="text" value={jpChar} onChange={e => setJpChar(e.target.value.slice(0, 2))} placeholder="默认 → 按分类自动"
               maxLength={2}
