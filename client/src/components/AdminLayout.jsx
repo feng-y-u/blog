@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
+import { getMe } from '../api/auth'
 
 const NAV_ITEMS = [
   { to: '/admin', label: '仪表盘', emoji: '📊', exact: true },
@@ -38,11 +39,26 @@ function prefetchAdminPages() {
 export default function AdminLayout() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [checking, setChecking] = useState(true)
   const token = localStorage.getItem('token')
 
   useEffect(() => {
-    if (!token) navigate('/login', { replace: true })
+    if (!token) {
+      navigate('/login', { replace: true })
+      return
+    }
+    let mounted = true
+    // Validate the token before rendering the admin shell to avoid a flash of
+    // the admin UI when the token is expired or forged.
+    getMe()
+      .then(() => { if (mounted) setChecking(false) })
+      .catch(() => {
+        if (!mounted) return
+        localStorage.removeItem('token')
+        navigate('/login', { replace: true })
+      })
     prefetchAdminPages()
+    return () => { mounted = false }
   }, [token, navigate])
 
   function handleLogout() {
@@ -52,10 +68,16 @@ export default function AdminLayout() {
 
   function isActive(item) {
     if (item.exact) return location.pathname === item.to
-    return location.pathname.startsWith(item.to)
+    if (location.pathname === item.to) return true
+    if (!location.pathname.startsWith(item.to + '/')) return false
+    // Longest prefix wins: /admin/posts/new highlights only 写文章, not 文章管理.
+    return !NAV_ITEMS.some(other =>
+      !other.exact && other.to !== item.to && other.to.length > item.to.length &&
+      location.pathname.startsWith(other.to + '/')
+    )
   }
 
-  if (!token) return null
+  if (!token || checking) return null
 
   return (
     <div className="admin-layout admin-layout-new">
