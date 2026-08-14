@@ -9,7 +9,8 @@ import TagList from './TagList'
 
 export default function Sidebar() {
   const { settings } = useSettings()
-  const profileName = '风予'
+  const profileName = settings?.profile_name || '风予'
+  const avatarEmoji = settings?.avatar_emoji || ''
   let socialLinks = {}
   try { socialLinks = JSON.parse(settings?.social_links ?? '{}') } catch {}
   const [stats, setStats] = useState({ posts: '-', categories: '-' })
@@ -33,7 +34,7 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <ProfileCard avatar={avatarImg} name={profileName} socialLinks={socialLinks} signature={settings?.profile_signature} />
+      <ProfileCard avatar={avatarImg} emoji={avatarEmoji || null} name={profileName} socialLinks={socialLinks} signature={settings?.profile_signature} />
       <NavStats stats={stats} links={[
         { to: '/', label: '文章', key: 'posts' },
         { to: '/categories', label: '分类', key: 'categories' },
