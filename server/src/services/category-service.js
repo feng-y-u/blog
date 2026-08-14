@@ -32,9 +32,11 @@ async function update(id, { name, description }) {
 async function remove(id) {
   const existing = await prisma.category.findUnique({ where: { id } })
   if (!existing) return null
-  await prisma.post.updateMany({ where: { categoryId: id }, data: { categoryId: null } })
-  await prisma.note.updateMany({ where: { categoryId: id }, data: { categoryId: null } })
-  await prisma.category.delete({ where: { id } })
+  await prisma.$transaction([
+    prisma.post.updateMany({ where: { categoryId: id }, data: { categoryId: null } }),
+    prisma.note.updateMany({ where: { categoryId: id }, data: { categoryId: null } }),
+    prisma.category.delete({ where: { id } }),
+  ])
   return true
 }
 

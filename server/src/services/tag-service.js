@@ -26,8 +26,10 @@ async function update(id, { name }) {
 async function remove(id) {
   const existing = await prisma.tag.findUnique({ where: { id } })
   if (!existing) return null
-  await prisma.postTag.deleteMany({ where: { tagId: id } })
-  await prisma.tag.delete({ where: { id } })
+  await prisma.$transaction([
+    prisma.postTag.deleteMany({ where: { tagId: id } }),
+    prisma.tag.delete({ where: { id } }),
+  ])
   return true
 }
 

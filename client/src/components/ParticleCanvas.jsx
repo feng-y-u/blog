@@ -18,9 +18,8 @@ function createParticle(width, height) {
   }
 }
 
-export default function ParticleCanvas({ colorKey }) {
+export default function ParticleCanvas() {
   const canvasRef = useRef(null)
-  const particlesRef = useRef([])
   const rafRef = useRef(null)
 
   useEffect(() => {
@@ -29,27 +28,31 @@ export default function ParticleCanvas({ colorKey }) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    let w = 0
+    let h = 0
+    let particles = []
+
+    // Resize only when the container changes (window resize), not per frame.
     function resize() {
       const dpr = window.devicePixelRatio || 1
       const rect = canvas.parentElement.getBoundingClientRect()
-      canvas.width = rect.width * dpr
-      canvas.height = rect.height * dpr
-      canvas.style.width = rect.width + 'px'
-      canvas.style.height = rect.height + 'px'
-      ctx.scale(dpr, dpr)
-      return { w: rect.width, h: rect.height }
+      w = rect.width
+      h = rect.height
+      canvas.width = w * dpr
+      canvas.height = h * dpr
+      canvas.style.width = w + 'px'
+      canvas.style.height = h + 'px'
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
-    let { w, h } = resize()
+    resize()
     const count = 35 + Math.floor(Math.random() * 15)
-    particlesRef.current = Array.from({ length: count }, () => createParticle(w, h))
+    particles = Array.from({ length: count }, () => createParticle(w, h))
 
-    function animate(time) {
-      const { w: cw, h: ch } = resize()
-      w = cw; h = ch
+    function animate() {
       ctx.clearRect(0, 0, w, h)
 
-      for (const p of particlesRef.current) {
+      for (const p of particles) {
         p.pulse += 0.01
         p.x += p.vx
         p.y += p.vy
@@ -67,11 +70,13 @@ export default function ParticleCanvas({ colorKey }) {
     }
 
     rafRef.current = requestAnimationFrame(animate)
+    window.addEventListener('resize', resize)
 
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      cancelAnimationFrame(rafRef.current)
+      window.removeEventListener('resize', resize)
     }
-  }, [colorKey])
+  }, [])
 
   return (
     <canvas
