@@ -1,11 +1,12 @@
 const { Router } = require('express')
 const multer = require('multer')
+const os = require('os')
 const path = require('path')
 const controller = require('../controllers/note-controller')
 const auth = require('../middleware/auth')
-const config = require('../config')
 
-const upload = multer({ dest: path.join(config.uploadDir, 'notes'), limits: { fileSize: 1024 * 1024 } })
+// Temp dir outside the public /uploads tree; files are deleted right after import.
+const upload = multer({ dest: path.join(os.tmpdir(), 'blog-note-uploads'), limits: { fileSize: 1024 * 1024 } })
 
 // 公开路由
 const publicRouter = Router()

@@ -39,9 +39,19 @@ async function create(data) {
   let title, content, categoryId
 
   if (data.file) {
-    title = data.file.originalname.replace(/\.md$/i, '')
-    content = await fs.readFile(data.file.path, 'utf-8')
+    const file = data.file
+    if (!/\.md$/i.test(file.originalname)) {
+      await fs.unlink(file.path).catch(() => {})
+      throw Object.assign(new Error('只支持 .md 文件'), { statusCode: 400 })
+    }
+    title = file.originalname.replace(/\.md$/i, '')
     categoryId = data.categoryId ? +data.categoryId : null
+    try {
+      content = await fs.readFile(file.path, 'utf-8')
+    } finally {
+      // Imported file is transient: remove it whether the read succeeded or not.
+      await fs.unlink(file.path).catch(() => {})
+    }
   } else {
     title = data.title
     content = data.content
@@ -53,7 +63,7 @@ async function create(data) {
   }
 
   return prisma.note.create({
-    data: { title, content, categoryId, filePath: data.file?.path },
+    data: { title, content, categoryId },
     include: { category: { select: { id: true, name: true, slug: true } } },
   })
 }
