@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { getPostBySlug, getAdjacentPosts } from '../api/posts'
 import Loading from '../components/Loading'
-import CommentSection from '../components/CommentSection'
 import ReadingProgress from '../components/ReadingProgress'
 import Lightbox from '../components/Lightbox'
 import ArticleMeta from '../components/ArticleMeta'
@@ -93,9 +92,6 @@ export default function PostDetailPage() {
         <ArticleFooter tags={post.tags} isFavorited={isFavorited} onToggleFavorite={handleToggleFavorite} onCopyLink={handleCopyLink} copied={copied} />
       </article>
       <AdjacentNav prev={adjacent.prev} next={adjacent.next} />
-      <section className="comment-section">
-        <CommentSection postId={post.id} />
-      </section>
     </>
   )
 }
