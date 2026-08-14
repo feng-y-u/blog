@@ -44,7 +44,10 @@ export default function PostDetailPage() {
     let cancelled = false
     setLoading(true)
     setError(null)
-    Promise.all([getPostBySlug(slug), getPosts({ limit: 100 })])
+    Promise.all([
+      getPostBySlug(slug),
+      getPosts({ limit: 100 }).catch(() => ({ data: { data: [] } })),
+    ])
       .then(([postRes, allRes]) => {
         if (cancelled) return
         const p = postRes.data.data
