@@ -2,7 +2,7 @@ const noteService = require('../services/note-service')
 
 async function listPublic(req, res, next) {
   try {
-    const result = await noteService.listPublic(req.query)
+    const result = await noteService.list(req.query)
     res.json({
       data: result.data,
       pagination: {

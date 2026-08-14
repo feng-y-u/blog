@@ -1,10 +1,6 @@
 const prisma = require('../utils/prisma')
 const fs = require('fs/promises')
 
-async function listPublic(params = {}) {
-  return list(params)
-}
-
 async function list({ page = 1, limit = 20, categoryId } = {}) {
   page = Math.max(+page || 1, 1); limit = Math.min(Math.max(+limit || 20, 1), 100)
   const where = {}
@@ -95,4 +91,4 @@ async function getForExport(id) {
   return prisma.note.findUnique({ where: { id } })
 }
 
-module.exports = { listPublic, list, getById, create, update, remove, getForExport }
+module.exports = { list, getById, create, update, remove, getForExport }

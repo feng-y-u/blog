@@ -8,10 +8,6 @@ async function list() {
   })
 }
 
-async function getById(id) {
-  return prisma.tag.findUnique({ where: { id } })
-}
-
 async function create({ name }) {
   const slug = await uniqueSlug(prisma, 'tag', name)
   return prisma.tag.create({ data: { name, slug } })
@@ -33,4 +29,4 @@ async function remove(id) {
   return true
 }
 
-module.exports = { list, getById, create, update, remove }
+module.exports = { list, create, update, remove }
