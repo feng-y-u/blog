@@ -236,11 +236,3 @@
 .adjacent-nav-spacer {
   flex: 1;
 }
-
-/* Comment section wrapper */
-.comment-section {
-  max-width: 680px;
-  margin: 0 auto 48px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-}
