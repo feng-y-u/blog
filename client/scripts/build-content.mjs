@@ -126,12 +126,14 @@ try {
 
 // --- sitemap + robots ---
 const siteUrl = settings.site_url || 'https://example.com'
+const xmlEsc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+const loc = (...segs) => xmlEsc(siteUrl + '/' + segs.map(encodeURIComponent).join('/'))
 let sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-sm += `  <url><loc>${siteUrl}/</loc><priority>1.0</priority></url>\n`
-for (const p of posts) sm += `  <url><loc>${siteUrl}/post/${p.slug}</loc><lastmod>${p.publishedAt.slice(0, 10)}</lastmod><priority>0.9</priority></url>\n`
-for (const c of categories) sm += `  <url><loc>${siteUrl}/category/${c.slug}</loc><priority>0.8</priority></url>\n`
-for (const t of tags) sm += `  <url><loc>${siteUrl}/tag/${t.slug}</loc><priority>0.7</priority></url>\n`
-sm += `  <url><loc>${siteUrl}/notes</loc><priority>0.7</priority></url>\n</urlset>`
+sm += `  <url><loc>${loc()}</loc><priority>1.0</priority></url>\n`
+for (const p of posts) sm += `  <url><loc>${loc('post', p.slug)}</loc><lastmod>${p.publishedAt.slice(0, 10)}</lastmod><priority>0.9</priority></url>\n`
+for (const c of categories) sm += `  <url><loc>${loc('category', c.slug)}</loc><priority>0.8</priority></url>\n`
+for (const t of tags) sm += `  <url><loc>${loc('tag', t.slug)}</loc><priority>0.7</priority></url>\n`
+sm += `  <url><loc>${loc('notes')}</loc><priority>0.7</priority></url>\n</urlset>`
 await writeFile(path.join(publicDir, 'sitemap.xml'), sm)
 await writeFile(path.join(publicDir, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${siteUrl}/sitemap.xml\n`)
 
