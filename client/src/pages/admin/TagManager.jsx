@@ -22,10 +22,10 @@ export default function TagManager() {
     try {
       if (editing) {
         await updateTag(editing, { name })
-        setToast('已更新')
+        setToast({ type: 'success', text: '已更新' })
       } else {
         await createTag({ name })
-        setToast('已创建')
+        setToast({ type: 'success', text: '已创建' })
       }
       setName(''); setEditing(null)
       load()
@@ -88,7 +88,7 @@ export default function TagManager() {
         onConfirm={async () => {
           try {
             await deleteTag(confirmDelete.id)
-            setToast('已删除')
+            setToast({ type: 'success', text: '已删除' })
             load()
           } catch { setToast({ type: 'error', text: '删除失败' }) }
           setConfirmDelete(null)

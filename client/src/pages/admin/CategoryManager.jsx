@@ -23,10 +23,10 @@ export default function CategoryManager() {
     try {
       if (editing) {
         await updateCategory(editing, { name, description })
-        setToast('已更新')
+        setToast({ type: 'success', text: '已更新' })
       } else {
         await createCategory({ name, description })
-        setToast('已创建')
+        setToast({ type: 'success', text: '已创建' })
       }
       setName(''); setDescription(''); setEditing(null)
       load()
@@ -98,7 +98,7 @@ export default function CategoryManager() {
         onConfirm={async () => {
           try {
             await deleteCategory(confirmDelete.id)
-            setToast('已删除')
+            setToast({ type: 'success', text: '已删除' })
             load()
           } catch { setToast({ type: 'error', text: '删除失败' }) }
           setConfirmDelete(null)
