@@ -1,22 +1,5 @@
 const noteService = require('../services/note-service')
 
-async function listPublic(req, res, next) {
-  try {
-    const result = await noteService.list(req.query)
-    res.json({
-      data: result.data,
-      pagination: {
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        totalPages: Math.ceil(result.total / result.limit),
-      },
-    })
-  } catch (err) {
-    next(err)
-  }
-}
-
 async function list(req, res, next) {
   try {
     const result = await noteService.list(req.query)
@@ -92,4 +75,4 @@ async function exportNote(req, res, next) {
   }
 }
 
-module.exports = { listPublic, list, getById, create, update, remove, exportNote }
+module.exports = { list, getById, create, update, remove, exportNote }

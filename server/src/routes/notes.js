@@ -10,7 +10,7 @@ const upload = multer({ dest: path.join(os.tmpdir(), 'blog-note-uploads'), limit
 
 // 公开路由
 const publicRouter = Router()
-publicRouter.get('/', controller.listPublic)
+publicRouter.get('/', controller.list)
 
 // 管理路由
 const adminRouter = Router()
