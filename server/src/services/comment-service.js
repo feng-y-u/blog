@@ -1,9 +1,9 @@
 const prisma = require('../utils/prisma')
 const { COMMENT_STATUS } = require('../constants')
 
-function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-}
+// Comments are stored raw: React escapes text at render time (no dangerouslySetInnerHTML
+// is used anywhere in the client). Do NOT reintroduce server-side HTML escaping here,
+// it causes double-escaped output (e.g. "&lt;" shown literally).
 
 async function listByPost(postId) {
   return prisma.comment.findMany({
@@ -27,13 +27,17 @@ async function create(postId, { authorName, authorEmail, content, parentId }) {
   if (parentId && (!parent || parent.postId !== postId)) {
     throw Object.assign(new Error('父评论不存在'), { statusCode: 400 })
   }
+  if (parentId && parent.parentId !== null) {
+    // Only one reply level is supported; nested replies would never be displayed.
+    throw Object.assign(new Error('暂不支持回复的回复'), { statusCode: 400 })
+  }
 
   return prisma.comment.create({
     data: {
       postId,
-      authorName: escapeHtml(authorName),
+      authorName,
       authorEmail,
-      content: escapeHtml(content),
+      content,
       parentId: parentId ? +parentId : null,
       status: COMMENT_STATUS.PENDING,
     },
@@ -74,8 +78,18 @@ async function remove(id) {
   const existing = await prisma.comment.findUnique({ where: { id } })
   if (!existing) return null
 
-  await prisma.comment.deleteMany({ where: { parentId: id } })
-  await prisma.comment.delete({ where: { id } })
+  // Collect and delete all descendants: the self-relation has no DB-level cascade.
+  const ids = [id]
+  let frontier = [id]
+  while (frontier.length) {
+    const children = await prisma.comment.findMany({
+      where: { parentId: { in: frontier } },
+      select: { id: true },
+    })
+    frontier = children.map(c => c.id)
+    ids.push(...frontier)
+  }
+  await prisma.comment.deleteMany({ where: { id: { in: ids } } })
   return true
 }
 
