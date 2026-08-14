@@ -6,7 +6,7 @@ async function listPublic(params = {}) {
 }
 
 async function list({ page = 1, limit = 20, categoryId } = {}) {
-  page = +page; limit = Math.min(+limit, 100)
+  page = Math.max(+page || 1, 1); limit = Math.min(Math.max(+limit || 20, 1), 100)
   const where = {}
   if (categoryId) where.categoryId = +categoryId
 

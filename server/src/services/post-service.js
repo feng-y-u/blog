@@ -7,7 +7,7 @@ function reshapeTags(post) {
 }
 
 async function list({ page = 1, limit = 3, category, tag, status, search, user } = {}) {
-  page = +page; limit = Math.min(+limit, 100)
+  page = Math.max(+page || 1, 1); limit = Math.min(Math.max(+limit || 3, 1), 100)
   const where = {}
 
   if (category) where.category = { slug: category }
@@ -101,17 +101,18 @@ async function update(id, data) {
   }
   if (categoryId !== undefined) updateData.categoryId = categoryId ? parseInt(categoryId, 10) : null
 
-  if (tagIds !== undefined) {
-    await prisma.postTag.deleteMany({ where: { postId: id } })
-    if (tagIds.length) {
-      await prisma.postTag.createMany({ data: tagIds.map(tagId => ({ postId: id, tagId })) })
+  const post = await prisma.$transaction(async tx => {
+    if (tagIds !== undefined) {
+      await tx.postTag.deleteMany({ where: { postId: id } })
+      if (tagIds.length) {
+        await tx.postTag.createMany({ data: tagIds.map(tagId => ({ postId: id, tagId })) })
+      }
     }
-  }
-
-  const post = await prisma.post.update({
-    where: { id },
-    data: updateData,
-    include: { category: true, tags: { include: { tag: true } } },
+    return tx.post.update({
+      where: { id },
+      data: updateData,
+      include: { category: true, tags: { include: { tag: true } } },
+    })
   })
 
   return reshapeTags(post)
@@ -129,7 +130,8 @@ async function updateStatus(id, status) {
   if (!existing) return null
 
   const data = { status }
-  if (status === POST_STATUS.PUBLISHED) data.publishedAt = new Date()
+  // Keep the original publish date on re-publish, consistent with update().
+  if (status === POST_STATUS.PUBLISHED && !existing.publishedAt) data.publishedAt = new Date()
 
   const post = await prisma.post.update({
     where: { id },

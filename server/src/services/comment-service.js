@@ -45,7 +45,7 @@ async function create(postId, { authorName, authorEmail, content, parentId }) {
 }
 
 async function listAll({ page = 1, limit = 20, status } = {}) {
-  page = +page; limit = Math.min(+limit, 100)
+  page = Math.max(+page || 1, 1); limit = Math.min(Math.max(+limit || 20, 1), 100)
   const where = {}
   if (status) where.status = status
 
