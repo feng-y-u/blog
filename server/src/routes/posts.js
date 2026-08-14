@@ -4,7 +4,7 @@ const auth = require('../middleware/auth')
 const optionalAuth = require('../middleware/optional-auth')
 
 router.get('/', optionalAuth, controller.list)
-router.get('/id/:id', controller.getById)
+router.get('/id/:id', optionalAuth, controller.getById)
 router.get('/:id/adjacent', controller.getAdjacentPosts)
 router.get('/:slug', controller.getBySlug)
 router.post('/', auth, controller.create)

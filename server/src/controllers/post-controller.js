@@ -79,7 +79,7 @@ async function updateStatus(req, res, next) {
 async function getById(req, res, next) {
   try {
     const id = +req.params.id
-    const post = await postService.getById(id)
+    const post = await postService.getById(id, req.user)
     if (!post) return res.status(404).json({ error: '文章不存在' })
     res.json({ data: post })
   } catch (err) {

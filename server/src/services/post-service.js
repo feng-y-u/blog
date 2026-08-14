@@ -54,7 +54,7 @@ async function getBySlug(slug, user) {
   return reshapeTags(post)
 }
 
-async function getById(id) {
+async function getById(id, user) {
   const post = await prisma.post.findUnique({
     where: { id },
     include: {
@@ -62,6 +62,7 @@ async function getById(id) {
       tags: { include: { tag: true } },
     },
   })
+  if (!post || (post.status !== POST_STATUS.PUBLISHED && !user)) return null
   return post ? reshapeTags(post) : null
 }
 
