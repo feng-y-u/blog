@@ -116,6 +116,11 @@
   color: var(--fg);
   margin: 28px 0 10px;
 }
+.article-body h2,
+.article-body h3 {
+  /* keep headings clear of the fixed navbar when scrolled via TOC */
+  scroll-margin-top: 72px;
+}
 .article-body p {
   margin-bottom: 16px;
   line-height: 1.9;

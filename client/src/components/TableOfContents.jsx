@@ -1,22 +1,35 @@
+function makeId(text, used) {
+  const base = text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w一-鿿-]/g, '') || 'heading'
+  const n = (used.get(base) || 0) + 1
+  used.set(base, n)
+  return n === 1 ? base : `${base}-${n}`
+}
+
+// Extract h2/h3 headings from markdown, skipping fenced code blocks.
 export function extractTOC(content) {
-  const regex = /^(#{2,3})\s+(.+)$/gm
+  const used = new Map()
   const headings = []
-  let match
-  while ((match = regex.exec(content)) !== null) {
-    const text = match[2].replace(/[`*_~]/g, '').trim()
-    headings.push({
-      level: match[1].length,
-      text,
-      id: text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w一-鿿-]/g, ''),
-    })
+  let inFence = false
+  for (const line of content.split('\n')) {
+    if (/^\s*(```|~~~)/.test(line)) {
+      inFence = !inFence
+      continue
+    }
+    if (inFence) continue
+    const m = /^(#{2,3})\s+(.+)$/.exec(line)
+    if (!m) continue
+    const text = m[2].replace(/[`*_~]/g, '').trim()
+    headings.push({ level: m[1].length, text, id: makeId(text, used) })
   }
   return headings
 }
 
-function handleClick(id) {
+// Scroll to the Nth heading in the rendered article body (order matches extractTOC).
+function handleClick(index) {
   return (e) => {
     e.preventDefault()
-    const el = document.getElementById(id)
+    const els = document.querySelectorAll('.article-body h2, .article-body h3')
+    const el = els[index]
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 }
@@ -28,15 +41,15 @@ export default function TableOfContents({ headings }) {
     <div className="article-toc">
       <div className="article-toc-title">目录</div>
       <ul className="article-toc-list">
-        {headings.map(h => (
+        {headings.map((h, i) => (
           <li
-            key={h.id}
+            key={i}
             className={`article-toc-item article-toc-item-${h.level === 3 ? 'h3' : 'h2'}`}
           >
             <a
               href={`#${h.id}`}
               className="article-toc-link"
-              onClick={handleClick(h.id)}
+              onClick={handleClick(i)}
             >
               {h.text}
             </a>
