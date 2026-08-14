@@ -31,7 +31,7 @@ export default function CommentManager() {
   async function handleUpdate(id, data) {
     try {
       await client.put(`/comments/${id}`, data)
-      setToast(data.status === 'approved' ? '已批准' : '已驳回')
+      setToast({ type: 'success', text: data.status === 'approved' ? '已批准' : '已驳回' })
       load()
     } catch { setToast({ type: 'error', text: '操作失败' }) }
   }
@@ -121,7 +121,7 @@ export default function CommentManager() {
         onConfirm={async () => {
           try {
             await client.delete(`/comments/${confirmDelete.id}`)
-            setToast('已删除')
+            setToast({ type: 'success', text: '已删除' })
             load()
           } catch { setToast({ type: 'error', text: '删除失败' }) }
           setConfirmDelete(null)

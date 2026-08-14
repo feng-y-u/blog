@@ -218,10 +218,7 @@ export default function CommentSection({ postId }) {
     }
   }
 
-  const handleReply = handleCreate
-
   if (loading) return <div className="text-center py-8" style={{ fontSize: '14px', color: 'var(--fg-muted)' }}>加载评论中...</div>
-
   return (
     <>
       <style>{TEXTAREA_CSS}</style>
@@ -238,7 +235,7 @@ export default function CommentSection({ postId }) {
       {comments.length > 0 && (
         <div className="comment-list" style={{ marginTop: '24px' }}>
           {comments.map(comment => (
-            <CommentItem key={comment.id} comment={comment} postId={postId} onReply={handleReply} />
+            <CommentItem key={comment.id} comment={comment} postId={postId} onReply={handleCreate} />
           ))}
         </div>
       )}

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-export default function ArticleFooter({ tags, postId, isFavorited, onToggleFavorite, onCopyLink, copied }) {
+export default function ArticleFooter({ tags, isFavorited, onToggleFavorite, onCopyLink, copied }) {
   return (
     <div className="article-footer">
       {tags?.length > 0 && (

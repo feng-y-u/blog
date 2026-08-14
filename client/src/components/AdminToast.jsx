@@ -13,7 +13,7 @@ export default function AdminToast({ message, onClose, type }) {
     return () => clearTimeout(timer)
   }, [message, onClose])
 
-  if (!message || (!visible && !message)) return null
+  if (!message) return null
 
   return (
     <div className="admin-toast" data-type={type || 'success'} data-visible={visible}>

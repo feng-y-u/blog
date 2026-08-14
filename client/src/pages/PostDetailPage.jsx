@@ -90,7 +90,7 @@ export default function PostDetailPage() {
         <ArticleToolbar author={post.author?.displayName} viewCount={post.viewCount} fontSize={fontSize} onFontSizeChange={setFontSize} />
         <TableOfContents headings={headings} />
         <ArticleBody content={post.content} onImageClick={setLightboxSrc} />
-        <ArticleFooter tags={post.tags} postId={post.id} isFavorited={isFavorited} onToggleFavorite={handleToggleFavorite} onCopyLink={handleCopyLink} copied={copied} />
+        <ArticleFooter tags={post.tags} isFavorited={isFavorited} onToggleFavorite={handleToggleFavorite} onCopyLink={handleCopyLink} copied={copied} />
       </article>
       <AdjacentNav prev={adjacent.prev} next={adjacent.next} />
       <section className="comment-section">

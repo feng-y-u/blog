@@ -1,5 +1,5 @@
 export function formatDate(date) {
-  return new Date(date).toLocaleDateString()
+  return new Date(date).toLocaleDateString('zh-CN')
 }
 
 export function formatTime(date) {

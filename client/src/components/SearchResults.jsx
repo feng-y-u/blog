@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import EmptyState from './EmptyState'
+import Loading from './Loading'
 
 function highlightText(text, keyword) {
   if (!keyword) return text
@@ -19,13 +20,7 @@ function readingTime(content) {
 
 export default function SearchResults({ results, keyword, loading }) {
   if (loading) {
-    return <div className="loading">
-      <div className="skeleton-card">
-        <div className="skeleton-line skeleton-line-sm" />
-        <div className="skeleton-line skeleton-line-lg" />
-        <div className="skeleton-line skeleton-line-md" />
-      </div>
-    </div>
+    return <Loading />
   }
 
   if (!results || results.length === 0) {
