@@ -79,7 +79,7 @@ posts.json 每篇文章字段：`{ slug, title, date, category, tags, cover, exc
 
 | 模块 | 行为 |
 |---|---|
-| `api/posts.js` | `getPosts({page,limit,category,tag,search})` 前端过滤（category/tag 按 slug、search 匹配标题+正文、分页计算 totalPages）；`getPostBySlug(slug)`；`getAdjacentPosts(id)` 按日期排序取前后篇。删除管理函数 |
+| `api/posts.js` | `getPosts({page,limit,category,tag,search})` 前端过滤（category/tag 按 slug、search 匹配标题+正文、分页计算 totalPages）；`getPostBySlug(slug)`；相邻文章由 PostDetailPage 本地计算（全量列表按索引取前后篇）。删除管理函数 |
 | `api/categories.js` | `getCategories()` / `getCategoryBySlug(slug)` 读 JSON |
 | `api/tags.js` | `getTags()` 读 JSON |
 | `api/note.js` | `getNotes(params)` / `getPublicNotes(params)` 前端分页。删除管理函数 |
