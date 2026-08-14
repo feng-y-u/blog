@@ -73,7 +73,7 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
     >
       {/* 全背景粒子 */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-        <ParticleCanvas colorKey={post.category?.name || 'default'} />
+        <ParticleCanvas />
       </div>
 
       {/* 左栏：文字 */}
