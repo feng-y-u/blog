@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useOutletContext } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { getPosts } from '../api/posts'
 import MagazinePage from '../components/MagazinePage'
@@ -10,7 +11,8 @@ import Loading from '../components/Loading'
 
 const FEATURED_COUNT = 6
 
-export default function HomePage({ onSearchOpen }) {
+export default function HomePage() {
+  const { onSearchOpen } = useOutletContext() ?? {}
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [visibleIndex, setVisibleIndex] = useState(0)
