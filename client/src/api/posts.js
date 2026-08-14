@@ -12,7 +12,7 @@ export async function getPosts(params = {}) {
   if (tag) list = list.filter(p => p.tags?.some(t => t.slug === tag))
   if (search) {
     const q = String(search).toLowerCase()
-    list = list.filter(p => p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q))
+    list = list.filter(p => p.title?.toLowerCase().includes(q) || p.content?.toLowerCase().includes(q))
   }
   const total = list.length
   const safePage = Math.max(+page || 1, 1)

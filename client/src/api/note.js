@@ -5,9 +5,9 @@ const notes = () => (notesPromise ??= loadJson('/data/notes.json'))
 
 async function list(params = {}) {
   const all = await notes()
-  const { page = 1, limit = 20, categoryId } = params
+  const { page = 1, limit = 20, category } = params
   let list = all
-  if (categoryId) list = list.filter(n => n.category?.slug === categoryId)
+  if (category) list = list.filter(n => n.category?.slug === category)
   const total = list.length
   const safePage = Math.max(+page || 1, 1)
   const safeLimit = Math.min(Math.max(+limit || 20, 1), 100)
