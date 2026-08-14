@@ -25,7 +25,7 @@ export default function PostEditor() {
   const [excerpt, setExcerpt] = useState('')
   const [coverImage, setCoverImage] = useState('')
   const [jpChar, setJpChar] = useState('')
-  const [categoryId, setCategoryId] = useState('5')
+  const [categoryId, setCategoryId] = useState('')
   const [selectedTags, setSelectedTags] = useState([])
   const [categories, setCategories] = useState([])
   const [tags, setTags] = useState([])
@@ -63,7 +63,7 @@ export default function PostEditor() {
       setExcerpt(post.excerpt || '')
       setCoverImage(post.coverImage || '')
       setJpChar(post.jpChar || '')
-      setCategoryId(String(post.categoryId || '5'))
+      setCategoryId(post.categoryId ? String(post.categoryId) : '')
       setSelectedTags(post.tags?.map(t => t.id) || [])
       if (post.content && editor) {
         const blocks = await editor.tryParseMarkdownToBlocks(post.content)
@@ -198,7 +198,7 @@ export default function PostEditor() {
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: 'var(--fg)' }}>分类</label>
             <select value={categoryId} onChange={e => setCategoryId(e.target.value)}
               style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', fontSize: '13px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--fg)' }}>
-              <option value="5">其他</option>
+              <option value="">未分类</option>
               {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
             </select>
           </div>
