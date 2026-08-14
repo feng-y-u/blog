@@ -27,7 +27,7 @@ export default function TagCloudPage() {
             const opacity = 0.5 + weight * 0.5
             return (
               <Link
-                key={tag.id}
+                key={tag.slug}
                 to={`/tag/${tag.slug}`}
                 className="tag"
                 style={{

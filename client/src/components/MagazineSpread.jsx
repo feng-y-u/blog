@@ -143,7 +143,7 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
         {post.tags?.length > 0 && (
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: compact ? '12px' : '24px' }}>
             {post.tags.slice(0, compact ? 2 : 4).map(tag => (
-              <span key={tag.id} style={{
+              <span key={tag.slug} style={{
                 fontSize: '10px', padding: '3px 10px',
                 borderRadius: '20px',
                 border: '1px solid var(--accent-pink-dim)',

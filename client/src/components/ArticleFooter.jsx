@@ -6,7 +6,7 @@ export default function ArticleFooter({ tags, isFavorited, onToggleFavorite, onC
       {tags?.length > 0 && (
         <div className="article-tags">
           {tags.map(tag => (
-            <Link key={tag.id} to={`/tag/${tag.slug}`} className="tag">
+            <Link key={tag.slug} to={`/tag/${tag.slug}`} className="tag">
               {tag.name}
             </Link>
           ))}

@@ -46,7 +46,7 @@ export default function Sidebar() {
           <div className="section-title">分类</div>
           <div className="category-list">
             {categories.map(cat => (
-              <Link key={cat.id} to={`/category/${cat.slug}`} className="tag-row">
+              <Link key={cat.slug} to={`/category/${cat.slug}`} className="tag-row">
                 <span>{cat.name}</span>
                 <span>{cat._count?.posts || 0}</span>
               </Link>

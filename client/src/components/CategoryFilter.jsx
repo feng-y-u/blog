@@ -10,7 +10,7 @@ export default function CategoryFilter({ categories, activeCategory, onCategoryC
       </button>
       {categories.map(cat => (
         <button
-          key={cat.id}
+          key={cat.slug}
           onClick={() => onCategoryClick(cat.slug)}
           className={`filter-btn${activeCategory === cat.slug ? ' active' : ''}`}
         >

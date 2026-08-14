@@ -35,7 +35,7 @@ export default function PostCard({ post }) {
         {post.tags?.length > 0 && (
           <div className="post-card-tags">
             {post.tags.slice(0, 4).map(tag => (
-              <span key={tag.id} className="tag" style={{ fontSize: '10px', padding: '2px 8px' }}>{tag.name}</span>
+              <span key={tag.slug} className="tag" style={{ fontSize: '10px', padding: '2px 8px' }}>{tag.name}</span>
             ))}
           </div>
         )}

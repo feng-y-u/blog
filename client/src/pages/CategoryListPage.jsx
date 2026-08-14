@@ -18,7 +18,7 @@ export default function CategoryListPage() {
       <h1 className="page-title">分类列表</h1>
       <div className="card-grid">
         {categories.map(cat => (
-          <Link key={cat.id} to={`/category/${cat.slug}`} className="card card-hover" style={{ padding: '24px', textDecoration: 'none', color: 'inherit' }}>
+          <Link key={cat.slug} to={`/category/${cat.slug}`} className="card card-hover" style={{ padding: '24px', textDecoration: 'none', color: 'inherit' }}>
             <h2 style={{ fontSize: '18px', fontWeight: 600 }}>{cat.name}</h2>
             {cat.description && <p style={{ fontSize: '13px', color: 'var(--fg-secondary)', marginTop: '4px' }}>{cat.description}</p>}
             <span style={{ fontSize: '13px', color: 'var(--fg-muted)', marginTop: '8px', display: 'inline-block' }}>{cat._count?.posts || 0} 篇文章</span>

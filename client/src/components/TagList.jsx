@@ -5,7 +5,7 @@ export default function TagList({ tags, variant = 'tag', getLink }) {
   return (
     <>
       {tags.map(tag => (
-        <Link key={tag.id} to={getLink(tag.slug)} className={variant === 'row' ? 'tag-row' : 'tag'}>
+        <Link key={tag.slug} to={getLink(tag.slug)} className={variant === 'row' ? 'tag-row' : 'tag'}>
           {tag.name}
           {variant === 'row' && <span>{tag._count?.posts || 0}</span>}
         </Link>
