@@ -1,5 +1,6 @@
 import client from './client'
 
+export const getPublicNotes = params => client.get('/notes/public', { params })
 export const getNotes = params => client.get('/notes', { params })
 export const getNote = id => client.get(`/notes/${id}`)
 export const createNote = data => client.post('/notes', data)

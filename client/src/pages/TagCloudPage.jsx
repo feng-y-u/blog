@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getTags } from '../api/posts'
+import { getTags } from '../api/tags'
 import Loading from '../components/Loading'
 
 export default function TagCloudPage() {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getTags, createTag, updateTag, deleteTag } from '../../api/posts'
+import { getTags, createTag, updateTag, deleteTag } from '../../api/tags'
 import AdminToast from '../../components/AdminToast'
 import ConfirmModal from '../../components/ConfirmModal'
 import Loading from '../../components/Loading'

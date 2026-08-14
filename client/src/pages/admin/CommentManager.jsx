@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import client from '../../api/client'
+import { getComments, updateComment, deleteComment } from '../../api/comments'
 import AdminToast from '../../components/AdminToast'
 import ConfirmModal from '../../components/ConfirmModal'
 import Loading from '../../components/Loading'
@@ -19,7 +19,7 @@ export default function CommentManager() {
     setLoading(true)
     const params = { page, limit: 20 }
     if (filter) params.status = filter
-    client.get('/comments', { params })
+    getComments(params)
       .then(res => {
         setComments(res.data.data)
         setTotalPages(res.data.pagination.totalPages)
@@ -30,7 +30,7 @@ export default function CommentManager() {
 
   async function handleUpdate(id, data) {
     try {
-      await client.put(`/comments/${id}`, data)
+      await updateComment(id, data)
       setToast({ type: 'success', text: data.status === 'approved' ? '已批准' : '已驳回' })
       load()
     } catch { setToast({ type: 'error', text: '操作失败' }) }
@@ -120,7 +120,7 @@ export default function CommentManager() {
         danger
         onConfirm={async () => {
           try {
-            await client.delete(`/comments/${confirmDelete.id}`)
+            await deleteComment(confirmDelete.id)
             setToast({ type: 'success', text: '已删除' })
             load()
           } catch { setToast({ type: 'error', text: '删除失败' }) }

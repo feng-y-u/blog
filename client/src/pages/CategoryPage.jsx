@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getPosts, getCategoryBySlug } from '../api/posts'
+import { getPosts } from '../api/posts'
+import { getCategoryBySlug } from '../api/categories'
 import Loading from '../components/Loading'
 import PostCard from '../components/PostCard'
 

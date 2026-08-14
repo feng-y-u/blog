@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { getPosts, getCategories, getTags } from '../../api/posts'
-import client from '../../api/client'
+import { getPosts } from '../../api/posts'
+import { getCategories } from '../../api/categories'
+import { getTags } from '../../api/tags'
+import { getComments } from '../../api/comments'
 import { getNotes } from '../../api/note'
 import Loading from '../../components/Loading'
 
@@ -14,8 +16,8 @@ export default function AdminDashboard() {
       getPosts({ limit: 1 }),
       getCategories(),
       getTags(),
-      client.get('/comments', { params: { limit: 1 } }),
-      client.get('/comments', { params: { limit: 5, status: 'pending' } }),
+      getComments({ limit: 1 }),
+      getComments({ limit: 5, status: 'pending' }),
       getNotes({ limit: 1 }),
     ]).then(([postsRes, catRes, tagRes, commentsRes, pendingRes, notesRes]) => {
       setStats({

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getCategories, createCategory, updateCategory, deleteCategory } from '../../api/posts'
+import { getCategories, createCategory, updateCategory, deleteCategory } from '../../api/categories'
 import AdminToast from '../../components/AdminToast'
 import ConfirmModal from '../../components/ConfirmModal'
 import Loading from '../../components/Loading'

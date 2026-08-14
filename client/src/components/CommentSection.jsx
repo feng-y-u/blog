@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import client from '../api/client'
+import { getPostComments, createComment } from '../api/comments'
 import { formatTime } from '../utils/date'
 
 const AVATARS = ['🐱', '🦊', '🐧', '🐰', '🐻', '🐼', '🐨', '🦁']
@@ -196,7 +196,7 @@ export default function CommentSection({ postId }) {
   const [error, setError] = useState(null)
 
   function fetchComments() {
-    return client.get(`/posts/${postId}/comments`)
+    return getPostComments(postId)
       .then(res => setComments(res.data.data))
       .catch(() => setError('加载评论失败'))
       .finally(() => setLoading(false))
@@ -205,7 +205,7 @@ export default function CommentSection({ postId }) {
   useEffect(() => { fetchComments() }, [postId])
 
   async function handleCreate(data) {
-    const res = await client.post(`/posts/${postId}/comments`, data)
+    const res = await createComment(postId, data)
     return res.data.data
   }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getCategories } from '../api/posts'
+import { getCategories } from '../api/categories'
 import Loading from '../components/Loading'
 
 export default function CategoryListPage() {

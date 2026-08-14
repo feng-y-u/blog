@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import client from '../api/client'
+import { getPublicNotes } from '../api/note'
 import Loading from '../components/Loading'
 import { formatTime } from '../utils/date'
 
@@ -15,7 +15,7 @@ export default function NotesPage() {
 
   useEffect(() => {
     setLoading(true)
-    client.get('/notes/public', { params: { page, limit: 20 } })
+    getPublicNotes({ page, limit: 20 })
       .then(res => {
         setNotes(res.data.data)
         setTotalPages(res.data.pagination.totalPages)
