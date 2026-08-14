@@ -36,7 +36,8 @@ async function loadMarkdownFiles(dir) {
     const title = data.title || content.match(/^#\s+(.+)$/m)?.[1]?.trim() || slug
     const fileStat = await stat(path.join(dir, f.name))
     const date = datePrefix || data.date || fileStat.mtime.toISOString().slice(0, 10)
-    items.push({ slug, title, date, data, content })
+    const dateStr = (date instanceof Date ? date.toISOString().slice(0, 10) : date)
+    items.push({ slug, title, date: dateStr, data, content })
   }
   return items
 }
@@ -87,6 +88,7 @@ const notes = noteFiles.map(({ slug, title, date, data, content }) => {
   if (seenNoteSlugs.has(slug)) throw new Error(`重复的笔记 slug: ${slug}`)
   seenNoteSlugs.add(slug)
   const categoryName = data.category || null
+  if (categoryName && !categoryNames.has(categoryName)) console.warn('笔记分类未收录: ' + categoryName)
   return {
     slug,
     title,
