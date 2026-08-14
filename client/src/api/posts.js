@@ -31,9 +31,3 @@ export async function getPostBySlug(slug) {
   const post = all.find(p => p.slug === slug) || null
   return { data: { data: post } }
 }
-
-export async function getAdjacentPosts() {
-  const all = await posts()
-  // Computed by PostDetailPage via currentIndex instead (see Task 5).
-  return { data: { data: { prev: null, next: null } } }
-}

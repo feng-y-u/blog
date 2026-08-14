@@ -33,7 +33,7 @@ export default function NotesPage() {
       ) : (
         <div className="notes-grid">
           {notes.map(note => (
-            <div key={note.id} className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}>
+            <div key={note.slug} className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '10px' }}>{note.title}</h2>
               <p style={{
                 fontSize: '13px', color: 'var(--fg-secondary)', lineHeight: 1.7,

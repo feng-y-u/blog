@@ -14,7 +14,7 @@ export default function RestPosts({ posts, searchTrigger }) {
 
         <div className="post-list">
           {posts.map(post => (
-            <PostCard key={post.id} post={post} />
+            <PostCard key={post.slug} post={post} />
           ))}
         </div>
       </div>

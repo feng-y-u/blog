@@ -52,7 +52,7 @@ export default function CategoryPage() {
       )}
 
       <div className="post-list">
-        {posts.map(post => <PostCard key={post.id} post={post} />)}
+        {posts.map(post => <PostCard key={post.slug} post={post} />)}
         {posts.length === 0 && <p style={{ color: 'var(--fg-secondary)' }}>该分类下暂无文章</p>}
       </div>
     </div>

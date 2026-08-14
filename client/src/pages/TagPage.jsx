@@ -47,7 +47,7 @@ export default function TagPage() {
       </div>
 
       <div className="post-list">
-        {posts.map(post => <PostCard key={post.id} post={post} />)}
+        {posts.map(post => <PostCard key={post.slug} post={post} />)}
         {posts.length === 0 && <p style={{ color: 'var(--fg-secondary)' }}>该标签下暂无文章</p>}
       </div>
     </div>

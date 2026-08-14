@@ -8,7 +8,7 @@ export default function MagazinePage({ posts, pageIndex, visibleIndex, postsPerP
     <div data-index={pageIndex} className="magazine-page">
       <MagazineNumbering side="left">
         {posts.map((post, i) => (
-          <div key={post.id} style={{
+          <div key={post.slug} style={{
             height: posts.length >= 2 ? `calc(100vh / ${posts.length})` : '100vh',
             display: 'flex',
             flexDirection: 'column',
@@ -57,7 +57,7 @@ export default function MagazinePage({ posts, pageIndex, visibleIndex, postsPerP
       }}>
         {posts.map((post, i) => (
           <MagazineSpread
-            key={post.id}
+            key={post.slug}
             post={post}
             index={pageIndex * perPage + i}
             isVisible={pageIndex === visibleIndex}

@@ -42,7 +42,7 @@ export default function SearchResults({ results, keyword, loading }) {
       <p className="search-result-count">找到 {results.length} 条结果</p>
       <div className="search-results">
         {results.map(post => (
-          <article key={post.id} className="post-card">
+          <article key={post.slug} className="post-card">
             {post.coverImage && (
               <div className="post-card-cover">
                 <img src={post.coverImage} alt="" loading="lazy" />

@@ -130,7 +130,7 @@ export default function SearchModal({ onClose }) {
           <div style={{ marginTop: '16px' }}>
             {results.map(post => (
               <Link
-                key={post.id}
+                key={post.slug}
                 to={`/post/${post.slug}`}
                 onClick={onClose}
                 style={{
