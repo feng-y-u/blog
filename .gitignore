@@ -41,3 +41,9 @@ server/uploads/*
 
 # Prisma (keep schema, ignore generated client)
 server/node_modules/.prisma/
+
+# Static build artifacts
+client/public/data/
+client/public/images/
+client/public/sitemap.xml
+client/public/robots.txt
