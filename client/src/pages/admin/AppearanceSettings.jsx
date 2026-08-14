@@ -15,7 +15,7 @@ const FIELDS = [
 ]
 
 export default function AppearanceSettings() {
-  const { settings, reload } = useSettings()
+  const { settings, error, reload } = useSettings()
   const [form, setForm] = useState({})
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState(null)
@@ -56,6 +56,15 @@ export default function AppearanceSettings() {
     } finally {
       setSaving(false)
     }
+  }
+
+  if (!settings && error) {
+    return (
+      <div className="admin-card" style={{ padding: '32px', textAlign: 'center' }}>
+        <p style={{ marginBottom: '16px', color: 'var(--fg-secondary)' }}>设置加载失败，请重试</p>
+        <button onClick={reload} className="admin-btn admin-btn-primary">重试</button>
+      </div>
+    )
   }
 
   if (!settings) {
