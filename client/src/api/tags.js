@@ -1,6 +1,8 @@
-import client from './client'
+import { loadJson } from './loader'
 
-export const getTags = () => client.get('/tags')
-export const createTag = data => client.post('/tags', data)
-export const updateTag = (id, data) => client.put(`/tags/${id}`, data)
-export const deleteTag = id => client.delete(`/tags/${id}`)
+let tagsPromise = null
+const tags = () => (tagsPromise ??= loadJson('/data/tags.json'))
+
+export async function getTags() {
+  return { data: { data: await tags() } }
+}

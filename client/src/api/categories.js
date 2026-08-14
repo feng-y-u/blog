@@ -1,7 +1,13 @@
-import client from './client'
+import { loadJson } from './loader'
 
-export const getCategories = () => client.get('/categories')
-export const getCategoryBySlug = slug => client.get(`/categories/${slug}`)
-export const createCategory = data => client.post('/categories', data)
-export const updateCategory = (id, data) => client.put(`/categories/${id}`, data)
-export const deleteCategory = id => client.delete(`/categories/${id}`)
+let categoriesPromise = null
+const categories = () => (categoriesPromise ??= loadJson('/data/categories.json'))
+
+export async function getCategories() {
+  return { data: { data: await categories() } }
+}
+
+export async function getCategoryBySlug(slug) {
+  const all = await categories()
+  return { data: { data: all.find(c => c.slug === slug) || null } }
+}

@@ -1,9 +1,24 @@
-import client from './client'
+import { loadJson } from './loader'
 
-export const getPublicNotes = params => client.get('/notes/public', { params })
-export const getNotes = params => client.get('/notes', { params })
-export const getNote = id => client.get(`/notes/${id}`)
-export const createNote = data => client.post('/notes', data)
-export const updateNote = (id, data) => client.put(`/notes/${id}`, data)
-export const deleteNote = id => client.delete(`/notes/${id}`)
-export const exportNote = id => client.get(`/notes/${id}/export`, { responseType: 'blob' })
+let notesPromise = null
+const notes = () => (notesPromise ??= loadJson('/data/notes.json'))
+
+async function list(params = {}) {
+  const all = await notes()
+  const { page = 1, limit = 20, categoryId } = params
+  let list = all
+  if (categoryId) list = list.filter(n => n.category?.slug === categoryId)
+  const total = list.length
+  const safePage = Math.max(+page || 1, 1)
+  const safeLimit = Math.min(Math.max(+limit || 20, 1), 100)
+  const start = (safePage - 1) * safeLimit
+  return {
+    data: {
+      data: list.slice(start, start + safeLimit),
+      pagination: { page: safePage, limit: safeLimit, total, totalPages: Math.ceil(total / safeLimit) },
+    },
+  }
+}
+
+export const getNotes = list
+export const getPublicNotes = list

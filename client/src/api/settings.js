@@ -1,9 +1,7 @@
-import client from './client'
+import { loadJson } from './loader'
 
-export function getSettings() {
-  return client.get('/settings')
-}
-
-export function updateSettings(data) {
-  return client.put('/settings', data)
+let settingsPromise = null
+export async function getSettings() {
+  settingsPromise ??= loadJson('/data/settings.json')
+  return { data: { data: await settingsPromise } }
 }
