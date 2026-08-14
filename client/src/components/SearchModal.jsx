@@ -8,6 +8,7 @@ export default function SearchModal({ onClose }) {
   const [loading, setLoading] = useState(false)
   const inputRef = useRef(null)
   const timerRef = useRef(null)
+  const seqRef = useRef(0)
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -20,11 +21,12 @@ export default function SearchModal({ onClose }) {
       return
     }
     timerRef.current = setTimeout(() => {
+      const seq = ++seqRef.current
       setLoading(true)
       getPosts({ search: query, limit: 10 })
-        .then(res => setResults(res.data.data))
+        .then(res => { if (seq === seqRef.current) setResults(res.data.data) })
         .catch(() => {})
-        .finally(() => setLoading(false))
+        .finally(() => { if (seq === seqRef.current) setLoading(false) })
     }, 300)
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)

@@ -11,16 +11,19 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let cancelled = false
     setLoading(true)
     Promise.all([
       getPosts({ category: slug, limit: 50 }),
       getCategoryBySlug(slug),
     ])
       .then(([postsRes, catRes]) => {
+        if (cancelled) return
         setPosts(postsRes.data.data)
         setCategory(catRes.data.data)
       })
-      .finally(() => setLoading(false))
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
   }, [slug])
 
   if (loading) return <Loading />

@@ -16,6 +16,7 @@ export default function SearchPage() {
   const [activeCategory, setActiveCategory] = useState('')
   const [searched, setSearched] = useState(false)
   const debounceRef = useRef(null)
+  const seqRef = useRef(0)
 
   useEffect(() => {
     getCategories().then(res => setCategories(res.data.data)).catch(() => {})
@@ -28,12 +29,13 @@ export default function SearchPage() {
   function doSearch(q, category) {
     const params = { search: q, limit: 50 }
     if (category) params.category = category
+    const seq = ++seqRef.current
     setLoading(true)
     setSearched(true)
     getPosts(params)
-      .then(res => setResults(res.data.data))
-      .catch(() => setResults([]))
-      .finally(() => setLoading(false))
+      .then(res => { if (seq === seqRef.current) setResults(res.data.data) })
+      .catch(() => { if (seq === seqRef.current) setResults([]) })
+      .finally(() => { if (seq === seqRef.current) setLoading(false) })
   }
 
   useEffect(() => {

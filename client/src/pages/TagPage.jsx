@@ -11,16 +11,19 @@ export default function TagPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let cancelled = false
     setLoading(true)
     Promise.all([
       getPosts({ tag: slug, limit: 50 }),
       getTags(),
     ])
       .then(([postsRes, tagsRes]) => {
+        if (cancelled) return
         setPosts(postsRes.data.data)
         setTag(tagsRes.data.data.find(t => t.slug === slug) || null)
       })
-      .finally(() => setLoading(false))
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
   }, [slug])
 
   if (loading) return <Loading />

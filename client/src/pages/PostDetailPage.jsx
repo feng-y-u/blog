@@ -32,17 +32,20 @@ export default function PostDetailPage() {
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
     setLoading(true)
     setError(null)
     getPostBySlug(slug)
       .then(({ data }) => {
+        if (cancelled) return undefined
         const p = data.data
         setPost(p)
         return getAdjacentPosts(p.id)
       })
-      .then(({ data }) => setAdjacent(data.data))
-      .catch(err => setError(err.response?.data?.error || '文章不存在'))
-      .finally(() => setLoading(false))
+      .then(res => { if (res && !cancelled) setAdjacent(res.data.data) })
+      .catch(err => { if (!cancelled) setError(err.response?.data?.error || '文章不存在') })
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
   }, [slug])
 
   useEffect(() => {
