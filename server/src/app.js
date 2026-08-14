@@ -38,7 +38,7 @@ const { uploadImage } = require('./controllers/upload-controller')
 const settingsRoutes = require('./routes/settings')
 const { sitemap, robots } = require('./controllers/sitemap-controller')
 
-app.use('/uploads', express.static('uploads'))
+app.use('/uploads', express.static(config.uploadDir))
 
 app.use('/api/auth', authRoutes)
 app.use('/api/posts', postRoutes)

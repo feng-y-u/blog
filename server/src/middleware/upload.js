@@ -1,12 +1,13 @@
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
+const config = require('../config')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const now = new Date()
     const dateDir = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}`
-    const dir = path.join(__dirname, '../../uploads/images', dateDir)
+    const dir = path.join(config.uploadDir, 'images', dateDir)
     fs.mkdirSync(dir, { recursive: true })
     cb(null, dir)
   },

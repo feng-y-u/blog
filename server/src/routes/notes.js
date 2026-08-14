@@ -1,9 +1,11 @@
 const { Router } = require('express')
 const multer = require('multer')
+const path = require('path')
 const controller = require('../controllers/note-controller')
 const auth = require('../middleware/auth')
+const config = require('../config')
 
-const upload = multer({ dest: 'uploads/notes/', limits: { fileSize: 1024 * 1024 } })
+const upload = multer({ dest: path.join(config.uploadDir, 'notes'), limits: { fileSize: 1024 * 1024 } })
 
 // 公开路由
 const publicRouter = Router()
