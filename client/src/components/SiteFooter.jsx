@@ -20,8 +20,6 @@ export default function SiteFooter({ simple }) {
       <Link to="/" className="link-accent" style={{ margin: '0 4px' }}>首页</Link>
       {' · '}
       <a href="#" className="link-accent" style={{ margin: '0 4px' }}>关于</a>
-      {' · '}
-      <a href="#" className="link-accent" style={{ margin: '0 4px' }}>友情链接</a>
     </footer>
   )
 }

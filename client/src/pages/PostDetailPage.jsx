@@ -35,9 +35,6 @@ export default function PostDetailPage() {
   const [fontSize, setFontSize] = useState(getInitialFontSize)
   const [lightboxSrc, setLightboxSrc] = useState(null)
   const [localViews, setLocalViews] = useState(0)
-  const [favorites, setFavorites] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('fav-posts') || '[]') } catch { return [] }
-  })
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -71,10 +68,6 @@ export default function PostDetailPage() {
     localStorage.setItem('article-font', fontSize)
   }, [fontSize])
 
-  useEffect(() => {
-    localStorage.setItem('fav-posts', JSON.stringify(favorites))
-  }, [favorites])
-
   function handleCopyLink() {
     navigator.clipboard.writeText(window.location.href).then(() => {
       setCopied(true)
@@ -82,16 +75,10 @@ export default function PostDetailPage() {
     }).catch(() => {})
   }
 
-  function handleToggleFavorite() {
-    if (!post) return
-    setFavorites(prev => prev.includes(post.slug) ? prev.filter(s => s !== post.slug) : [...prev, post.slug])
-  }
-
   if (loading) return <Loading />
   if (error) return <div style={{ textAlign: 'center', padding: '48px 24px', color: 'var(--accent-pink)' }}>{error}</div>
   if (!post) return null
 
-  const isFavorited = favorites.includes(post.slug)
   const headings = extractTOC(post.content)
 
   return (
@@ -108,7 +95,7 @@ export default function PostDetailPage() {
         <ArticleToolbar author={settings?.profile_name || ''} viewCount={localViews} fontSize={fontSize} onFontSizeChange={setFontSize} />
         <TableOfContents headings={headings} />
         <ArticleBody content={post.content} onImageClick={setLightboxSrc} />
-        <ArticleFooter tags={post.tags} isFavorited={isFavorited} onToggleFavorite={handleToggleFavorite} onCopyLink={handleCopyLink} copied={copied} />
+        <ArticleFooter tags={post.tags} onCopyLink={handleCopyLink} copied={copied} />
       </article>
       <AdjacentNav prev={adjacent.prev} next={adjacent.next} />
     </>

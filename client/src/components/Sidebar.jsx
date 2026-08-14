@@ -36,7 +36,7 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <ProfileCard avatar={avatarImg} emoji={avatarEmoji || null} name={profileName} socialLinks={socialLinks} signature={settings?.profile_signature} />
+      <ProfileCard avatar={settings?.avatar_image || avatarImg} emoji={avatarEmoji || null} name={profileName} socialLinks={socialLinks} signature={settings?.profile_signature} />
       <NavStats stats={stats} links={[
         { to: '/', label: '文章', key: 'posts' },
         { to: '/categories', label: '分类', key: 'categories' },
