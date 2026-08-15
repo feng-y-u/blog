@@ -97,7 +97,7 @@ export default function WriterPage() {
         <span className="writer-topbar-title">✏ 写作工具</span>
         <button className="writer-btn" onClick={handleOpenDir}>打开 content 目录</button>
         {permissionNeeded && <button className="writer-btn" onClick={handleReauthorize}>重新授权</button>}
-        {dir && <button className="writer-btn" onClick={() => setShowImages(true)}>图片管理</button>}
+        {dir && <button className="writer-btn" onClick={() => setShowImages(true)}>本文章片</button>}
         <span style={{ flex: 1 }} />
         {dir && <span style={{ fontSize: '12px', color: 'var(--fg-muted)' }}>已连接：content/</span>}
         {toast && <span style={{ fontSize: '12px', color: 'var(--accent-pink)' }}>{toast}</span>}
@@ -165,7 +165,7 @@ export default function WriterPage() {
             </div>
           </div>
         </div>
-        <ImageManager open={showImages} dir={dir} onClose={() => setShowImages(false)} />
+        <ImageManager open={showImages} dir={dir} form={current} onChange={onField} onClose={() => setShowImages(false)} />
         </>
       )}
     </div>

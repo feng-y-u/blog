@@ -1,54 +1,63 @@
-import { useState, useEffect } from 'react'
-import { listImageFiles, deleteImage, listMarkdownFiles, readTextFile } from '../../utils/file-system'
-import { parseFrontmatter } from '../../utils/frontmatter'
+import { useState } from 'react'
+import { deleteImage, listMarkdownFiles, readTextFile } from '../../utils/file-system'
 
-// Image manager modal: lists content/images/, shows which files are referenced
-// by posts, and allows deleting unreferenced or confirmed files.
-export default function ImageManager({ open, dir, onClose }) {
-  const [images, setImages] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-
-  async function load() {
-    setLoading(true)
-    setError(null)
-    try {
-      const names = await listImageFiles(dir)
-      const used = new Set()
-      const postsDir = await dir.getDirectoryHandle('posts')
-      for (const name of await listMarkdownFiles(postsDir)) {
-        const raw = await readTextFile(postsDir, name)
-        const { data } = parseFrontmatter(raw)
-        for (const m of raw.matchAll(/\/images\/([^)\s"'`]+)/g)) {
-          used.add(decodeURIComponent(m[1]))
-        }
-        if (data.coverImage) {
-          const m = String(data.coverImage).match(/\/images\/([^)\s"'`]+)/)
-          if (m) used.add(decodeURIComponent(m[1]))
-        }
-      }
-      setImages(names.map(name => ({ name, referenced: used.has(name) })))
-    } catch (err) {
-      setError('加载图片失败: ' + err.message)
-    } finally {
-      setLoading(false)
-    }
+// Extract /images/ references from the current article's content + coverImage.
+function extractImageRefs(content, coverImage) {
+  const refs = new Map()
+  for (const m of String(content || '').matchAll(/!\[[^\]]*\]\(\s*\/images\/([^)\s"'`]+)[^)]*\)/g)) {
+    const name = decodeURIComponent(m[1])
+    refs.set(name, { count: (refs.get(name)?.count || 0) + 1, isCover: false })
   }
+  const cm = String(coverImage || '').match(/\/images\/([^)\s"'`]+)/)
+  if (cm) {
+    const name = decodeURIComponent(cm[1])
+    refs.set(name, { count: refs.get(name)?.count || 0, isCover: true })
+  }
+  return [...refs.entries()].map(([name, v]) => ({ name, ...v }))
+}
 
-  useEffect(() => {
-    if (open && dir) load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, dir])
+// Article-scoped image manager: shows only images referenced by the article
+// being edited, tagged as cover/inline, and removes them with one click
+// (clears references + deletes the file unless other posts still use it).
+export default function ImageManager({ open, dir, form, onChange, onClose }) {
+  const [notice, setNotice] = useState(null)
+  const [busy, setBusy] = useState(null)
 
   if (!open) return null
 
-  async function handleDelete(name) {
-    if (!window.confirm(`确定删除图片 ${name}？此操作不可撤销。`)) return
+  const images = extractImageRefs(form.content, form.coverImage)
+
+  async function handleRemove(name, isCover) {
+    setBusy(name)
+    setNotice(null)
     try {
-      await deleteImage(dir, name)
-      setImages(prev => prev.filter(i => i.name !== name))
+      // 1. strip all markdown image references to this file from the content
+      const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const re = new RegExp(`!\\[[^\\]]*\\]\\([^)]*\\/images\\/${escaped}[^)]*\\)`, 'g')
+      const nextContent = String(form.content || '').replace(re, '')
+      // 2. clear the cover field if it points at this image
+      if (isCover) onChange('coverImage', '')
+      if (nextContent !== form.content) onChange('content', nextContent)
+
+      // 3. delete the file unless another post (on disk, excluding this one)
+      //    still references it
+      const postsDir = await dir.getDirectoryHandle('posts')
+      let usedElsewhere = false
+      for (const pname of await listMarkdownFiles(postsDir)) {
+        if (pname === form.name) continue
+        const raw = await readTextFile(postsDir, pname)
+        if (raw.includes(`/images/${name}`)) { usedElsewhere = true; break }
+      }
+      if (usedElsewhere) {
+        setNotice(`「${name}」仍被其他文章引用，已移除本文引用但保留文件`)
+      } else {
+        await deleteImage(dir, name)
+        setNotice(`已移除引用并删除文件「${name}」`)
+      }
     } catch (err) {
-      setError('删除失败: ' + err.message)
+      setNotice('操作失败: ' + err.message)
+    } finally {
+      setBusy(null)
     }
   }
 
@@ -59,55 +68,53 @@ export default function ImageManager({ open, dir, onClose }) {
       background: 'rgba(0,0,0,0.5)',
     }} onClick={e => { if (e.target === e.currentTarget) onClose() }}>
       <div style={{
-        width: 'min(720px, 92vw)', maxHeight: '80vh', overflowY: 'auto',
+        width: 'min(640px, 92vw)', maxHeight: '80vh', overflowY: 'auto',
         background: 'var(--card)', border: '1px solid var(--border)',
         borderRadius: '12px', padding: '24px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '16px', margin: 0 }}>图片管理（content/images/）</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '16px', margin: 0 }}>本文章片</h2>
           <span style={{ flex: 1 }} />
           <button className="writer-btn" onClick={onClose}>关闭</button>
         </div>
-        {error && <p style={{ color: 'var(--accent-pink)', fontSize: '13px', marginBottom: '12px' }}>{error}</p>}
-        {loading ? (
-          <p style={{ color: 'var(--fg-muted)', fontSize: '13px' }}>加载中…</p>
-        ) : images.length === 0 ? (
-          <p style={{ color: 'var(--fg-muted)', fontSize: '13px' }}>暂无图片</p>
+        {notice && (
+          <p style={{ color: 'var(--accent)', fontSize: '13px', marginBottom: '12px', background: 'var(--accent-dim)', borderRadius: '6px', padding: '8px 12px' }}>{notice}</p>
+        )}
+        {images.length === 0 ? (
+          <p style={{ color: 'var(--fg-muted)', fontSize: '13px' }}>本文暂无图片（正文或封面）</p>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {images.map(img => (
               <div key={img.name} style={{
-                border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden', background: 'var(--surface)',
+                display: 'flex', alignItems: 'center', gap: '12px',
+                border: '1px solid var(--border)', borderRadius: '8px',
+                padding: '8px 12px', background: 'var(--surface)',
               }}>
                 <img src={`/images/${encodeURIComponent(img.name)}`} alt={img.name}
-                  style={{ width: '100%', height: '90px', objectFit: 'cover', display: 'block', background: 'var(--bg)' }} />
-                <div style={{ padding: '8px' }}>
-                  <div style={{
-                    fontSize: '11px', color: 'var(--fg-secondary)', overflow: 'hidden',
-                    textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '6px',
-                  }} title={img.name}>{img.name}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{
-                      fontSize: '11px', padding: '2px 8px', borderRadius: '999px',
-                      background: img.referenced ? 'var(--accent-dim)' : 'var(--surface)',
-                      color: img.referenced ? 'var(--accent)' : 'var(--fg-muted)',
-                    }}>
-                      {img.referenced ? '被引用' : '未引用'}
-                    </span>
-                    <span style={{ flex: 1 }} />
-                    <button
-                      style={{
-                        fontSize: '12px', border: 'none', background: 'none', cursor: 'pointer',
-                        color: img.referenced ? 'var(--fg-muted)' : 'var(--accent-pink)',
-                      }}
-                      disabled={img.referenced}
-                      title={img.referenced ? '该图片被文章引用，先删除正文引用后再删' : '删除图片文件'}
-                      onClick={() => handleDelete(img.name)}
-                    >
-                      删除
-                    </button>
+                  style={{ width: '64px', height: '48px', objectFit: 'cover', borderRadius: '6px', flexShrink: 0, background: 'var(--bg)' }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '13px', color: 'var(--fg)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={img.name}>
+                    {img.name}
+                  </div>
+                  <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
+                    {img.isCover && (
+                      <span style={{ fontSize: '11px', padding: '1px 8px', borderRadius: '999px', background: 'var(--accent-dim)', color: 'var(--accent)' }}>封面图</span>
+                    )}
+                    {img.count > 0 && (
+                      <span style={{ fontSize: '11px', padding: '1px 8px', borderRadius: '999px', background: 'var(--surface)', color: 'var(--fg-secondary)' }}>
+                        正文 ×{img.count}
+                      </span>
+                    )}
                   </div>
                 </div>
+                <button
+                  className="writer-btn"
+                  disabled={busy === img.name}
+                  onClick={() => handleRemove(img.name, img.isCover)}
+                  title="移除本文引用并删除文件（若未被其他文章引用）"
+                >
+                  {busy === img.name ? '处理中…' : '移除'}
+                </button>
               </div>
             ))}
           </div>

@@ -112,7 +112,7 @@ export async function listImageFiles(dir) {
   const imagesDir = await dir.getDirectoryHandle('images')
   const names = []
   for await (const [name, handle] of imagesDir.entries()) {
-    if (handle.kind === 'file') names.push(name)
+    if (handle.kind === 'file' && /\.(jpe?g|png|gif|webp|svg)$/i.test(name)) names.push(name)
   }
   return names.sort()
 }
