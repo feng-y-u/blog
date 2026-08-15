@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { readTextFile, writeTextFile, copyImageTo } from '../../utils/file-system'
 import { parseFrontmatter, stringifyFrontmatter } from '../../utils/frontmatter'
 import { slugify } from '../../utils/slugify'
+import { compressImage } from '../../utils/image-compress'
 
 const TODAY = new Date().toISOString().slice(0, 10)
 
@@ -139,7 +140,7 @@ export default function useWriterArticle(dir, onSaved) {
   const insertImage = useCallback(async file => {
     if (!dir) { setToast('请先打开 content 目录'); return }
     try {
-      const url = await copyImageTo(dir, file)
+      const url = await copyImageTo(dir, await compressImage(file))
       const alt = decodeURIComponent(url.split('/').pop()).replace(/\.[^.]+$/, '')
       const snippet = `![${alt}](${url})`
       const ta = textareaRef.current

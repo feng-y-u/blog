@@ -14,6 +14,13 @@ export function SettingsProvider({ children }) {
 
   useEffect(() => { reload() }, [reload])
 
+  // Default page title from site settings (per-page Helmet titles override it).
+  useEffect(() => {
+    if (settings?.site_title && document.title === 'Blog') {
+      document.title = settings.site_title
+    }
+  }, [settings])
+
   return (
     <SettingsContext.Provider value={{ settings, error, reload }}>
       {children}

@@ -4,6 +4,7 @@ import {
 } from '../utils/file-system'
 import { parseFrontmatter } from '../utils/frontmatter'
 import { slugify } from '../utils/slugify'
+import { compressImage } from '../utils/image-compress'
 import useWriterArticle from '../components/writer/useWriterArticle'
 import WriterToolbar from '../components/writer/WriterToolbar'
 import WriterMetaForm from '../components/writer/WriterMetaForm'
@@ -163,7 +164,7 @@ export default function WriterPage() {
                 if (f) {
                   if (dir) {
                     try {
-                      const url = await copyImageTo(dir, f)
+                      const url = await copyImageTo(dir, await compressImage(f))
                       onField('coverImage', url)
                     } catch (err) {
                       setToast('封面上传失败: ' + err.message)
