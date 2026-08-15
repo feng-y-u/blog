@@ -10,7 +10,7 @@ const SIDEBAR_PATHS = ['/categories', '/category/', '/tag/', '/search', '/archiv
 export default function Layout() {
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const showSidebar = SIDEBAR_PATHS.some(p => location.pathname.startsWith(p))
+  const showSidebar = isHome || SIDEBAR_PATHS.some(p => location.pathname.startsWith(p))
   const [searchOpen, setSearchOpen] = useState(false)
 
   // ⌘K / Ctrl+K 快捷键
@@ -31,27 +31,19 @@ export default function Layout() {
 
       {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
 
-      {/* 主内容 */}
-      {isHome ? (
-        /* 首页：全屏无容器约束 */
-        <main className="page-enter" key={location.key} style={{ paddingTop: '56px' /* navbar height */ }}>
+      {/* 主内容：统一两栏布局（首页也显示侧边栏） */}
+      <div className="page-enter" key={location.key} style={{
+        display: 'flex',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: isHome ? '56px 24px 48px' : '88px 24px 48px',
+        gap: '32px',
+      }}>
+        <main style={{ flex: 1, minWidth: 0 }}>
           <Outlet context={{ onSearchOpen: () => setSearchOpen(true) }} />
         </main>
-      ) : (
-        /* 其他页面：带容器和侧边栏 */
-        <div className="page-enter" key={location.key} style={{
-          display: 'flex',
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '88px 24px 48px',
-          gap: '32px',
-        }}>
-          <main style={{ flex: 1, minWidth: 0 }}>
-            <Outlet />
-          </main>
-          {showSidebar && <Sidebar />}
-        </div>
-      )}
+        {showSidebar && <Sidebar />}
+      </div>
 
       {/* 页脚 — 首页的 footer 已放在 HomePage 滚动容器内 */}
       {!isHome && <SiteFooter simple />}
