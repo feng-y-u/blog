@@ -117,8 +117,8 @@
   color: var(--accent);
 }
 .icon-btn.active {
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-dim);
+  color: var(--accent);
   font-weight: 600;
 }
 
@@ -350,9 +350,10 @@
   color: var(--accent);
 }
 .pagination-btn.active {
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-dim);
+  color: var(--accent);
   border-color: var(--accent);
+  font-weight: 600;
 }
 
 /* Site footer */

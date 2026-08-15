@@ -17,6 +17,7 @@ export default function WriterPage() {
   const [articles, setArticles] = useState([])
   const [catTags, setCatTags] = useState({ categories: [], tags: [] })
   const [showImages, setShowImages] = useState(false)
+  const [showMeta, setShowMeta] = useState(false)
   const coverInputRef = useRef(null)
 
   const supported = typeof window !== 'undefined' && 'showDirectoryPicker' in window
@@ -131,6 +132,10 @@ export default function WriterPage() {
               dirty={dirty}
               saving={saving}
             />
+            <button className="writer-meta-toggle" onClick={() => setShowMeta(v => !v)}>
+              📋 文章信息（标题 / 分类 / 标签 / 封面 / 摘要）{showMeta ? '▴ 收起' : '▾ 展开'}
+            </button>
+            {showMeta && (
             <WriterMetaForm
               form={current}
               categories={catTags.categories}
@@ -154,6 +159,7 @@ export default function WriterPage() {
               }}
               coverInputRef={coverInputRef}
             />
+            )}
             <div className="writer-body">
               <textarea
                 ref={textareaRef}

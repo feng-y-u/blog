@@ -76,6 +76,7 @@
   color: var(--fg);
 }
 .writer-list-item.active {
+  background: var(--accent-dim);
   border-color: var(--accent);
   color: var(--fg);
 }
@@ -86,6 +87,25 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+}
+
+.writer-meta-toggle {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--fg-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font-body);
+  text-align: left;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+.writer-meta-toggle:hover {
+  color: var(--accent);
 }
 
 .writer-meta {
@@ -145,9 +165,10 @@
   transition: var(--transition);
 }
 .writer-tag.active {
-  background: var(--accent);
+  background: var(--accent-dim);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--accent);
+  font-weight: 600;
 }
 
 .writer-body {

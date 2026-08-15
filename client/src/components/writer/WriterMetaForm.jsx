@@ -1,4 +1,3 @@
-import ArticleBody from '../ArticleBody'
 import PostCard from '../PostCard'
 
 // {slug,title,date,category,tags,coverImage,excerpt,jpChar,content} = form
@@ -81,12 +80,6 @@ export default function WriterMetaForm({ form, categories, tags, onField, onPick
       <div className="writer-field full">
         <label>摘要（留空则保存后由构建自动截取）</label>
         <textarea className="writer-textarea" rows={2} value={form.excerpt} onChange={e => onField('excerpt', e.target.value)} />
-      </div>
-      <div className="writer-field full">
-        <label>正文预览（保存为 Markdown 文件）</label>
-        <div className="article-body" style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '12px 16px', background: 'var(--bg)' }}>
-          {form.content.trim() ? <ArticleBody content={form.content} onImageClick={() => {}} /> : <span style={{ color: 'var(--fg-muted)' }}>正文为空</span>}
-        </div>
       </div>
       {form.isNew && (
         <div className="writer-field full">
