@@ -73,7 +73,7 @@ export default function WriterPage() {
     }
     window.addEventListener('paste', onPaste)
     return () => window.removeEventListener('paste', onPaste)
-  }, [dir, current, dirty]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dir, supported]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadArticles = useCallback(async handle => {
     const names = await listMarkdownFiles(handle)
@@ -114,18 +114,22 @@ export default function WriterPage() {
 
   async function handleSelect(name) {
     if (dirty && !window.confirm('当前有未保存的更改，确定放弃并打开其他文章？')) return
-    const raw = await readTextFile(dir, name)
-    const { data, order, content } = parseFrontmatter(raw)
-    const base = name.replace(/\.md$/, '')
-    const datePrefix = base.match(/^(\d{4}-\d{2}-\d{2})[-_]/)?.[1] || ''
-    const slug = datePrefix ? base.slice(datePrefix.length + 1) : base
-    setCurrent({
-      isNew: false, name, slug, title: data.title || '', date: datePrefix || TODAY,
-      category: data.category || '', tags: data.tags || [], jpChar: data.jpChar || '',
-      coverImage: data.coverImage || '', excerpt: data.excerpt || '', content,
-      extra: data, order,
-    })
-    setDirty(false)
+    try {
+      const raw = await readTextFile(dir, name)
+      const { data, order, content } = parseFrontmatter(raw)
+      const base = name.replace(/\.md$/, '')
+      const datePrefix = base.match(/^(\d{4}-\d{2}-\d{2})[-_]/)?.[1] || ''
+      const slug = datePrefix ? base.slice(datePrefix.length + 1) : base
+      setCurrent({
+        isNew: false, name, slug, title: data.title || '', date: datePrefix || TODAY,
+        category: data.category || '', tags: data.tags || [], jpChar: data.jpChar || '',
+        coverImage: data.coverImage || '', excerpt: data.excerpt || '', content,
+        extra: data, order,
+      })
+      setDirty(false)
+    } catch (err) {
+      setToast('打开文章失败: ' + err.message)
+    }
   }
 
   function handleNew() {
@@ -135,17 +139,21 @@ export default function WriterPage() {
   }
 
   async function handleImportMd(file) {
-    const text = await file.text()
-    const { data, order, content } = parseFrontmatter(text)
-    if (dirty && !window.confirm('当前有未保存的更改，确定导入并覆盖编辑器？')) return
-    setCurrent({
-      isNew: true, name: '', slug: slugify(data.title || file.name.replace(/\.md$/, '')),
-      title: data.title || '', date: data.date || TODAY,
-      category: data.category || '', tags: data.tags || [], jpChar: data.jpChar || '',
-      coverImage: data.coverImage || '', excerpt: data.excerpt || '', content,
-      extra: data, order,
-    })
-    setDirty(true)
+    try {
+      const text = await file.text()
+      const { data, order, content } = parseFrontmatter(text)
+      if (dirty && !window.confirm('当前有未保存的更改，确定导入并覆盖编辑器？')) return
+      setCurrent({
+        isNew: true, name: '', slug: slugify(data.title || file.name.replace(/\.md$/, '')),
+        title: data.title || '', date: data.date || TODAY,
+        category: data.category || '', tags: data.tags || [], jpChar: data.jpChar || '',
+        coverImage: data.coverImage || '', excerpt: data.excerpt || '', content,
+        extra: data, order,
+      })
+      setDirty(true)
+    } catch (err) {
+      setToast('导入失败: ' + err.message)
+    }
   }
 
   async function handleSave() {
@@ -155,8 +163,16 @@ export default function WriterPage() {
     const slug = deriveSlug(form)
     let name = form.name
     if (form.isNew) {
-      name = `${form.date || TODAY}-${slug}.md`
-      if (articles.some(a => a.name === name)) {
+      const dateSafe = /^\d{4}-\d{2}-\d{2}$/.test(form.date) ? form.date : TODAY
+      name = `${dateSafe}-${slug}.md`
+      let exists = true
+      try {
+        await dir.getFileHandle(name)
+      } catch (err) {
+        if (err?.name === 'NotFoundError') exists = false
+        else throw err
+      }
+      if (exists) {
         if (!window.confirm(`文件 ${name} 已存在，覆盖？`)) return
       }
     }
@@ -193,17 +209,20 @@ export default function WriterPage() {
       const snippet = `![${alt}](${url})`
       const ta = textareaRef.current
       if (ta) {
-        const start = ta.selectionStart ?? current.content.length
+        const start = ta.selectionStart ?? ta.value.length
         const end = ta.selectionEnd ?? start
-        const next = current.content.slice(0, start) + snippet + current.content.slice(end)
-        setCurrent(prev => ({ ...prev, content: next }))
+        setCurrent(prev => {
+          const next = prev.content.slice(0, start) + snippet + prev.content.slice(end)
+          return { ...prev, content: next }
+        })
         setDirty(true)
         requestAnimationFrame(() => {
           ta.focus()
           ta.selectionStart = ta.selectionEnd = start + snippet.length
         })
       } else {
-        onField('content', current.content + '\n' + snippet)
+        setCurrent(prev => ({ ...prev, content: prev.content + '\n' + snippet }))
+        setDirty(true)
       }
     } catch (err) {
       setToast('图片插入失败: ' + err.message)
@@ -259,9 +278,17 @@ export default function WriterPage() {
               onField={onField}
               onPickCover={async e => {
                 const f = e.target.files?.[0]
-                if (f && dir) {
-                  const url = await copyImageTo(dir, f)
-                  onField('coverImage', url)
+                if (f) {
+                  if (dir) {
+                    try {
+                      const url = await copyImageTo(dir, f)
+                      onField('coverImage', url)
+                    } catch (err) {
+                      setToast('封面上传失败: ' + err.message)
+                    }
+                  } else {
+                    setToast('请先打开 content 目录')
+                  }
                 }
                 e.target.value = ''
               }}

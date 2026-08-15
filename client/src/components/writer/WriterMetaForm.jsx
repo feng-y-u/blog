@@ -4,7 +4,7 @@ import PostCard from '../PostCard'
 // {slug,title,date,category,tags,coverImage,excerpt,jpChar,content} = form
 export default function WriterMetaForm({ form, categories, tags, onField, onPickCover, coverInputRef }) {
   const inputStyle = { padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '6px', background: 'var(--bg)', color: 'var(--fg)', fontSize: '13px', fontFamily: 'var(--font-body)' }
-  const btn = { ...inputStyle, cursor: 'pointer', background: 'var(--surface)' }
+  const btn = { cursor: 'pointer', background: 'var(--surface)' }
 
   return (
     <div className="writer-meta">
@@ -58,12 +58,12 @@ export default function WriterMetaForm({ form, categories, tags, onField, onPick
       <div className="writer-field full">
         <label>封面</label>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <button style={btn} onClick={() => coverInputRef.current?.click()}>选择封面图片</button>
+          <button className="writer-btn" style={btn} onClick={() => coverInputRef.current?.click()}>选择封面图片</button>
           <input ref={coverInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={onPickCover} />
           {form.coverImage && (
             <>
               <img src={form.coverImage} alt="封面预览" style={{ height: '48px', borderRadius: '6px', border: '1px solid var(--border)' }} />
-              <button style={btn} onClick={() => onField('coverImage', '')}>移除</button>
+              <button className="writer-btn" style={btn} onClick={() => onField('coverImage', '')}>移除</button>
             </>
           )}
         </div>
@@ -84,7 +84,10 @@ export default function WriterMetaForm({ form, categories, tags, onField, onPick
           <PostCard post={{
             slug: form.slug,
             title: form.title || '未命名文章',
-            publishedAt: new Date(form.date + 'T00:00:00Z').toISOString(),
+            publishedAt: (() => {
+              const d = /^\d{4}-\d{2}-\d{2}$/.test(form.date) ? form.date : new Date().toISOString().slice(0, 10)
+              return new Date(d + 'T00:00:00Z').toISOString()
+            })(),
             category: form.category ? { name: form.category, slug: form.category } : null,
             tags: form.tags.map(t => ({ name: t, slug: t })),
             coverImage: form.coverImage || null,
