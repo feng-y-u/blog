@@ -55,9 +55,9 @@
   color: var(--accent);
 }
 .filter-btn.active {
-  background: var(--accent-dim);
+  background: var(--accent);
   border-color: var(--accent);
-  color: var(--accent);
+  color: #fff;
 }
 
 /* Search results */

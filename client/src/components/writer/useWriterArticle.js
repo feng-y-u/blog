@@ -22,6 +22,14 @@ export default function useWriterArticle(dir, onSaved) {
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState(null)
   const textareaRef = useRef(null)
+  const lastSelRef = useRef(null)
+
+  // Remember the last caret position in the textarea so image insertion can
+  // target it even after the toolbar button steals focus.
+  function rememberSelection() {
+    const ta = textareaRef.current
+    if (ta) lastSelRef.current = [ta.selectionStart, ta.selectionEnd]
+  }
 
   // warn before closing with unsaved changes
   useEffect(() => {
@@ -136,11 +144,19 @@ export default function useWriterArticle(dir, onSaved) {
       const snippet = `![${alt}](${url})`
       const ta = textareaRef.current
       if (ta) {
+        const lastSel = lastSelRef.current
         // Read the selection inside the updater so offsets and prev.content
         // are from the same render (safe under rapid consecutive inserts).
         setCurrent(prev => {
-          const start = ta.selectionStart ?? prev.content.length
-          const end = ta.selectionEnd ?? start
+          let start, end
+          if (document.activeElement === ta) {
+            start = ta.selectionStart ?? prev.content.length
+            end = ta.selectionEnd ?? start
+          } else if (lastSel) {
+            [start, end] = lastSel
+          } else {
+            start = end = prev.content.length
+          }
           const next = prev.content.slice(0, start) + snippet + prev.content.slice(end)
           return { ...prev, content: next }
         })
@@ -174,7 +190,7 @@ export default function useWriterArticle(dir, onSaved) {
   }, [dir, insertImage])
 
   return {
-    current, dirty, saving, toast, textareaRef, setToast,
+    current, dirty, saving, toast, textareaRef, setToast, rememberSelection,
     onField, handleSelect, handleNew, handleImportMd, handleSave, insertImage,
   }
 }

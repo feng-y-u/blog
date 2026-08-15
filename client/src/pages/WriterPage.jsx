@@ -54,7 +54,7 @@ export default function WriterPage() {
   }, [])
 
   const article = useWriterArticle(dir, loadArticles)
-  const { current, dirty, saving, toast, setToast, textareaRef, onField, handleSelect, handleNew, handleImportMd, handleSave, insertImage } = article
+  const { current, dirty, saving, toast, setToast, textareaRef, rememberSelection, onField, handleSelect, handleNew, handleImportMd, handleSave, insertImage } = article
 
   // restore persisted dir handle on mount
   useEffect(() => {
@@ -159,6 +159,9 @@ export default function WriterPage() {
                 ref={textareaRef}
                 value={current.content}
                 onChange={e => onField('content', e.target.value)}
+                onSelect={rememberSelection}
+                onClick={rememberSelection}
+                onKeyUp={rememberSelection}
                 placeholder="在这里写 Markdown 正文…（支持粘贴图片自动插入）"
               />
               <WriterPreview form={current} />
