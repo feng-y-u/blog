@@ -14,6 +14,7 @@ const TagPage = lazy(() => import('./pages/TagPage'))
 const SearchPage = lazy(() => import('./pages/SearchPage'))
 const NotesPage = lazy(() => import('./pages/NotesPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
+const WriterPage = lazy(() => import('./pages/WriterPage'))
 
 function SuspenseWrapper({ children }) {
   return <Suspense fallback={<Loading />}>{children}</Suspense>
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/tag/:slug" element={<SuspenseWrapper><TagPage /></SuspenseWrapper>} />
           <Route path="/search" element={<SuspenseWrapper><SearchPage /></SuspenseWrapper>} />
           <Route path="/notes" element={<SuspenseWrapper><NotesPage /></SuspenseWrapper>} />
+          <Route path="/writer" element={<SuspenseWrapper><WriterPage /></SuspenseWrapper>} />
         </Route>
         <Route path="*" element={<SuspenseWrapper><NotFoundPage /></SuspenseWrapper>} />
       </Routes>
