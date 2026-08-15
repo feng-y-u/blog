@@ -36,6 +36,20 @@ export default function PostDetailPage() {
   const [lightboxSrc, setLightboxSrc] = useState(null)
   const [localViews, setLocalViews] = useState(0)
   const [copied, setCopied] = useState(false)
+  const [showTop, setShowTop] = useState(false)
+
+  // Show the back-to-top button after scrolling down a bit.
+  useEffect(() => {
+    function onScroll() {
+      setShowTop(window.scrollY > 400)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -114,6 +128,9 @@ export default function PostDetailPage() {
           <AdjacentNav prev={adjacent.prev} next={adjacent.next} />
         </div>
       </div>
+      {showTop && (
+        <button className="back-to-top" onClick={scrollToTop} aria-label="回到顶部">↑</button>
+      )}
     </>
   )
 }
