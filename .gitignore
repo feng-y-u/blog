@@ -39,3 +39,6 @@ client/public/data/
 client/public/images/
 client/public/sitemap.xml
 client/public/robots.txt
+
+# Reference material (external sources)
+design-ref/
