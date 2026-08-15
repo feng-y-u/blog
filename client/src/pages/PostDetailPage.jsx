@@ -96,10 +96,10 @@ export default function PostDetailPage() {
           </aside>
         )}
         <div className="article-column">
+          {post.coverImage && (
+            <img src={post.coverImage} alt="" className="article-hero" />
+          )}
           <article className="article-container">
-            {post.coverImage && (
-              <img src={post.coverImage} alt="" className="article-hero" />
-            )}
             <ArticleMeta category={post.category} publishedAt={post.publishedAt} contentLength={post.content?.length} />
             <h1 className="article-title">{post.title}</h1>
             <ArticleToolbar author={settings?.profile_name || ''} viewCount={localViews} fontSize={fontSize} onFontSizeChange={setFontSize} />
