@@ -13,6 +13,8 @@ const TagCloudPage = lazy(() => import('./pages/TagCloudPage'))
 const TagPage = lazy(() => import('./pages/TagPage'))
 const SearchPage = lazy(() => import('./pages/SearchPage'))
 const NotesPage = lazy(() => import('./pages/NotesPage'))
+const ArchivesPage = lazy(() => import('./pages/ArchivesPage'))
+const AboutPage = lazy(() => import('./pages/AboutPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 const WriterPage = lazy(() => import('./pages/WriterPage'))
 
@@ -34,6 +36,8 @@ export default function App() {
           <Route path="/tag/:slug" element={<SuspenseWrapper><TagPage /></SuspenseWrapper>} />
           <Route path="/search" element={<SuspenseWrapper><SearchPage /></SuspenseWrapper>} />
           <Route path="/notes" element={<SuspenseWrapper><NotesPage /></SuspenseWrapper>} />
+          <Route path="/archives" element={<SuspenseWrapper><ArchivesPage /></SuspenseWrapper>} />
+          <Route path="/about" element={<SuspenseWrapper><AboutPage /></SuspenseWrapper>} />
         </Route>
         <Route path="/writer" element={<SuspenseWrapper><WriterPage /></SuspenseWrapper>} />
         <Route path="*" element={<SuspenseWrapper><NotFoundPage /></SuspenseWrapper>} />

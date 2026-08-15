@@ -1,8 +1,30 @@
 /* ===== Article / Post Detail Page ===== */
 
+/* Article container: card style with hero image */
 .article-container {
   max-width: 680px;
   margin: 0 auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 40px 48px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.article-hero {
+  display: block;
+  width: calc(100% + 96px);
+  max-height: 360px;
+  object-fit: cover;
+  margin: -40px -48px 28px;
+}
+.article-copyright {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--fg-muted);
 }
 
 /* Meta row: category + date + reading time */

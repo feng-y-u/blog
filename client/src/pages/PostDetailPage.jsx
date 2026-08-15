@@ -97,11 +97,19 @@ export default function PostDetailPage() {
         )}
         <div className="article-column">
           <article className="article-container">
+            {post.coverImage && (
+              <img src={post.coverImage} alt="" className="article-hero" />
+            )}
             <ArticleMeta category={post.category} publishedAt={post.publishedAt} contentLength={post.content?.length} />
             <h1 className="article-title">{post.title}</h1>
             <ArticleToolbar author={settings?.profile_name || ''} viewCount={localViews} fontSize={fontSize} onFontSizeChange={setFontSize} />
             <ArticleBody content={post.content} onImageClick={setLightboxSrc} />
             <ArticleFooter tags={post.tags} onCopyLink={handleCopyLink} copied={copied} />
+            <div className="article-copyright">
+              本文作者：{settings?.profile_name || ''} · 本文链接：{typeof window !== 'undefined' ? window.location.href : ''}
+              <br />
+              版权声明：自由转载-非商用-非衍生-保持署名（CC BY-NC-SA 4.0）
+            </div>
           </article>
           <AdjacentNav prev={adjacent.prev} next={adjacent.next} />
         </div>

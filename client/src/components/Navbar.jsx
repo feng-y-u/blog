@@ -81,9 +81,11 @@ export default function Navbar({ onSearchOpen }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
         {!isPostPage && (
           <>
-            <NavLink to="/" active={location.pathname === '/'}>Articles</NavLink>
-            <NavLink to="/categories" active={location.pathname.startsWith('/categor')}>Categories</NavLink>
-            <NavLink to="/tags" active={location.pathname.startsWith('/tag')}>Tags</NavLink>
+            <NavLink to="/" active={location.pathname === '/'}>文章</NavLink>
+            <NavLink to="/categories" active={location.pathname.startsWith('/categor')}>分类</NavLink>
+            <NavLink to="/tags" active={location.pathname.startsWith('/tag')}>标签</NavLink>
+            <NavLink to="/archives" active={location.pathname.startsWith('/archives')}>归档</NavLink>
+            <NavLink to="/about" active={location.pathname.startsWith('/about')}>关于</NavLink>
           </>
         )}
         <button
