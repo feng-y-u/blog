@@ -107,3 +107,17 @@ export async function copyImageTo(dir, file, preferredName) {
   await writable.close()
   return `/images/${candidate}`
 }
+
+export async function listImageFiles(dir) {
+  const imagesDir = await dir.getDirectoryHandle('images')
+  const names = []
+  for await (const [name, handle] of imagesDir.entries()) {
+    if (handle.kind === 'file') names.push(name)
+  }
+  return names.sort()
+}
+
+export async function deleteImage(dir, name) {
+  const imagesDir = await dir.getDirectoryHandle('images')
+  await imagesDir.removeEntry(name)
+}
