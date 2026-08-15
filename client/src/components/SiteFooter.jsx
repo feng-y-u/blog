@@ -18,8 +18,6 @@ export default function SiteFooter({ simple }) {
     <footer className="site-footer">
       &copy; {year} {siteTitle} | Powered by コードとアニメ<br />
       <Link to="/" className="link-accent" style={{ margin: '0 4px' }}>首页</Link>
-      {' · '}
-      <a href="#" className="link-accent" style={{ margin: '0 4px' }}>关于</a>
     </footer>
   )
 }

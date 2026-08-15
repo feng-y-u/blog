@@ -12,7 +12,6 @@ node_modules/
 
 # Build output
 client/dist/
-server/dist/
 
 # Claude local settings
 .claude/
@@ -34,13 +33,6 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
-
-# Uploads (local development)
-server/uploads/*
-!server/uploads/.gitkeep
-
-# Prisma (keep schema, ignore generated client)
-server/node_modules/.prisma/
 
 # Static build artifacts
 client/public/data/
