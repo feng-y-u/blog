@@ -46,7 +46,8 @@ export async function pickContentDir() {
 export async function restoreContentDir() {
   try {
     return (await idbGet(IDB_KEY)) || null
-  } catch {
+  } catch (err) {
+    console.warn('恢复目录句柄失败:', err)
     return null
   }
 }
@@ -73,7 +74,7 @@ export async function writeTextFile(dir, name, text) {
 export async function listMarkdownFiles(dir) {
   const names = []
   for await (const [name, handle] of dir.entries()) {
-    if (handle.kind === 'file' && name.endsWith('.md')) names.push(name)
+    if (handle.kind === 'file' && name.toLowerCase().endsWith('.md')) names.push(name)
   }
   return names.sort()
 }
@@ -89,13 +90,16 @@ export async function copyImageTo(dir, file, preferredName) {
   let candidate = name
   let i = 1
   for (;;) {
+    let exists = true
     try {
       await imagesDir.getFileHandle(candidate)
-      candidate = `${base}-${i}${ext}`
-      i += 1
-    } catch {
-      break // not found -> name is free
+    } catch (err) {
+      if (err?.name === 'NotFoundError') exists = false
+      else throw err
     }
+    if (!exists) break
+    candidate = `${base}-${i}${ext}`
+    i += 1
   }
   const handle = await imagesDir.getFileHandle(candidate, { create: true })
   const writable = await handle.createWritable()
