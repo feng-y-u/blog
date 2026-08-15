@@ -453,3 +453,17 @@ body {
 .site-footer-mt {
   margin-top: 20px;
 }
+.footer-btn {
+  display: inline-block;
+  padding: 4px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 12px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.footer-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}

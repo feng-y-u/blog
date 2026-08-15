@@ -54,7 +54,7 @@ export default function Layout() {
       )}
 
       {/* 页脚 — 首页的 footer 已放在 HomePage 滚动容器内 */}
-      {!isHome && <SiteFooter simple />}
+      {!isHome && <SiteFooter />}
     </div>
   )
 }
