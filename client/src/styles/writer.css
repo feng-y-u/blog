@@ -76,9 +76,11 @@
   color: var(--fg);
 }
 .writer-list-item.active {
+  color: var(--accent);
+  font-weight: 600;
   background: var(--accent-dim);
-  border-color: var(--accent);
-  color: var(--fg);
+  box-shadow: inset 3px 0 0 var(--accent);
+  transform: translateY(-1px);
 }
 
 .writer-editor {
@@ -165,10 +167,12 @@
   transition: var(--transition);
 }
 .writer-tag.active {
-  background: var(--accent-dim);
-  border-color: var(--accent);
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: inset 0 -2px 0 var(--accent), 0 4px 12px var(--accent-glow);
+  transform: translateY(-1px) scale(1.06);
 }
 
 .writer-body {
@@ -189,6 +193,17 @@
 }
 .writer-body textarea:focus {
   outline: none;
+}
+
+.writer-resizer {
+  width: 6px;
+  flex-shrink: 0;
+  cursor: col-resize;
+  background: transparent;
+  transition: background-color 0.2s;
+}
+.writer-resizer:hover {
+  background: var(--accent-dim);
 }
 
 .writer-preview {

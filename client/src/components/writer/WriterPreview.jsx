@@ -1,8 +1,8 @@
 import ArticleBody from '../ArticleBody'
 
-export default function WriterPreview({ form }) {
+export default function WriterPreview({ form, width }) {
   return (
-    <div className="writer-preview">
+    <div className="writer-preview" style={width ? { width } : undefined}>
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '16px', margin: '0 0 12px' }}>正文预览</h2>
       <div className="article-body">
         {form.content.trim() ? <ArticleBody content={form.content} onImageClick={() => {}} /> : <span style={{ color: 'var(--fg-muted)' }}>正文为空，开始写作吧</span>}

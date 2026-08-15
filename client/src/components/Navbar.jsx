@@ -126,6 +126,7 @@ export default function Navbar({ onSearchOpen }) {
 function NavLink({ to, active, children }) {
   return (
     <Link to={to} style={{
+      display: 'inline-block',
       fontSize: '12px', fontWeight: 500,
       color: active ? 'var(--accent-pink)' : 'var(--fg-muted)',
       textDecoration: 'none',
@@ -133,6 +134,8 @@ function NavLink({ to, active, children }) {
       transition: 'var(--transition)',
       borderBottom: active ? '1px solid var(--accent-pink)' : '1px solid transparent',
       paddingBottom: '2px',
+      transform: active ? 'translateY(-1px) scale(1.08)' : 'none',
+      boxShadow: active ? '0 4px 12px var(--accent-glow)' : 'none',
     }}
       onMouseEnter={e => { if (!active) { e.currentTarget.style.color = 'var(--fg-secondary)' } }}
       onMouseLeave={e => { if (!active) { e.currentTarget.style.color = 'var(--fg-muted)' } }}>

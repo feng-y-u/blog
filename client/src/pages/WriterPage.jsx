@@ -18,6 +18,7 @@ export default function WriterPage() {
   const [catTags, setCatTags] = useState({ categories: [], tags: [] })
   const [showImages, setShowImages] = useState(false)
   const [showMeta, setShowMeta] = useState(false)
+  const [previewWidth, setPreviewWidth] = useState(380)
   const coverInputRef = useRef(null)
 
   const supported = typeof window !== 'undefined' && 'showDirectoryPicker' in window
@@ -88,6 +89,22 @@ export default function WriterPage() {
     if (await ensureWritePermission(dir)) { setPermissionNeeded(false); await loadArticles(dir) }
   }
 
+  // Drag the vertical divider to resize the preview panel (240px..700px).
+  function startDrag(e) {
+    e.preventDefault()
+    const startX = e.clientX
+    const startW = previewWidth
+    function onMove(ev) {
+      setPreviewWidth(Math.min(Math.max(startW - (ev.clientX - startX), 240), 700))
+    }
+    function onUp() {
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+    }
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
+  }
+
   if (!supported) {
     return <div className="writer-shell"><div className="writer-empty">写作工具需要 Chrome 或 Edge 浏览器（File System Access）。</div></div>
   }
@@ -133,7 +150,7 @@ export default function WriterPage() {
               saving={saving}
             />
             <button className="writer-meta-toggle" onClick={() => setShowMeta(v => !v)}>
-              📋 文章信息（标题 / 分类 / 标签 / 封面 / 摘要）{showMeta ? '▴ 收起' : '▾ 展开'}
+              文章信息（标题 / 分类 / 标签 / 封面 / 摘要）{showMeta ? '▴ 收起' : '▾ 展开'}
             </button>
             {showMeta && (
             <WriterMetaForm
@@ -170,7 +187,8 @@ export default function WriterPage() {
                 onKeyUp={rememberSelection}
                 placeholder="在这里写 Markdown 正文…（支持粘贴图片自动插入）"
               />
-              <WriterPreview form={current} />
+              <div className="writer-resizer" onMouseDown={startDrag} title="拖动调整预览宽度" />
+              <WriterPreview form={current} width={previewWidth} />
             </div>
           </div>
         </div>

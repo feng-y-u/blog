@@ -55,10 +55,12 @@
   color: var(--accent);
 }
 .filter-btn.active {
-  background: var(--accent-dim);
-  border-color: var(--accent);
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: inset 0 -2px 0 var(--accent), 0 4px 12px var(--accent-glow);
+  transform: translateY(-1px) scale(1.06);
 }
 
 /* Search results */
