@@ -32,6 +32,7 @@ npx wrangler pages deploy client/dist
 - 页面全部懒加载（React.lazy）；样式为自定义 CSS（main.jsx 导入 index/theme/common/article/sidebar/search.css）
 - 暗色模式：`data-theme` 属性 + localStorage `blog-theme`
 - 收藏/阅读进度/浏览量等为 localStorage 本地实现（无服务端）
+- `/writer` 隐藏路由：本地写作工具（Chrome/Edge）。选择 content/ 目录后可新建/编辑文章、设置封面/分类/标签、插入图片（自动复制到 content/images/）、导入 md、实时预览；保存自动生成文件名与 frontmatter
 
 ## Conventions
 - Commit: `<type>(<scope>): 中文描述` — 类型 `feat|fix|refactor|chore|docs|style`；单 `main` + `feature` 分支

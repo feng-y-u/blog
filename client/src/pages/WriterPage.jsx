@@ -32,6 +32,7 @@ export default function WriterPage() {
   const [dirty, setDirty] = useState(false)
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState(null)
+  const [catTags, setCatTags] = useState({ categories: [], tags: [] })
   const coverInputRef = useRef(null)
   const textareaRef = useRef(null)
 
@@ -78,16 +79,24 @@ export default function WriterPage() {
   const loadArticles = useCallback(async handle => {
     const names = await listMarkdownFiles(handle)
     const items = []
+    const catSet = new Set()
+    const tagSet = new Set()
     for (const name of names) {
       try {
         const raw = await readTextFile(handle, name)
         const { data } = parseFrontmatter(raw)
+        if (data.category) catSet.add(String(data.category))
+        ;(Array.isArray(data.tags) ? data.tags : []).forEach(t => tagSet.add(String(t)))
         items.push({ name, title: data.title || name.replace(/\.md$/, ''), category: data.category || '', tags: data.tags || [] })
       } catch {
         items.push({ name, title: name.replace(/\.md$/, ''), category: '', tags: [] })
       }
     }
     setArticles(items)
+    setCatTags({
+      categories: [...catSet].sort().map(name => ({ name, slug: slugify(name) })),
+      tags: [...tagSet].sort().map(name => ({ name, slug: slugify(name) })),
+    })
   }, [])
 
   async function handleOpenDir() {
@@ -273,8 +282,8 @@ export default function WriterPage() {
             />
             <WriterMetaForm
               form={current}
-              categories={[]}
-              tags={[]}
+              categories={catTags.categories}
+              tags={catTags.tags}
               onField={onField}
               onPickCover={async e => {
                 const f = e.target.files?.[0]
