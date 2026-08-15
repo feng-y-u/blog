@@ -1,5 +1,12 @@
 /* ===== Common Components ===== */
 
+/* Base font: override Tailwind preflight so every element inherits Maple Mono
+   (preflight sets a system-ui stack on html; our rule loads later and wins). */
+html,
+body {
+  font-family: var(--font-body);
+}
+
 /* Card */
 .card {
   background: var(--surface);
