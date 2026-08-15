@@ -42,3 +42,5 @@ client/public/robots.txt
 
 # Reference material (external sources)
 design-ref/
+
+# npm temp cache.npm-tmp-cache/
