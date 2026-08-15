@@ -2,20 +2,6 @@ import { useRef, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ParticleCanvas from './ParticleCanvas'
 
-const JAPANESE_CHARS = {
-  tech: '構築',
-  anime: '春',
-  rust: '記録',
-  default: '誌',
-}
-
-function getJapaneseChar(post) {
-  const cat = post.category?.name?.toLowerCase() || ''
-  if (cat.includes('rust') || cat.includes('tech')) return JAPANESE_CHARS.tech
-  if (cat.includes('anime') || cat.includes('动漫') || cat.includes('新番')) return JAPANESE_CHARS.anime
-  return JAPANESE_CHARS.default
-}
-
 function scrambleText(finalText, onUpdate, onDone) {
   const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ'
   let current = finalText.split('')
@@ -46,7 +32,8 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
   const [coverError, setCoverError] = useState(false)
   const titleRef = useRef(null)
   const isLeft = index % 2 === 0
-  const japaneseChar = post.jpChar || getJapaneseChar(post)
+  // Decorative Japanese char: only shown when explicitly set in frontmatter (jpChar).
+  const japaneseChar = post.jpChar || ''
   const hasCover = post.coverImage && !coverError
 
   useEffect(() => {
@@ -217,7 +204,8 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
           </>
         )}
 
-        {/* 日文大文字 */}
+        {/* 日文大文字（仅在显式设置 jpChar 时显示） */}
+        {japaneseChar && (
         <div aria-hidden="true" style={{
           fontSize: compact ? 'clamp(36px, 5vw, 64px)' : 'clamp(60px, 8vw, 110px)',
           fontWeight: 900,
@@ -232,6 +220,7 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
         }}>
           {japaneseChar}
         </div>
+        )}
 
         {/* 底部装饰 */}
         <div style={{
