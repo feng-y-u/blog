@@ -35,21 +35,22 @@ export function parseFrontmatter(raw) {
 }
 
 export function stringifyFrontmatter(data, order) {
+  const renderValue = v => {
+    if (Array.isArray(v)) return `[${v.map(String).join(', ')}]`
+    if (typeof v === 'boolean') return String(v)
+    if (typeof v === 'number') return String(v)
+    const s = String(v).replace(/\n/g, ' ')
+    const needsQuote = /^-?\d+$/.test(s) || s === 'true' || s === 'false' || s.includes(':') || s !== s.trim()
+    return needsQuote ? `'${s}'` : s
+  }
   const lines = ['---']
   for (const key of order) {
     const v = data[key]
     if (v === undefined || v === null) continue
-    if (Array.isArray(v)) lines.push(`${key}: [${v.map(String).join(', ')}]`)
-    else if (typeof v === 'boolean') lines.push(`${key}: ${v}`)
-    else if (typeof v === 'number') lines.push(`${key}: ${v}`)
-    else {
-      const s = String(v).replace(/\n/g, ' ')
-      const needsQuote = /^-?\d+$/.test(s) || s === 'true' || s === 'false' || s.includes(':') || s !== s.trim()
-      lines.push(`${key}: ${needsQuote ? `'${s}'` : s}`)
-    }
+    lines.push(`${key}: ${renderValue(v)}`)
   }
   for (const key of Object.keys(data)) {
-    if (!order.includes(key)) lines.push(`${key}: ${data[key]}`)
+    if (!order.includes(key)) lines.push(`${key}: ${renderValue(data[key])}`)
   }
   lines.push('---')
   return lines.join('\n') + '\n'

@@ -218,15 +218,16 @@ export default function WriterPage() {
       const snippet = `![${alt}](${url})`
       const ta = textareaRef.current
       if (ta) {
-        const start = ta.selectionStart ?? ta.value.length
-        const end = ta.selectionEnd ?? start
         setCurrent(prev => {
+          const start = ta.selectionStart ?? prev.content.length
+          const end = ta.selectionEnd ?? start
           const next = prev.content.slice(0, start) + snippet + prev.content.slice(end)
           return { ...prev, content: next }
         })
         setDirty(true)
         requestAnimationFrame(() => {
           ta.focus()
+          const start = ta.selectionStart ?? ta.value.length
           ta.selectionStart = ta.selectionEnd = start + snippet.length
         })
       } else {

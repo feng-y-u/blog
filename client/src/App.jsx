@@ -34,8 +34,8 @@ export default function App() {
           <Route path="/tag/:slug" element={<SuspenseWrapper><TagPage /></SuspenseWrapper>} />
           <Route path="/search" element={<SuspenseWrapper><SearchPage /></SuspenseWrapper>} />
           <Route path="/notes" element={<SuspenseWrapper><NotesPage /></SuspenseWrapper>} />
-          <Route path="/writer" element={<SuspenseWrapper><WriterPage /></SuspenseWrapper>} />
         </Route>
+        <Route path="/writer" element={<SuspenseWrapper><WriterPage /></SuspenseWrapper>} />
         <Route path="*" element={<SuspenseWrapper><NotFoundPage /></SuspenseWrapper>} />
       </Routes>
       </SettingsProvider>
