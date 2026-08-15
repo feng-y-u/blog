@@ -2,20 +2,11 @@ import { readdir, readFile, mkdir, copyFile, writeFile, stat } from 'node:fs/pro
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import matter from 'gray-matter'
+import { slugify } from '../src/utils/slugify.js'
 
 const root = path.resolve(fileURLToPath(new URL('.', import.meta.url)), '../..')
 const contentDir = path.join(root, 'content')
 const publicDir = path.join(root, 'client/public')
-
-// Same rules as the old server slugify (keeps CJK).
-function slugify(text) {
-  let slug = String(text).toLowerCase().trim()
-    .replace(/[^\w一-鿿\s-]/g, '')
-    .replace(/[\s_]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-  return slug || 'untitled'
-}
 
 function parseDateFromFilename(name) {
   const m = name.match(/^(\d{4}-\d{2}-\d{2})[-_]/)
