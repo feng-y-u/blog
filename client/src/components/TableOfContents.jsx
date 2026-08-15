@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+
 function makeId(text, used) {
   const base = text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w一-鿿-]/g, '') || 'heading'
   const n = (used.get(base) || 0) + 1
@@ -35,6 +37,25 @@ function handleClick(index) {
 }
 
 export default function TableOfContents({ headings }) {
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  // Scroll spy: highlight the TOC entry of the heading currently in view.
+  useEffect(() => {
+    const els = document.querySelectorAll('.article-body h2, .article-body h3')
+    if (!els.length) return
+    function onScroll() {
+      const offset = 140 // navbar height + breathing room
+      let current = 0
+      for (let i = 0; i < els.length; i++) {
+        if (els[i].getBoundingClientRect().top <= offset) current = i
+      }
+      setActiveIndex(current)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [headings])
+
   if (headings.length < 2) return null
 
   return (
@@ -44,7 +65,7 @@ export default function TableOfContents({ headings }) {
         {headings.map((h, i) => (
           <li
             key={i}
-            className={`article-toc-item article-toc-item-${h.level === 3 ? 'h3' : 'h2'}`}
+            className={`article-toc-item article-toc-item-${h.level === 3 ? 'h3' : 'h2'}${i === activeIndex ? ' active' : ''}`}
           >
             <a
               href={`#${h.id}`}

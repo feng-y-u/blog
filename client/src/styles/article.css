@@ -104,6 +104,15 @@
 .article-toc-item {
   margin-bottom: 6px;
   font-size: 14px;
+  transition: var(--transition);
+}
+.article-toc-item.active {
+  box-shadow: inset 3px 0 0 var(--accent), 0 4px 14px var(--accent-glow);
+  transform: translateY(-1px);
+}
+.article-toc-item.active .article-toc-link {
+  color: var(--accent);
+  font-weight: 600;
 }
 .article-toc-item-h3 {
   padding-left: 28px;
