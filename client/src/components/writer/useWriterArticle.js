@@ -40,7 +40,8 @@ export default function useWriterArticle(dir, onSaved) {
   async function handleSelect(name) {
     if (dirty && !window.confirm('当前有未保存的更改，确定放弃并打开其他文章？')) return
     try {
-      const raw = await readTextFile(dir, name)
+      const postsDir = await dir.getDirectoryHandle('posts')
+      const raw = await readTextFile(postsDir, name)
       const { data, order, content } = parseFrontmatter(raw)
       const base = name.replace(/\.md$/, '')
       const datePrefix = base.match(/^(\d{4}-\d{2}-\d{2})[-_]/)?.[1] || ''
@@ -87,12 +88,13 @@ export default function useWriterArticle(dir, onSaved) {
     const title = form.title.trim() || form.slug || 'untitled'
     const slug = slugify(form.slug || form.title)
     let name = form.name
+    const postsDir = await dir.getDirectoryHandle('posts', { create: true })
     if (form.isNew) {
       const dateSafe = /^\d{4}-\d{2}-\d{2}$/.test(form.date) ? form.date : TODAY
       name = `${dateSafe}-${slug}.md`
       let exists = true
       try {
-        await dir.getFileHandle(name)
+        await postsDir.getFileHandle(name)
       } catch (err) {
         if (err?.name === 'NotFoundError') exists = false
         else throw err
@@ -114,7 +116,7 @@ export default function useWriterArticle(dir, onSaved) {
     const text = stringifyFrontmatter(data, order) + (form.content || '')
     setSaving(true)
     try {
-      await writeTextFile(dir, name, text)
+      await writeTextFile(postsDir, name, text)
       setCurrent(prev => ({ ...prev, isNew: false, name }))
       setDirty(false)
       setToast(`已保存 ${name}`)

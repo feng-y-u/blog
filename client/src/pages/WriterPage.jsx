@@ -19,15 +19,23 @@ export default function WriterPage() {
 
   const supported = typeof window !== 'undefined' && 'showDirectoryPicker' in window
 
-  // Collect posts list + category/tag options from the content dir (authoritative source).
+  // Collect posts list + category/tag options from content/posts (authoritative source).
   const loadArticles = useCallback(async handle => {
-    const names = await listMarkdownFiles(handle)
+    let postsDir
+    try {
+      postsDir = await handle.getDirectoryHandle('posts')
+    } catch {
+      setArticles([])
+      setCatTags({ categories: [], tags: [] })
+      return
+    }
+    const names = await listMarkdownFiles(postsDir)
     const items = []
     const catSet = new Set()
     const tagSet = new Set()
     for (const name of names) {
       try {
-        const raw = await readTextFile(handle, name)
+        const raw = await readTextFile(postsDir, name)
         const { data } = parseFrontmatter(raw)
         if (data.category) catSet.add(String(data.category))
         ;(Array.isArray(data.tags) ? data.tags : []).forEach(t => tagSet.add(String(t)))
