@@ -18,7 +18,7 @@ export default function SiteFooter() {
           rel="noopener noreferrer"
           className="footer-btn"
         >
-          源码 ↗
+          源码
         </a>
       </div>
     </footer>
