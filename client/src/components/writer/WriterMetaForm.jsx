@@ -21,14 +21,24 @@ export default function WriterMetaForm({ form, categories, tags, onField, onPick
         <input className="writer-input" type="date" value={form.date} disabled={!form.isNew} onChange={e => onField('date', e.target.value)} />
       </div>
       <div className="writer-field">
-        <label>分类</label>
-        <select className="writer-select" value={form.category} onChange={e => onField('category', e.target.value)}>
-          <option value="">未分类</option>
-          {categories.map(c => <option key={c.slug} value={c.name}>{c.name}</option>)}
-          {form.category && !categories.some(c => c.name === form.category) && (
-            <option value={form.category}>{form.category}（新建）</option>
-          )}
-        </select>
+        <label>分类（下拉选择已有，或输入新分类回车应用）</label>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <select className="writer-select" style={{ flex: 1 }} value={form.category} onChange={e => onField('category', e.target.value)}>
+            <option value="">未分类</option>
+            {categories.map(c => <option key={c.slug} value={c.name}>{c.name}</option>)}
+            {form.category && !categories.some(c => c.name === form.category) && (
+              <option value={form.category}>{form.category}</option>
+            )}
+          </select>
+          <input className="writer-input" style={{ width: 140 }} placeholder="新分类，回车应用"
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                const v = e.target.value.trim()
+                if (v) { onField('category', v); e.target.value = '' }
+              }
+            }} />
+        </div>
       </div>
       <div className="writer-field">
         <label>杂志装饰字（jpChar，可选）</label>

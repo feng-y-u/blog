@@ -89,15 +89,23 @@ export default function PostDetailPage() {
       </Helmet>
       <ReadingProgress />
       {lightboxSrc && <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />}
-      <article className="article-container">
-        <ArticleMeta category={post.category} publishedAt={post.publishedAt} contentLength={post.content?.length} />
-        <h1 className="article-title">{post.title}</h1>
-        <ArticleToolbar author={settings?.profile_name || ''} viewCount={localViews} fontSize={fontSize} onFontSizeChange={setFontSize} />
-        <TableOfContents headings={headings} />
-        <ArticleBody content={post.content} onImageClick={setLightboxSrc} />
-        <ArticleFooter tags={post.tags} onCopyLink={handleCopyLink} copied={copied} />
-      </article>
-      <AdjacentNav prev={adjacent.prev} next={adjacent.next} />
+      <div className="article-page">
+        {headings.length >= 2 && (
+          <aside className="article-toc-sidebar">
+            <TableOfContents headings={headings} />
+          </aside>
+        )}
+        <div className="article-column">
+          <article className="article-container">
+            <ArticleMeta category={post.category} publishedAt={post.publishedAt} contentLength={post.content?.length} />
+            <h1 className="article-title">{post.title}</h1>
+            <ArticleToolbar author={settings?.profile_name || ''} viewCount={localViews} fontSize={fontSize} onFontSizeChange={setFontSize} />
+            <ArticleBody content={post.content} onImageClick={setLightboxSrc} />
+            <ArticleFooter tags={post.tags} onCopyLink={handleCopyLink} copied={copied} />
+          </article>
+          <AdjacentNav prev={adjacent.prev} next={adjacent.next} />
+        </div>
+      </div>
     </>
   )
 }

@@ -96,6 +96,42 @@
   color: var(--accent-pink);
 }
 
+/* Article page: TOC on the left, content column on the right */
+.article-page {
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  align-items: flex-start;
+}
+.article-toc-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 88px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+.article-column {
+  width: 680px;
+  flex-shrink: 0;
+  min-width: 0;
+}
+@media (max-width: 1024px) {
+  .article-toc-sidebar {
+    display: none;
+  }
+}
+@media (max-width: 720px) {
+  .article-page {
+    display: block;
+  }
+  .article-column {
+    width: 100%;
+  }
+}
+
 /* Article body (markdown content) */
 .article-body {
   font-size: var(--article-font-size);
