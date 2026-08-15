@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@automann/maple-mono-cn": "^7.9.2",
     "gsap": "^3.15.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

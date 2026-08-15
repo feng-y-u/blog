@@ -24,9 +24,9 @@
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.06);
   --article-font-size: 16px;
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --font-display: 'Maple Mono CN', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Maple Mono CN', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Maple Mono CN', 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 :root[data-theme="dark"] {
@@ -53,9 +53,9 @@
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
   --article-font-size: 16px;
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --font-display: 'Maple Mono CN', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Maple Mono CN', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Maple Mono CN', 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 /* ===== Home Splash ===== */
