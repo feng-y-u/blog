@@ -69,8 +69,9 @@ export default function Navbar({ onSearchOpen }) {
         }}>
           <span style={{ color: 'var(--accent-pink)', fontSize: '16px' }}>✦</span>
           <span style={{
-            color: 'var(--fg)', fontSize: '12px',
-            letterSpacing: '0.15em', fontWeight: 600,
+            color: 'var(--fg)', fontSize: '13px',
+            letterSpacing: '0.15em', fontWeight: 800,
+            fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', sans-serif",
           }}>
             {siteTitle}
           </span>
