@@ -120,7 +120,7 @@ export default function useWriterArticle(dir, onSaved) {
       setCurrent(prev => ({ ...prev, isNew: false, name }))
       setDirty(false)
       setToast(`已保存 ${name}`)
-      onSaved?.()
+      onSaved?.(dir)
     } catch (err) {
       setToast('保存失败: ' + err.message)
     } finally {
