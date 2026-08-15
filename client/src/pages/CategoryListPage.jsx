@@ -32,7 +32,7 @@ export default function CategoryListPage() {
 
   return (
     <div>
-      <h1 className="page-title">分类与标签</h1>
+      <h1 className="page-title">索引</h1>
 
       <h2 style={sectionTitle}>分类</h2>
       <div className="card-grid">
