@@ -25,6 +25,7 @@ export default function ArchivesPage() {
     ;(byYear[year] ||= []).push(p)
   }
   const years = Object.keys(byYear).sort((a, b) => b.localeCompare(a))
+  let order = 0
 
   return (
     <div>
@@ -32,28 +33,23 @@ export default function ArchivesPage() {
         <title>归档 — Blog</title>
       </Helmet>
       <h1 className="page-title">归档</h1>
-      {years.map(year => (
-        <div key={year} style={{ marginBottom: '32px' }}>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '20px', marginBottom: '16px', color: 'var(--fg)' }}>
-            {year} 年
-          </h2>
-          <div className="card" style={{ padding: '8px 24px' }}>
-            {byYear[year].map(p => (
-              <div key={p.slug} style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
-                padding: '12px 0', borderBottom: '1px solid var(--border)',
-              }}>
-                <Link to={`/post/${p.slug}`} style={{ color: 'var(--fg)', textDecoration: 'none', fontSize: '14px' }}>
-                  {p.title}
-                </Link>
-                <span style={{ fontSize: '12px', color: 'var(--fg-muted)', flexShrink: 0, marginLeft: '16px' }}>
-                  {(p.publishedAt || '').slice(0, 10)}
-                </span>
-              </div>
-            ))}
+      <div className="archive-timeline">
+        {years.map(year => (
+          <div key={year} className="archive-year">
+            <div className="archive-year-label">{year} 年</div>
+            {byYear[year].map(p => {
+              const i = order++
+              return (
+                <div key={p.slug} className="archive-item"
+                  style={{ animation: 'fadeInUp 0.4s ease both', animationDelay: `${i * 60}ms` }}>
+                  <span className="archive-date">{(p.publishedAt || '').slice(0, 10)}</span>
+                  <Link to={`/post/${p.slug}`} className="archive-title">{p.title}</Link>
+                </div>
+              )
+            })}
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       {posts.length === 0 && (
         <p style={{ color: 'var(--fg-secondary)' }}>暂无文章</p>
       )}

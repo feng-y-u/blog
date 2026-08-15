@@ -188,7 +188,7 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
         overflow: 'hidden',
         order: isLeft ? 2 : 1,
       }}>
-        {/* 封面图背景 */}
+        {/* 封面图背景（圆角相框效果） */}
         {hasCover && (
           <>
             <img
@@ -196,10 +196,11 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
               alt=""
               style={{
                 position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
+                inset: '20px',
+                width: 'calc(100% - 40px)',
+                height: 'calc(100% - 40px)',
                 objectFit: 'cover',
+                borderRadius: '16px',
                 opacity: isVisible ? 1 : 0,
                 transition: 'opacity 0.6s ease-out, transform 0.8s ease-out',
                 transform: isVisible ? 'scale(1)' : 'scale(1.08)',
@@ -209,7 +210,8 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
             />
             <div style={{
               position: 'absolute',
-              inset: 0,
+              inset: '20px',
+              borderRadius: '16px',
               background: 'linear-gradient(135deg, rgba(232,93,138,0.35), rgba(0,153,204,0.25))',
             }} />
           </>
