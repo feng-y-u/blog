@@ -24,7 +24,9 @@ export default function ArticleBody({ content, onImageClick }) {
             return (
               <code className={className} {...props}>
                 {lang && <span className="lang-tag">{lang}</span>}
-                {String(children).replace(/\n$/, '')}
+                {/* children may be highlighted <span> elements — render them as-is,
+                    never String() them (that yields "[object Object]") */}
+                {children}
               </code>
             )
           },
