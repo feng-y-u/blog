@@ -7,6 +7,53 @@ body {
   font-family: var(--font-body);
 }
 
+/* App page layout: two columns on desktop, single column on mobile */
+.app-layout {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 88px 24px 48px;
+  gap: 32px;
+}
+.app-layout[data-home] {
+  padding: 56px 24px 48px;
+}
+.app-layout > .app-content {
+  flex: 1;
+  min-width: 0;
+}
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+    padding: 72px 16px 32px;
+    gap: 24px;
+  }
+  .app-layout[data-home] {
+    padding: 56px 0 32px; /* homepage keeps its full-bleed magazine pages */
+  }
+  .app-layout > .sidebar {
+    width: 100%;
+  }
+}
+
+/* Navbar: compact on small screens */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 14px !important;
+  }
+  .nav-links {
+    gap: 12px !important;
+  }
+  .nav-link {
+    font-size: 11px !important;
+  }
+}
+@media (max-width: 480px) {
+  .nav-brand-text {
+    display: none;
+  }
+}
+
 /* Card */
 .card {
   background: var(--surface);

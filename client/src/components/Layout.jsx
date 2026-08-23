@@ -38,15 +38,9 @@ export default function Layout() {
           <Outlet context={{ onSearchOpen: () => setSearchOpen(true) }} />
         </main>
       ) : (
-        /* 其他页面：带容器和侧边栏 */
-        <div className="page-enter" key={location.key} style={{
-          display: 'flex',
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '88px 24px 48px',
-          gap: '32px',
-        }}>
-          <main style={{ flex: 1, minWidth: 0 }}>
+        /* 其他页面：带容器和侧边栏（app-layout 提供桌面双栏 / 移动端单栏） */
+        <div className="page-enter app-layout" key={location.key}>
+          <main className="app-content">
             <Outlet />
           </main>
           {showSidebar && <Sidebar />}

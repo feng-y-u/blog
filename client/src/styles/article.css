@@ -10,6 +10,14 @@
   padding: 48px 56px;
   box-shadow: var(--shadow);
 }
+@media (max-width: 768px) {
+  .article-container {
+    padding: 28px 20px;
+  }
+  .article-hero {
+    height: 200px;
+  }
+}
 /* Hero image: full-width banner above the card, fills regardless of source size */
 .article-hero {
   display: block;

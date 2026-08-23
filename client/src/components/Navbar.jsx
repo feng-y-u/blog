@@ -36,7 +36,7 @@ export default function Navbar({ onSearchOpen }) {
   }
 
   return (
-    <nav style={{
+    <nav className="navbar" style={{
       position: 'fixed',
       top: 0, left: 0, right: 0,
       zIndex: 100,
@@ -68,7 +68,7 @@ export default function Navbar({ onSearchOpen }) {
           textDecoration: 'none',
         }}>
           <span style={{ color: 'var(--accent-pink)', fontSize: '16px' }}>✦</span>
-          <span style={{
+          <span className="nav-brand-text" style={{
             color: 'var(--fg)', fontSize: '13px',
             letterSpacing: '0.15em', fontWeight: 800,
             fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', sans-serif",
@@ -79,7 +79,7 @@ export default function Navbar({ onSearchOpen }) {
       </div>
 
       {/* 右侧 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
         {!isPostPage && (
           <>
             <NavLink to="/" active={location.pathname === '/'}>文章</NavLink>
@@ -124,7 +124,7 @@ export default function Navbar({ onSearchOpen }) {
 
 function NavLink({ to, active, children }) {
   return (
-    <Link to={to} style={{
+    <Link to={to} className="nav-link" style={{
       display: 'inline-block',
       fontSize: '12px', fontWeight: active ? 700 : 500,
       color: active ? 'var(--accent-pink)' : 'var(--fg-muted)',
