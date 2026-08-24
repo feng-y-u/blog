@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { deleteImage, listMarkdownFiles, readTextFile } from '../../utils/file-system'
+import { deleteImage, listMarkdownFiles, readTextFile, revokeImageUrl } from '../../utils/file-system'
+import useResolvedUrl from './useResolvedUrl'
 
 // Extract /images/ references from the current article's content + coverImage.
 function extractImageRefs(content, coverImage) {
@@ -14,6 +15,13 @@ function extractImageRefs(content, coverImage) {
     refs.set(name, { count: refs.get(name)?.count || 0, isCover: true })
   }
   return [...refs.entries()].map(([name, v]) => ({ name, ...v }))
+}
+
+// Thumbnail of one image file, resolved against the connected content dir.
+function Thumb({ dir, name }) {
+  const src = useResolvedUrl(dir, `/images/${encodeURIComponent(name)}`)
+  return <img src={src} alt={name}
+    style={{ width: '64px', height: '48px', objectFit: 'cover', borderRadius: '6px', flexShrink: 0, background: 'var(--bg)' }} />
 }
 
 // Article-scoped image manager: shows only images referenced by the article
@@ -52,6 +60,7 @@ export default function ImageManager({ open, dir, form, onChange, onClose }) {
         setNotice(`「${name}」仍被其他文章引用，已移除本文引用但保留文件`)
       } else {
         await deleteImage(dir, name)
+        revokeImageUrl(name)
         setNotice(`已移除引用并删除文件「${name}」`)
       }
     } catch (err) {
@@ -90,8 +99,7 @@ export default function ImageManager({ open, dir, form, onChange, onClose }) {
                 border: '1px solid var(--border)', borderRadius: '8px',
                 padding: '8px 12px', background: 'var(--surface)',
               }}>
-                <img src={`/images/${encodeURIComponent(img.name)}`} alt={img.name}
-                  style={{ width: '64px', height: '48px', objectFit: 'cover', borderRadius: '6px', flexShrink: 0, background: 'var(--bg)' }} />
+                <Thumb dir={dir} name={img.name} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: '13px', color: 'var(--fg)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={img.name}>
                     {img.name}

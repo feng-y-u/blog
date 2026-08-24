@@ -1,7 +1,9 @@
 import PostCard from '../PostCard'
+import useResolvedUrl from './useResolvedUrl'
 
 // {slug,title,date,category,tags,coverImage,excerpt,jpChar,content} = form
-export default function WriterMetaForm({ form, categories, tags, onField, onPickCover, coverInputRef }) {
+export default function WriterMetaForm({ form, categories, tags, onField, onPickCover, coverInputRef, dir }) {
+  const coverSrc = useResolvedUrl(dir, form.coverImage)
   const inputStyle = { padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '6px', background: 'var(--bg)', color: 'var(--fg)', fontSize: '13px', fontFamily: 'var(--font-body)' }
   const btn = { cursor: 'pointer', background: 'var(--surface)' }
 
@@ -71,7 +73,7 @@ export default function WriterMetaForm({ form, categories, tags, onField, onPick
           <input ref={coverInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={onPickCover} />
           {form.coverImage && (
             <>
-              <img src={form.coverImage} alt="封面预览" style={{ height: '48px', borderRadius: '6px', border: '1px solid var(--border)' }} />
+              <img src={coverSrc} alt="封面预览" style={{ height: '48px', borderRadius: '6px', border: '1px solid var(--border)' }} />
               <button className="writer-btn" style={btn} onClick={() => onField('coverImage', '')}>移除</button>
             </>
           )}
@@ -93,7 +95,7 @@ export default function WriterMetaForm({ form, categories, tags, onField, onPick
             })(),
             category: form.category ? { name: form.category, slug: form.category } : null,
             tags: form.tags.map(t => ({ name: t, slug: t })),
-            coverImage: form.coverImage || null,
+            coverImage: form.coverImage ? coverSrc : null,
             excerpt: form.excerpt || '',
             content: form.content,
           }} />

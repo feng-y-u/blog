@@ -121,3 +121,38 @@ export async function deleteImage(dir, name) {
   const imagesDir = await dir.getDirectoryHandle('images')
   await imagesDir.removeEntry(name)
 }
+
+// Blob URLs for images previewed in the writer (keyed by file name).
+const blobUrlCache = new Map()
+
+// Writer previews: resolve a public /images/<name> URL to a blob URL backed
+// by the connected content dir handle, so freshly selected images show up in
+// any environment — the vite dev middleware only serves /images in `vite dev`.
+// Non-/images URLs and missing files fall back to the input unchanged.
+export async function resolveImageUrl(dir, url) {
+  const m = /^\/images\/([^?#]+)/.exec(String(url || ''))
+  if (!m || !dir) return url
+  const name = decodeURIComponent(m[1])
+  if (blobUrlCache.has(name)) return blobUrlCache.get(name)
+  try {
+    const imagesDir = await dir.getDirectoryHandle('images')
+    const file = await (await imagesDir.getFileHandle(name)).getFile()
+    const objectUrl = URL.createObjectURL(file)
+    blobUrlCache.set(name, objectUrl)
+    return objectUrl
+  } catch (err) {
+    if (err?.name !== 'NotFoundError') console.warn('resolveImageUrl:', err)
+    return url
+  }
+}
+
+// Drops a cached blob URL (used after deleting the file so a same-named
+// image copied later doesn't show the stale preview). `name` must be the
+// decoded file name, matching the cache key.
+export function revokeImageUrl(name) {
+  const url = blobUrlCache.get(String(name || ''))
+  if (url) {
+    URL.revokeObjectURL(url)
+    blobUrlCache.delete(String(name || ''))
+  }
+}

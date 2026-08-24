@@ -158,6 +158,7 @@ export default function WriterPage() {
               form={current}
               categories={catTags.categories}
               tags={catTags.tags}
+              dir={dir}
               onField={onField}
               onPickCover={async e => {
                 const f = e.target.files?.[0]
@@ -189,7 +190,7 @@ export default function WriterPage() {
                 placeholder="在这里写 Markdown 正文…（支持粘贴图片自动插入）"
               />
               <div className="writer-resizer" onMouseDown={startDrag} title="拖动调整预览宽度" />
-              <WriterPreview form={current} width={previewWidth} />
+              <WriterPreview form={current} width={previewWidth} dir={dir} />
             </div>
           </div>
         </div>
