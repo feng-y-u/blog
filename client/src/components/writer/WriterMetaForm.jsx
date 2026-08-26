@@ -83,10 +83,9 @@ export default function WriterMetaForm({ form, categories, tags, onField, onPick
         <label>摘要（留空则保存后由构建自动截取）</label>
         <textarea className="writer-textarea" rows={2} value={form.excerpt} onChange={e => onField('excerpt', e.target.value)} />
       </div>
-      {form.isNew && (
-        <div className="writer-field full">
-          <label>文章卡片效果预览</label>
-          <PostCard post={{
+      <div className="writer-field full">
+        <label>文章卡片效果预览</label>
+        <PostCard post={{
             slug: form.slug,
             title: form.title || '未命名文章',
             publishedAt: (() => {
@@ -99,8 +98,7 @@ export default function WriterMetaForm({ form, categories, tags, onField, onPick
             excerpt: form.excerpt || '',
             content: form.content,
           }} />
-        </div>
-      )}
+      </div>
     </div>
   )
 }
