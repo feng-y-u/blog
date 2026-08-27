@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { deleteImage, listMarkdownFiles, readTextFile, revokeImageUrl } from '../../utils/file-system'
+import { deleteImage, isImageReferencedElsewhere, revokeImageUrl } from '../../utils/file-system'
 import useResolvedUrl from './useResolvedUrl'
 
 // Extract /images/ references from the current article's content + coverImage.
@@ -50,12 +50,7 @@ export default function ImageManager({ open, dir, form, onChange, onClose }) {
       // 3. delete the file unless another post (on disk, excluding this one)
       //    still references it
       const postsDir = await dir.getDirectoryHandle('posts')
-      let usedElsewhere = false
-      for (const pname of await listMarkdownFiles(postsDir)) {
-        if (pname === form.name) continue
-        const raw = await readTextFile(postsDir, pname)
-        if (raw.includes(`/images/${name}`)) { usedElsewhere = true; break }
-      }
+      const usedElsewhere = await isImageReferencedElsewhere(postsDir, name, form.name || '')
       if (usedElsewhere) {
         setNotice(`「${name}」仍被其他文章引用，已移除本文引用但保留文件`)
       } else {

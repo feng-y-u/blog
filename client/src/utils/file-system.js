@@ -122,6 +122,17 @@ export async function deleteImage(dir, name) {
   await imagesDir.removeEntry(name)
 }
 
+// True when any post file other than `exceptName` references `/images/<name>`.
+// `exceptName` may be '' (e.g. an unsaved new article — no file to exclude).
+export async function isImageReferencedElsewhere(postsDir, name, exceptName) {
+  for (const pname of await listMarkdownFiles(postsDir)) {
+    if (pname === exceptName) continue
+    const raw = await readTextFile(postsDir, pname)
+    if (raw.includes(`/images/${name}`)) return true
+  }
+  return false
+}
+
 // Blob URLs for images previewed in the writer (keyed by file name).
 const blobUrlCache = new Map()
 
