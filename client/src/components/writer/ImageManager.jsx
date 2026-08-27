@@ -27,7 +27,7 @@ function Thumb({ dir, name }) {
 // Article-scoped image manager: shows only images referenced by the article
 // being edited, tagged as cover/inline, and removes them with one click
 // (clears references + deletes the file unless other posts still use it).
-export default function ImageManager({ open, dir, form, onChange, onClose }) {
+export default function ImageManager({ open, dir, form, onChange, onRemoveCover, onClose }) {
   const [notice, setNotice] = useState(null)
   const [busy, setBusy] = useState(null)
 
@@ -44,7 +44,7 @@ export default function ImageManager({ open, dir, form, onChange, onClose }) {
       const re = new RegExp(`!\\[[^\\]]*\\]\\([^)]*\\/images\\/${escaped}[^)]*\\)`, 'g')
       const nextContent = String(form.content || '').replace(re, '')
       // 2. clear the cover field if it points at this image
-      if (isCover) onChange('coverImage', '')
+      if (isCover) onRemoveCover?.()
       if (nextContent !== form.content) onChange('content', nextContent)
 
       // 3. delete the file unless another post (on disk, excluding this one)

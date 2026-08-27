@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import {
-  pickContentDir, restoreContentDir, ensureWritePermission, listMarkdownFiles, readTextFile, copyImageTo,
+  pickContentDir, restoreContentDir, ensureWritePermission, listMarkdownFiles, readTextFile,
 } from '../utils/file-system'
 import { parseFrontmatter } from '../utils/frontmatter'
 import { slugify } from '../utils/slugify'
@@ -57,7 +57,7 @@ export default function WriterPage() {
   }, [])
 
   const article = useWriterArticle(dir, loadArticles)
-  const { current, dirty, saving, toast, setToast, textareaRef, rememberSelection, onField, handleSelect, handleNew, handleImportMd, handleSave, insertImage } = article
+  const { current, dirty, saving, toast, setToast, textareaRef, rememberSelection, onField, applyCover, removeCover, handleSelect, handleNew, handleImportMd, handleSave, insertImage } = article
 
   // restore persisted dir handle on mount
   useEffect(() => {
@@ -165,10 +165,9 @@ export default function WriterPage() {
                 if (f) {
                   if (dir) {
                     try {
-                      const url = await copyImageTo(dir, await compressImage(f))
-                      onField('coverImage', url)
+                      applyCover(await compressImage(f))
                     } catch (err) {
-                      setToast('封面上传失败: ' + err.message)
+                      setToast('图片处理失败: ' + err.message)
                     }
                   } else {
                     setToast('请先打开 content 目录')
@@ -176,6 +175,7 @@ export default function WriterPage() {
                 }
                 e.target.value = ''
               }}
+              onRemoveCover={removeCover}
               coverInputRef={coverInputRef}
             />
             )}
@@ -194,7 +194,7 @@ export default function WriterPage() {
             </div>
           </div>
         </div>
-        <ImageManager open={showImages} dir={dir} form={current} onChange={onField} onClose={() => setShowImages(false)} />
+        <ImageManager open={showImages} dir={dir} form={current} onChange={onField} onRemoveCover={removeCover} onClose={() => setShowImages(false)} />
         </>
       )}
     </div>
