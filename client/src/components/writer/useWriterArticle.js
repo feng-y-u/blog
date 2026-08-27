@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { readTextFile, writeTextFile, copyImageTo, deleteImage, revokeImageUrl, isImageReferencedElsewhere } from '../../utils/file-system'
+import { readTextFile, writeTextFile, copyImageTo } from '../../utils/file-system'
 import { parseFrontmatter, stringifyFrontmatter } from '../../utils/frontmatter'
 import { slugify } from '../../utils/slugify'
 import { compressImage } from '../../utils/image-compress'
+import useCoverBlob from './useCoverBlob'
+import { copyCoverOnSave, cleanupReplacedCover } from './cover-save'
 
 const TODAY = new Date().toISOString().slice(0, 10)
 
@@ -24,7 +26,7 @@ export default function useWriterArticle(dir, onSaved) {
   const [toast, setToast] = useState(null)
   const textareaRef = useRef(null)
   const lastSelRef = useRef(null)
-  const blobUrlRef = useRef(null)
+  const { blobUrlRef, releaseCoverBlob } = useCoverBlob()
 
   // Remember the last caret position in the textarea so image insertion can
   // target it even after the toolbar button steals focus.
@@ -50,7 +52,8 @@ export default function useWriterArticle(dir, onSaved) {
   // Pick a new cover: preview via a blob URL, hold the compressed file for
   // the save step; cover focal position resets (it was tuned for the old image).
   function applyCover(blob) {
-    if (blobUrlRef.current) { URL.revokeObjectURL(blobUrlRef.current); blobUrlRef.current = null }
+    if (saving) return
+    releaseCoverBlob()
     const url = URL.createObjectURL(blob)
     blobUrlRef.current = url
     setCurrent(prev => ({ ...prev, coverImage: url, coverFile: blob, coverPosition: '' }))
@@ -60,12 +63,14 @@ export default function useWriterArticle(dir, onSaved) {
   // Remove the cover: no file is ever written before save, so this only
   // releases the preview blob and clears the fields.
   function removeCover() {
-    if (blobUrlRef.current) { URL.revokeObjectURL(blobUrlRef.current); blobUrlRef.current = null }
+    if (saving) return
+    releaseCoverBlob()
     setCurrent(prev => ({ ...prev, coverImage: '', coverFile: null, coverPosition: '' }))
     setDirty(true)
   }
 
   async function handleSelect(name) {
+    if (saving) return
     if (dirty && !window.confirm('当前有未保存的更改，确定放弃并打开其他文章？')) return
     try {
       const postsDir = await dir.getDirectoryHandle('posts')
@@ -74,7 +79,7 @@ export default function useWriterArticle(dir, onSaved) {
       const base = name.replace(/\.md$/, '')
       const datePrefix = base.match(/^(\d{4}-\d{2}-\d{2})[-_]/)?.[1] || ''
       const slug = datePrefix ? base.slice(datePrefix.length + 1) : base
-      if (blobUrlRef.current) { URL.revokeObjectURL(blobUrlRef.current); blobUrlRef.current = null }
+      releaseCoverBlob()
       setCurrent({
         isNew: false, name, slug, title: data.title || '', date: datePrefix || TODAY,
         category: data.category || '', tags: data.tags || [], jpChar: data.jpChar || '',
@@ -88,18 +93,20 @@ export default function useWriterArticle(dir, onSaved) {
   }
 
   function handleNew() {
+    if (saving) return
     if (dirty && !window.confirm('当前有未保存的更改，确定新建文章？')) return
-    if (blobUrlRef.current) { URL.revokeObjectURL(blobUrlRef.current); blobUrlRef.current = null }
+    releaseCoverBlob()
     setCurrent(emptyForm())
     setDirty(false)
   }
 
   async function handleImportMd(file) {
+    if (saving) return
     try {
       const text = await file.text()
       const { data, order, content } = parseFrontmatter(text)
       if (dirty && !window.confirm('当前有未保存的更改，确定导入并覆盖编辑器？')) return
-      if (blobUrlRef.current) { URL.revokeObjectURL(blobUrlRef.current); blobUrlRef.current = null }
+      releaseCoverBlob()
       setCurrent({
         isNew: true, name: '', slug: slugify(data.title || file.name.replace(/\.md$/, '')),
         title: data.title || '', date: data.date || TODAY,
@@ -115,10 +122,13 @@ export default function useWriterArticle(dir, onSaved) {
 
   async function handleSave() {
     if (!dir) { setToast('请先打开 content 目录'); return }
+    if (saving) return
     const form = current
     const title = form.title.trim() || form.slug || 'untitled'
     const slug = slugify(form.slug || form.title)
     let name = form.name
+    setSaving(true)
+    try {
     const postsDir = await dir.getDirectoryHandle('posts', { create: true })
     if (form.isNew) {
       const dateSafe = /^\d{4}-\d{2}-\d{2}$/.test(form.date) ? form.date : TODAY
@@ -137,14 +147,11 @@ export default function useWriterArticle(dir, onSaved) {
     // Cover is written to content/images/ only now, when it is actually saved.
     let coverUrl = form.coverImage
     let copiedUrl = null
-    if (form.coverFile) {
-      try {
-        copiedUrl = await copyImageTo(dir, form.coverFile)
-        coverUrl = copiedUrl
-      } catch (err) {
-        setToast('封面上传失败: ' + err.message)
-        return
-      }
+    try {
+      ({ coverUrl, copiedUrl } = await copyCoverOnSave(dir, form))
+    } catch (err) {
+      setToast('封面上传失败: ' + err.message)
+      return
     }
     const oldCover = form.extra?.coverImage
     const data = { ...form.extra, title }
@@ -159,27 +166,20 @@ export default function useWriterArticle(dir, onSaved) {
     const keys = ['title', ...(form.category ? ['category'] : []), ...(form.tags.length ? ['tags'] : []), ...(coverUrl ? ['coverImage'] : []), ...(form.coverPosition ? ['coverPosition'] : []), ...(form.excerpt ? ['excerpt'] : []), ...(form.jpChar ? ['jpChar'] : [])]
     const order = form.isNew ? keys : [...new Set([...form.order, ...keys])]
     const text = stringifyFrontmatter(data, order) + (form.content || '')
-    setSaving(true)
-    try {
       await writeTextFile(postsDir, name, text)
-      if (blobUrlRef.current) { URL.revokeObjectURL(blobUrlRef.current); blobUrlRef.current = null }
-      setCurrent(prev => ({ ...prev, isNew: false, name, coverImage: copiedUrl || prev.coverImage, coverFile: null }))
+      releaseCoverBlob()
+      setCurrent(prev => prev.name !== form.name || prev.isNew !== form.isNew
+        ? prev
+        : { ...prev, isNew: false, name, coverImage: copiedUrl || prev.coverImage, coverFile: null })
       setDirty(false)
       setToast(`已保存 ${name}`)
       onSaved?.(dir)
       // Replacing the cover: delete the old file unless another post uses it.
-      if (copiedUrl && oldCover && /^\/images\//.test(oldCover) && oldCover !== copiedUrl) {
-        const oldName = decodeURIComponent(oldCover.replace(/^\/images\//, ''))
-        try {
-          if (await isImageReferencedElsewhere(postsDir, oldName, name)) {
-            setToast(`已保存；旧封面被其他文章引用，文件「${oldName}」保留`)
-          } else {
-            await deleteImage(dir, oldName)
-            revokeImageUrl(oldName)
-          }
-        } catch (err) {
-          setToast(`已保存，但旧封面清理失败: ${err.message}`)
-        }
+      try {
+        const notice = await cleanupReplacedCover(dir, postsDir, { oldCover, copiedUrl, name })
+        if (notice) setToast(notice)
+      } catch (err) {
+        setToast(`已保存，但旧封面清理失败: ${err.message}`)
       }
     } catch (err) {
       setToast('保存失败: ' + err.message)
