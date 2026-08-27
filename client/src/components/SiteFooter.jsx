@@ -10,6 +10,7 @@ export default function SiteFooter() {
   return (
     <footer className="site-footer">
       <div>&copy; {year} {siteTitle} | Powered by コードとアニメ</div>
+      <div style={{ fontSize: '11px', color: 'var(--fg-muted)', marginTop: '6px' }}>图片来源于网络</div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '10px' }}>
         <Link to="/" className="footer-btn">首页</Link>
         <a
