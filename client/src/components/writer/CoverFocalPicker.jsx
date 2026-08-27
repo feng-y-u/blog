@@ -39,6 +39,7 @@ export default function CoverFocalPicker({ src, value, onChange }) {
         onPointerDown={e => { draggingRef.current = true; moveTo(e.clientX, e.clientY) }}
         onPointerMove={e => { if (draggingRef.current) moveTo(e.clientX, e.clientY) }}
         onPointerUp={() => { draggingRef.current = false }}
+        onPointerCancel={() => { draggingRef.current = false }}
         onPointerLeave={() => { draggingRef.current = false }}
       >
         <img src={src} alt="焦点预览" style={{
