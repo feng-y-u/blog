@@ -1,5 +1,6 @@
 import PostCard from '../PostCard'
 import useResolvedUrl from './useResolvedUrl'
+import CoverFocalPicker from './CoverFocalPicker'
 
 // {slug,title,date,category,tags,coverImage,excerpt,jpChar,content} = form
 export default function WriterMetaForm({ form, categories, tags, onField, onPickCover, onRemoveCover, coverInputRef, dir }) {
@@ -78,6 +79,11 @@ export default function WriterMetaForm({ form, categories, tags, onField, onPick
             </>
           )}
         </div>
+        {form.coverImage && (
+          <div style={{ marginTop: '10px' }}>
+            <CoverFocalPicker src={coverSrc} value={form.coverPosition} onChange={v => onField('coverPosition', v)} />
+          </div>
+        )}
       </div>
       <div className="writer-field full">
         <label>摘要（留空则保存后由构建自动截取）</label>
@@ -95,6 +101,7 @@ export default function WriterMetaForm({ form, categories, tags, onField, onPick
             category: form.category ? { name: form.category, slug: form.category } : null,
             tags: form.tags.map(t => ({ name: t, slug: t })),
             coverImage: form.coverImage ? coverSrc : null,
+            coverPosition: form.coverPosition || undefined,
             excerpt: form.excerpt || '',
             content: form.content,
           }} />
