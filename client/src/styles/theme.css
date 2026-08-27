@@ -160,15 +160,13 @@
   height: 100vh;
   overflow-y: scroll;
   scroll-behavior: smooth;
-  scroll-snap-type: y proximity;
   /* 顶部 56px 会被 navbar 覆盖，但 splash 内容从 80px 开始，不受影响 */
 }
 
-/* ===== Magazine Page ===== */
+/* ===== Magazine Section ===== */
 .magazine-page {
   position: relative;
   height: 100vh;
-  scroll-snap-align: start;
   overflow: hidden;
 }
 

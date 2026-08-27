@@ -26,7 +26,7 @@ function scrambleText(finalText, onUpdate, onDone) {
   tick()
 }
 
-export default function MagazineSpread({ post, index, isVisible, compact, compactHeight }) {
+export default function MagazineSpread({ post, index, compact, compactHeight }) {
   const [displayTitle, setDisplayTitle] = useState(post.title)
   const [scrambled, setScrambled] = useState(false)
   const [coverError, setCoverError] = useState(false)
@@ -46,14 +46,13 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
   }, [])
 
   useEffect(() => {
-    if (isVisible && !scrambled) {
-      setScrambled(true)
-      const timer = setTimeout(() => {
-        scrambleText(post.title, setDisplayTitle)
-      }, 300 + index * 150)
-      return () => clearTimeout(timer)
-    }
-  }, [isVisible, post.title, index, scrambled])
+    if (scrambled) return
+    setScrambled(true)
+    const timer = setTimeout(() => {
+      scrambleText(post.title, setDisplayTitle)
+    }, 300 + index * 150)
+    return () => clearTimeout(timer)
+  }, [post.title, index, scrambled])
 
   // On mobile: single column, cover fills the whole page, text sits on top.
   const textBg = hasCover && isMobile
@@ -68,7 +67,6 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : (compact ? '1.2fr 0.8fr' : '1fr 1fr'),
         height: compactHeight || (compact ? '50vh' : '100vh'),
-        scrollSnapAlign: compact ? 'none' : 'start',
         position: 'relative',
         overflow: 'hidden',
         background: 'var(--surface)',
@@ -104,9 +102,6 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
                 objectFit: 'cover',
                 objectPosition: post.coverPosition || undefined,
                 borderRadius: isMobile ? 0 : '16px',
-                opacity: isVisible ? 1 : 0,
-                transition: 'opacity 0.6s ease-out, transform 0.8s ease-out',
-                transform: isVisible ? 'scale(1)' : 'scale(1.08)',
               }}
               loading="lazy" decoding="async"
               onError={() => setCoverError(true)}

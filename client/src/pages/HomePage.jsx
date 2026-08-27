@@ -2,20 +2,20 @@ import { useState, useEffect, useRef } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { getPosts } from '../api/posts'
-import MagazinePage from '../components/MagazinePage'
+import MagazineSpread from '../components/MagazineSpread'
+import MagazineNumbering from '../components/MagazineNumbering'
 import HomeSplash from '../components/HomeSplash'
-import PageIndicator from '../components/PageIndicator'
 import RestPosts from '../components/RestPosts'
 import SiteFooter from '../components/SiteFooter'
 import Loading from '../components/Loading'
 
 const FEATURED_COUNT = 6
+const ROW_SIZE = 3
 
 export default function HomePage() {
   const { onSearchOpen } = useOutletContext() ?? {}
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [visibleIndex, setVisibleIndex] = useState(0)
   const scrollRef = useRef(null)
 
   useEffect(() => {
@@ -26,38 +26,14 @@ export default function HomePage() {
       .finally(() => setLoading(false))
   }, [])
 
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      entries => {
-        // The current page is the one with the largest visible portion. A
-        // single 0.5 threshold latches the wrong page near the boundary
-        // (adjacent 100vh pages can both sit at ~50%), so track ratio with
-        // fine thresholds and always pick the max.
-        let best = null
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue
-          if (!best || entry.intersectionRatio > best.intersectionRatio) best = entry
-        }
-        if (best) {
-          const idx = Number(best.target.dataset.index)
-          if (!isNaN(idx)) setVisibleIndex(idx)
-        }
-      },
-      { threshold: [0, 0.25, 0.5, 0.75, 1], root: el }
-    )
-    const items = el.querySelectorAll('[data-index]')
-    items.forEach(child => observer.observe(child))
-    return () => observer.disconnect()
-  }, [posts])
-
   const featured = posts.slice(0, FEATURED_COUNT)
   const rest = posts.slice(FEATURED_COUNT)
 
-  const triples = []
-  for (let i = 0; i < featured.length; i += 3) {
-    triples.push(featured.slice(i, i + 3))
+  // Continuous scroll: no paging state, no snap — posts are grouped into
+  // visual rows of ROW_SIZE only to keep the original compact density.
+  const rows = []
+  for (let i = 0; i < featured.length; i += ROW_SIZE) {
+    rows.push(featured.slice(i, i + ROW_SIZE))
   }
 
   if (loading) return <Loading />
@@ -71,25 +47,57 @@ export default function HomePage() {
 
       <HomeSplash scroller={scrollRef} />
 
-      {triples.length > 0 && triples.map((pagePosts, pageIdx) => (
-        <MagazinePage
-          key={pageIdx}
-          posts={pagePosts}
-          pageIndex={pageIdx}
-          visibleIndex={visibleIndex}
-        />
-      ))}
+      {rows.map((rowPosts, rowIdx) => (
+        <div key={rowIdx} className="magazine-page">
+          <MagazineNumbering side="left">
+            {rowPosts.map((post, i) => {
+              const n = rowIdx * ROW_SIZE + i
+              return (
+                <div key={post.slug} style={{
+                  height: `calc(100vh / ${rowPosts.length})`,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}>
+                  <span style={{
+                    fontSize: i === 0 && rowPosts.length >= 2 ? '20px' : '28px',
+                    fontWeight: 800,
+                    color: 'var(--accent-pink-dim)',
+                    lineHeight: 1,
+                    letterSpacing: '-0.03em',
+                  }}>
+                    {String(n + 1).padStart(2, '0')}
+                  </span>
+                  <span style={{
+                    fontSize: '9px',
+                    color: 'var(--fg-muted)',
+                    letterSpacing: '0.15em',
+                    writingMode: 'vertical-rl',
+                    height: '48px',
+                    opacity: 0.6,
+                  }}>
+                    {post.category?.name || 'ARTICLE'}
+                  </span>
+                </div>
+              )
+            })}
+          </MagazineNumbering>
 
-      {triples.length > 1 && (
-        <PageIndicator
-          total={triples.length}
-          active={visibleIndex}
-          onNavigate={(i) => {
-            const el = scrollRef.current?.querySelector(`[data-index="${i}"]`)
-            el?.scrollIntoView({ behavior: 'smooth' })
-          }}
-        />
-      )}
+          <div className="magazine-content">
+            {rowPosts.map((post, i) => (
+              <MagazineSpread
+                key={post.slug}
+                post={post}
+                index={rowIdx * ROW_SIZE + i}
+                compact={rowPosts.length >= 2}
+                compactHeight={rowPosts.length >= 2 ? `calc(100vh / ${rowPosts.length})` : undefined}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
 
       {rest.length > 0 && (
         <RestPosts
