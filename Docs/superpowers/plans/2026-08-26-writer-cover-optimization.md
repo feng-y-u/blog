@@ -241,12 +241,17 @@ git add client/src/components/writer/useWriterArticle.js
 git commit -m "feat(writer): 封面延迟到保存时复制，替换封面后清理旧图"
 ```
 
+**Task 2 执行增补（质量审查后并入，提交 `1260b13`）：**
+- 并发防护：`handleSave`/`handleSelect`/`handleNew`/`handleImportMd`/`applyCover`/`removeCover` 增加 `if (saving) return`；`setSaving(true)` 提前到复制前；保存后 `setCurrent` 增加文章身份校验（`prev.name !== form.name || prev.isNew !== form.isNew` 时不改写）。
+- 模块拆分（控制行数，见自审）：新增 `useCoverBlob.js`（blobUrlRef + releaseCoverBlob）、`cover-save.js`（`copyCoverOnSave`、`cleanupReplacedCover`）；`removeCover` 同时清 `coverPosition`（提交 `c05f33a`）。
+
 ---
 
 ### Task 3: WriterPage — 选封面改为预览
 
 **Files:**
 - Modify: `client/src/pages/WriterPage.jsx`
+- Modify: `client/src/components/writer/ImageManager.jsx`（封面移除路径同步迁移，review 增补）
 
 - [ ] **Step 1: 调整 import 与解构**
 
@@ -287,15 +292,27 @@ import {
               onRemoveCover={removeCover}
 ```
 
-- [ ] **Step 3: 编译验证**
+- [ ] **Step 3: ImageManager 封面移除改走 onRemoveCover（review 增补）**
+
+`WriterPage.jsx` 渲染 ImageManager 处增加 `onRemoveCover={removeCover}` 属性：
+
+```jsx
+<ImageManager open={showImages} dir={dir} form={current} onChange={onField} onRemoveCover={removeCover} onClose={() => setShowImages(false)} />
+```
+
+`ImageManager.jsx`：
+1. 签名增加 `onRemoveCover`：`export default function ImageManager({ open, dir, form, onChange, onRemoveCover, onClose })`
+2. `handleRemove` 中 `if (isCover) onChange('coverImage', '')` 改为 `if (isCover) onRemoveCover?.()`（一并清 coverFile/coverPosition，防止已移除的封面在下次保存时被重新复制）。
+
+- [ ] **Step 4: 编译验证**
 
 Run: `cd client && npm run build`
 Expected: 构建成功，无报错。
 
-- [ ] **Step 4: 提交**
+- [ ] **Step 5: 提交**
 
 ```bash
-git add client/src/pages/WriterPage.jsx
+git add client/src/pages/WriterPage.jsx client/src/components/writer/ImageManager.jsx
 git commit -m "feat(writer): 选中封面仅预览，保存时才写入 content"
 ```
 
