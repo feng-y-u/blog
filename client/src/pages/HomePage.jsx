@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { getPosts } from '../api/posts'
+import { useSettings } from '../contexts/SettingsContext'
 import MagazineSpread from '../components/MagazineSpread'
 import MagazineNumbering from '../components/MagazineNumbering'
 import HomeSplash from '../components/HomeSplash'
@@ -13,6 +14,7 @@ const FEATURED_COUNT = 6
 const ROW_SIZE = 3
 
 export default function HomePage() {
+  const { settings } = useSettings()
   const { onSearchOpen } = useOutletContext() ?? {}
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -41,8 +43,8 @@ export default function HomePage() {
   return (
     <div ref={scrollRef} className="page-scroll-container">
       <Helmet>
-        <title>风予's Blog — 代码与动漫的世界</title>
-        <meta name="description" content="个人博客，分享编程技术和动漫文化" />
+        <title>{settings?.site_title || "风予's Blog"}</title>
+        <meta name="description" content={settings?.profile_bio || '个人博客，分享编程技术和动漫文化'} />
       </Helmet>
 
       <HomeSplash scroller={scrollRef} />
