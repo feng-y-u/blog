@@ -61,7 +61,7 @@ export default function useWriterArticle(dir, onSaved) {
   // releases the preview blob and clears the fields.
   function removeCover() {
     if (blobUrlRef.current) { URL.revokeObjectURL(blobUrlRef.current); blobUrlRef.current = null }
-    setCurrent(prev => ({ ...prev, coverImage: '', coverFile: null }))
+    setCurrent(prev => ({ ...prev, coverImage: '', coverFile: null, coverPosition: '' }))
     setDirty(true)
   }
 
