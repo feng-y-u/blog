@@ -194,7 +194,7 @@ export default function WriterPage() {
             </div>
           </div>
         </div>
-        <ImageManager open={showImages} dir={dir} form={current} onChange={onField} onRemoveCover={removeCover} onClose={() => setShowImages(false)} />
+        <ImageManager open={showImages} dir={dir} form={current} onChange={onField} onRemoveCover={removeCover} saving={saving} onClose={() => setShowImages(false)} />
         </>
       )}
     </div>
