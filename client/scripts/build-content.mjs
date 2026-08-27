@@ -52,6 +52,7 @@ const posts = postFiles.map(({ slug, title, date, data, content }) => {
     category: categoryName ? { name: categoryName, slug: slugify(categoryName) } : null,
     tags: tags.map(t => ({ name: t, slug: slugify(t) })),
     coverImage: data.coverImage || data.cover || null,
+    coverPosition: data.coverPosition || null,
     excerpt: data.excerpt || content.replace(/^#\s+.+$/m, '').replace(/[#*`\[\]()>|\\-]/g, '').trim().slice(0, 120),
     jpChar: data.jpChar || null,
     content,
