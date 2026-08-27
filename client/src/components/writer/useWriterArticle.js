@@ -26,7 +26,7 @@ export default function useWriterArticle(dir, onSaved) {
   const [toast, setToast] = useState(null)
   const textareaRef = useRef(null)
   const lastSelRef = useRef(null)
-  const { blobUrlRef, releaseCoverBlob } = useCoverBlob()
+  const { blobUrlRef, lastSavedCoverRef, releaseCoverBlob } = useCoverBlob()
 
   // Remember the last caret position in the textarea so image insertion can
   // target it even after the toolbar button steals focus.
@@ -153,7 +153,7 @@ export default function useWriterArticle(dir, onSaved) {
       setToast('封面上传失败: ' + err.message)
       return
     }
-    const oldCover = form.extra?.coverImage
+    const prevSavedCover = lastSavedCoverRef.current ?? form.extra?.coverImage
     const data = { ...form.extra, title }
     if (form.category) data.category = form.category; else delete data.category
     if (form.tags.length) data.tags = form.tags; else delete data.tags
@@ -174,9 +174,10 @@ export default function useWriterArticle(dir, onSaved) {
       setDirty(false)
       setToast(`已保存 ${name}`)
       onSaved?.(dir)
+      lastSavedCoverRef.current = coverUrl
       // Replacing the cover: delete the old file unless another post uses it.
       try {
-        const notice = await cleanupReplacedCover(dir, postsDir, { oldCover, copiedUrl, name })
+        const notice = await cleanupReplacedCover(dir, postsDir, { oldCover: prevSavedCover, copiedUrl, name })
         if (notice) setToast(notice)
       } catch (err) {
         setToast(`已保存，但旧封面清理失败: ${err.message}`)
