@@ -1,37 +1,16 @@
 import { useRef, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ParticleCanvas from './ParticleCanvas'
-
-function scrambleText(finalText, onUpdate, onDone) {
-  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ'
-  let current = finalText.split('')
-  let frame = 0
-  const maxFrames = 20
-
-  function tick() {
-    if (frame >= maxFrames) {
-      onUpdate(finalText)
-      onDone?.()
-      return
-    }
-    const progress = frame / maxFrames
-    const flipped = current.map((ch, i) => {
-      if (ch === ' ' || i / current.length < progress) return ch
-      return chars[Math.floor(Math.random() * chars.length)]
-    })
-    onUpdate(flipped.join(''))
-    frame++
-    requestAnimationFrame(tick)
-  }
-  tick()
-}
+import { scrambleText } from '../utils/scramble-text'
 
 export default function MagazineSpread({ post, index, compact, compactHeight }) {
   const [displayTitle, setDisplayTitle] = useState(post.title)
   const [scrambled, setScrambled] = useState(false)
   const [coverError, setCoverError] = useState(false)
+  const [revealed, setRevealed] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const titleRef = useRef(null)
+  const rootRef = useRef(null)
   const isLeft = index % 2 === 0
   // Decorative Japanese char: only shown when explicitly set in frontmatter (jpChar).
   const japaneseChar = post.jpChar || ''
@@ -44,6 +23,23 @@ export default function MagazineSpread({ post, index, compact, compactHeight }) 
     mq.addEventListener('change', fn)
     return () => mq.removeEventListener('change', fn)
   }, [])
+
+  // Fade the cover in once when the spread first scrolls into view; no global
+  // paging state involved, so the entrance effect can't desync from what's
+  // actually on screen.
+  useEffect(() => {
+    if (revealed) return
+    const el = rootRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) {
+        setRevealed(true)
+        observer.disconnect()
+      }
+    }, { threshold: 0.15 })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [revealed])
 
   useEffect(() => {
     if (scrambled) return
@@ -63,6 +59,7 @@ export default function MagazineSpread({ post, index, compact, compactHeight }) 
 
   return (
     <div
+      ref={rootRef}
       style={{
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : (compact ? '1.2fr 0.8fr' : '1fr 1fr'),
@@ -102,6 +99,9 @@ export default function MagazineSpread({ post, index, compact, compactHeight }) 
                 objectFit: 'cover',
                 objectPosition: post.coverPosition || undefined,
                 borderRadius: isMobile ? 0 : '16px',
+                opacity: revealed ? 1 : 0,
+                transition: 'opacity 0.6s ease-out, transform 0.8s ease-out',
+                transform: revealed ? 'scale(1)' : 'scale(1.08)',
               }}
               loading="lazy" decoding="async"
               onError={() => setCoverError(true)}
