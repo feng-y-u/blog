@@ -31,14 +31,21 @@ export default function HomePage() {
     if (!el) return
     const observer = new IntersectionObserver(
       entries => {
+        // The current page is the one with the largest visible portion. A
+        // single 0.5 threshold latches the wrong page near the boundary
+        // (adjacent 100vh pages can both sit at ~50%), so track ratio with
+        // fine thresholds and always pick the max.
+        let best = null
         for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const idx = Number(entry.target.dataset.index)
-            if (!isNaN(idx)) setVisibleIndex(idx)
-          }
+          if (!entry.isIntersecting) continue
+          if (!best || entry.intersectionRatio > best.intersectionRatio) best = entry
+        }
+        if (best) {
+          const idx = Number(best.target.dataset.index)
+          if (!isNaN(idx)) setVisibleIndex(idx)
         }
       },
-      { threshold: 0.5, root: el }
+      { threshold: [0, 0.25, 0.5, 0.75, 1], root: el }
     )
     const items = el.querySelectorAll('[data-index]')
     items.forEach(child => observer.observe(child))
