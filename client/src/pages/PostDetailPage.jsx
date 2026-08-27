@@ -111,7 +111,7 @@ export default function PostDetailPage() {
         )}
         <div className="article-column">
           {post.coverImage && (
-            <img src={post.coverImage} alt="" className="article-hero" />
+            <img src={post.coverImage} alt="" className="article-hero" style={post.coverPosition ? { objectPosition: post.coverPosition } : undefined} />
           )}
           <article className="article-container">
             <ArticleMeta category={post.category} publishedAt={post.publishedAt} contentLength={post.content?.length} />

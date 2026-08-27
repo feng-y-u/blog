@@ -45,7 +45,7 @@ export default function SearchResults({ results, keyword, loading }) {
           <article key={post.slug} className="post-card">
             {post.coverImage && (
               <div className="post-card-cover">
-                <img src={post.coverImage} alt="" loading="lazy" />
+                <img src={post.coverImage} alt="" loading="lazy" style={post.coverPosition ? { objectPosition: post.coverPosition } : undefined} />
               </div>
             )}
             <div className="post-card-body">

@@ -102,6 +102,7 @@ export default function MagazineSpread({ post, index, isVisible, compact, compac
                 width: isMobile ? '100%' : 'calc(100% - 40px)',
                 height: isMobile ? '100%' : 'calc(100% - 40px)',
                 objectFit: 'cover',
+                objectPosition: post.coverPosition || undefined,
                 borderRadius: isMobile ? 0 : '16px',
                 opacity: isVisible ? 1 : 0,
                 transition: 'opacity 0.6s ease-out, transform 0.8s ease-out',
