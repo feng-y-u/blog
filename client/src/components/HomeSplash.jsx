@@ -9,6 +9,9 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function HomeSplash({ scroller }) {
   const { settings } = useSettings()
+  // Top banner comes from content config (banner_image, e.g. /images/banner.jpg);
+  // falls back to the bundled glow asset while the field is empty.
+  const bannerSrc = settings?.banner_image || glowImg
   const subtitle = settings?.site_subtitle || '记录技术与热爱的角落'
   const siteTitle = settings?.site_title || "风予's Blog"
   const splashRef = useRef(null)
@@ -41,7 +44,7 @@ export default function HomeSplash({ scroller }) {
 
   return (
     <div ref={splashRef} className="home-splash">
-      <img src={glowImg} alt="" className="splash-bg" />
+      <img src={bannerSrc} alt="" className="splash-bg" />
       <div className="splash-overlay" />
       <SnowEffect progressRef={snowProgress} />
       <div className="splash-content">
