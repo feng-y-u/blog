@@ -31,7 +31,7 @@ export default function CategoryPage() {
 
   return (
     <div>
-      <Link to="/categories" className="back-link">← 所有分类</Link>
+      <Link to="/categories" className="back-link">← 索引</Link>
 
       {/* 分类头部卡片 */}
       {category && (
