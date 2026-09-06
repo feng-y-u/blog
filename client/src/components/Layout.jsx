@@ -5,7 +5,7 @@ import Sidebar from './Sidebar'
 import SearchModal from './SearchModal'
 import SiteFooter from './SiteFooter'
 
-const SIDEBAR_PATHS = ['/categories', '/category/', '/tag/', '/tags', '/search', '/archives']
+const SIDEBAR_PATHS = ['/categories', '/category/', '/tag/', '/search', '/archives']
 
 export default function Layout() {
   const location = useLocation()

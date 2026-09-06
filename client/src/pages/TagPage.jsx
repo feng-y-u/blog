@@ -31,7 +31,7 @@ export default function TagPage() {
 
   return (
     <div>
-      <Link to="/tags" className="back-link">← 所有标签</Link>
+      <Link to="/categories" className="back-link">← 索引</Link>
 
       {/* 标签头部卡片 */}
       <div className="card" style={{ padding: '24px', marginBottom: '24px' }}>

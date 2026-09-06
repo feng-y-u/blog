@@ -10,7 +10,6 @@ const PostDetailPage = lazy(() => import('./pages/PostDetailPage'))
 const CategoryListPage = lazy(() => import('./pages/CategoryListPage'))
 const CategoryPage = lazy(() => import('./pages/CategoryPage'))
 const TagPage = lazy(() => import('./pages/TagPage'))
-const TagListPage = lazy(() => import('./pages/TagListPage'))
 const SearchPage = lazy(() => import('./pages/SearchPage'))
 const NotesPage = lazy(() => import('./pages/NotesPage'))
 const ArchivesPage = lazy(() => import('./pages/ArchivesPage'))
@@ -32,7 +31,6 @@ export default function App() {
           <Route path="/categories" element={<SuspenseWrapper><CategoryListPage /></SuspenseWrapper>} />
           <Route path="/category/:slug" element={<SuspenseWrapper><CategoryPage /></SuspenseWrapper>} />
           <Route path="/tag/:slug" element={<SuspenseWrapper><TagPage /></SuspenseWrapper>} />
-          <Route path="/tags" element={<SuspenseWrapper><TagListPage /></SuspenseWrapper>} />
           <Route path="/search" element={<SuspenseWrapper><SearchPage /></SuspenseWrapper>} />
           <Route path="/notes" element={<SuspenseWrapper><NotesPage /></SuspenseWrapper>} />
           <Route path="/archives" element={<SuspenseWrapper><ArchivesPage /></SuspenseWrapper>} />
