@@ -33,8 +33,9 @@ export default function Layout() {
 
       {/* 主内容 */}
       {isHome ? (
-        /* 首页：全屏无容器约束 */
-        <main className="page-enter" key={location.key} style={{ paddingTop: '56px' /* navbar height */ }}>
+        /* 首页：全屏无容器约束。不加 page-enter 淡入 —— 首屏本身就是整块深色，
+           从透明淡进来会先露出白底闪一下；首屏有自己的进场动画。 */
+        <main key={location.key} style={{ paddingTop: '56px' /* navbar height */ }}>
           <Outlet context={{ onSearchOpen: () => setSearchOpen(true) }} />
         </main>
       ) : (

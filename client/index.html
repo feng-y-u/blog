@@ -13,6 +13,18 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- 首帧背景：CSS/JS 还没到时先按主题和路由铺底色，避免白屏一闪 -->
+    <script>
+      (function () {
+        try {
+          var dark = localStorage.getItem('blog-theme') === 'dark'
+          var home = location.pathname === '/' || location.pathname === ''
+          document.documentElement.style.background = home
+            ? '#0b0b12'
+            : (dark ? '#0d0d14' : '#ffffff')
+        } catch (e) {}
+      })()
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

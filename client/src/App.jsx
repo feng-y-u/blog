@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import Layout from './components/Layout'
 import Loading from './components/Loading'
+import SplashFallback from './components/SplashFallback'
 import { SettingsProvider } from './contexts/SettingsContext'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
@@ -16,8 +17,10 @@ const ArchivesPage = lazy(() => import('./pages/ArchivesPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 const WriterPage = lazy(() => import('./pages/WriterPage'))
 
-function SuspenseWrapper({ children }) {
-  return <Suspense fallback={<Loading />}>{children}</Suspense>
+// 首页的 fallback 要和真正的首屏同形（深色底 + 呼吸 ✦），
+// 否则 lazy chunk 下载期间会先闪一屏小骨架。
+function SuspenseWrapper({ children, splash = false }) {
+  return <Suspense fallback={splash ? <SplashFallback /> : <Loading />}>{children}</Suspense>
 }
 
 export default function App() {
@@ -26,7 +29,7 @@ export default function App() {
       <SettingsProvider>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<SuspenseWrapper><HomePage /></SuspenseWrapper>} />
+          <Route path="/" element={<SuspenseWrapper splash><HomePage /></SuspenseWrapper>} />
           <Route path="/post/:slug" element={<SuspenseWrapper><PostDetailPage /></SuspenseWrapper>} />
           <Route path="/categories" element={<SuspenseWrapper><CategoryListPage /></SuspenseWrapper>} />
           <Route path="/category/:slug" element={<SuspenseWrapper><CategoryPage /></SuspenseWrapper>} />
