@@ -24,6 +24,8 @@
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.06);
   --article-font-size: 16px;
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  /* 首屏退场进度 0→1，由 HomeSplash 写到 <html> 上 */
+  --splash-p: 0;
   --font-display: 'Maple Mono CN', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-body: 'Maple Mono CN', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'Maple Mono CN', 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
@@ -53,12 +55,17 @@
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
   --article-font-size: 16px;
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  /* 首屏退场进度 0→1，由 HomeSplash 写到 <html> 上 */
+  --splash-p: 0;
   --font-display: 'Maple Mono CN', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-body: 'Maple Mono CN', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'Maple Mono CN', 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
 }
 
-/* ===== Home Splash ===== */
+/* ===== Home Splash =====
+   The exit is driven by one custom property, --splash-p (0 → 1), written by
+   ScrollTrigger on <html>. Everything below is derived from it, so timings can
+   be tuned here without touching the component. */
 .home-splash {
   position: relative;
   height: 100vh;
@@ -66,8 +73,6 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-  will-change: clip-path;
 }
 
 .splash-bg {
@@ -77,6 +82,11 @@
   height: 100%;
   object-fit: cover;
   pointer-events: none;
+  /* 44% 之后才开始溶掉，给标题留出碎裂的时间 */
+  --fade: clamp(0, (var(--splash-p) - 0.44) * 1.9, 1);
+  opacity: calc(1 - var(--fade));
+  transform: scale(calc(1 + var(--fade) * 0.05));
+  will-change: opacity, transform;
 }
 
 .splash-overlay {
@@ -84,14 +94,18 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.35);
   pointer-events: none;
+  opacity: calc(1 - clamp(0, (var(--splash-p) - 0.44) * 1.9, 1));
 }
 
+/* 标题块整体下沉 20vh（0→31%）：观感是被“拖住”一下再散开 */
 .splash-content {
   position: relative;
   z-index: 1;
   padding: 80px 24px 0;
   text-align: center;
-  animation: fadeInDown 1s ease-out;
+  animation: splashFadeIn 0.9s ease-out;
+  transform: translate3d(0, calc(clamp(0, var(--splash-p) * 3.2, 1) * 20vh), 0);
+  will-change: transform;
 }
 
 .splash-badge {
@@ -100,9 +114,12 @@
   letter-spacing: 0.35em;
   color: rgba(232, 213, 232, 0.35);
   margin-bottom: 32px;
+  opacity: calc(1 - clamp(0, (var(--splash-p) - 0.08) * 4, 1));
 }
 
+/* inline-block 让盒子贴住文字本身，粒子采样才能和字形对齐 */
 .splash-title {
+  display: inline-block;
   font-family: var(--font-display);
   font-size: 56px;
   font-weight: 800;
@@ -110,6 +127,7 @@
   letter-spacing: -0.02em;
   line-height: 1.1;
   margin: 0;
+  opacity: calc(1 - clamp(0, (var(--splash-p) - 0.08) * 4.5, 1));
 }
 
 .splash-divider {
@@ -118,6 +136,7 @@
   background: rgba(232, 213, 232, 0.2);
   margin: 24px auto;
   border-radius: 1px;
+  opacity: calc(1 - clamp(0, (var(--splash-p) - 0.08) * 4, 1));
 }
 
 .splash-subtitle {
@@ -125,6 +144,7 @@
   color: rgba(232, 213, 232, 0.5);
   letter-spacing: 0.12em;
   margin: 0;
+  opacity: calc(1 - clamp(0, (var(--splash-p) - 0.08) * 4, 1));
 }
 
 .splash-scroll-hint {
@@ -138,11 +158,51 @@
   color: rgba(232, 213, 232, 0.2);
   letter-spacing: 0.25em;
   animation: splashBounce 2s ease-in-out infinite;
+  opacity: calc(1 - clamp(0, var(--splash-p) * 4, 1));
 }
 
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-12px); }
-  to { opacity: 1; transform: translateY(0); }
+/* 粒子层：压在导航(100)之上、搜索弹窗(200)之下，才能“落进”导航栏 */
+.splash-particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 150;
+}
+
+/* ===== 导航品牌与 ✦ 的交接（仅首页） ===== */
+html.is-home-hero .nav-brand-text {
+  opacity: clamp(0, (var(--splash-p, 0) - 0.76) * 6, 1);
+}
+
+html.is-home-hero .nav-brand-mark {
+  display: inline-block;
+  position: relative;
+  --tm: clamp(0, (var(--splash-p, 0) - 0.70) * 5.5, 1);
+  --ping: clamp(0, (var(--splash-p, 0) - 0.855) * 14, 1);
+  --bump: calc(4 * var(--ping) * (1 - var(--ping)));
+  opacity: var(--tm);
+  transform:
+    scale(calc(0.35 + var(--tm) * 0.65 + var(--bump) * 0.55))
+    rotate(calc((1 - var(--tm)) * -110deg));
+  text-shadow:
+    0 0 calc(var(--bump) * 16px) rgba(255, 77, 106, 0.85),
+    0 0 calc(var(--bump) * 34px) rgba(255, 77, 106, 0.45);
+}
+
+html.is-home-hero .nav-brand-mark::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 77, 106, 0.75);
+  opacity: calc(var(--ping) * (1 - var(--ping)) * 2.2);
+  transform: scale(calc(0.35 + var(--ping) * 2.1));
+  pointer-events: none;
+}
+
+@keyframes splashFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes splashBounce {
@@ -155,8 +215,31 @@
   background: rgba(0, 0, 0, 0.5);
 }
 
-/* ===== Unified Page Scroll Container ===== */
-.page-scroll-container {
+/* Reduced motion: 不粒子、不下沉、不点亮，只做干净的交叠淡出 */
+@media (prefers-reduced-motion: reduce) {
+  .splash-bg,
+  .splash-overlay,
+  .splash-content,
+  .splash-title,
+  .splash-badge,
+  .splash-divider,
+  .splash-subtitle,
+  .splash-scroll-hint {
+    opacity: calc(1 - var(--splash-p, 0)) !important;
+    transform: none !important;
+  }
+  html.is-home-hero .nav-brand-text,
+  html.is-home-hero .nav-brand-mark {
+    opacity: 1 !important;
+    transform: none !important;
+    text-shadow: none !important;
+  }
+  html.is-home-hero .nav-brand-mark::after {
+    display: none !important;
+  }
+}
+
+/* ===== Unified Page Scroll Container ===== */.page-scroll-container {
   height: 100vh;
   overflow-y: scroll;
   scroll-behavior: smooth;

@@ -67,7 +67,7 @@ export default function Navbar({ onSearchOpen }) {
           display: 'flex', alignItems: 'center', gap: '6px',
           textDecoration: 'none',
         }}>
-          <span style={{ color: 'var(--accent-pink)', fontSize: '16px' }}>✦</span>
+          <span className="nav-brand-mark" style={{ color: 'var(--accent-pink)', fontSize: '16px' }}>✦</span>
           <span className="nav-brand-text" style={{
             color: 'var(--fg)', fontSize: '13px',
             letterSpacing: '0.15em', fontWeight: 800,
@@ -107,7 +107,8 @@ export default function Navbar({ onSearchOpen }) {
           style={{
             background: 'none', border: 'none',
             color: 'var(--fg-muted)', cursor: 'pointer',
-            fontSize: '16px', padding: '4px',
+            width: '22px', height: '22px', padding: 0,
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
             transition: 'var(--transition)',
             lineHeight: 1,
           }}
@@ -115,10 +116,40 @@ export default function Navbar({ onSearchOpen }) {
           onMouseLeave={e => { e.currentTarget.style.color = 'var(--fg-muted)' }}
           aria-label={theme === 'dark' ? '切换到浅色模式' : '切换到暗色模式'}
         >
-          {theme === 'dark' ? '☀️' : '🌙'}
+          {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
         </button>
       </div>
     </nav>
+  )
+}
+
+// 主题图标用矢量线稿：emoji 会被系统画成彩色位图，永远跟不了 currentColor
+const ICON = {
+  viewBox: '0 0 24 24',
+  width: 16,
+  height: 16,
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.7,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+  'aria-hidden': 'true',
+}
+
+function SunIcon() {
+  return (
+    <svg {...ICON}>
+      <circle cx="12" cy="12" r="4.2" />
+      <path d="M12 2.6v2.4M12 19v2.4M2.6 12h2.4M19 12h2.4M5.4 5.4l1.7 1.7M16.9 16.9l1.7 1.7M18.6 5.4l-1.7 1.7M7.1 16.9l-1.7 1.7" />
+    </svg>
+  )
+}
+
+function MoonIcon() {
+  return (
+    <svg {...ICON}>
+      <path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" />
+    </svg>
   )
 }
 
