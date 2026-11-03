@@ -38,8 +38,6 @@ export default function HomePage() {
     rows.push(featured.slice(i, i + ROW_SIZE))
   }
 
-  if (loading) return <Loading />
-
   return (
     <div ref={scrollRef} className="page-scroll-container">
       <Helmet>
@@ -47,9 +45,10 @@ export default function HomePage() {
         <meta name="description" content={settings?.profile_bio || '个人博客，分享编程技术和动漫文化'} />
       </Helmet>
 
+      {/* 首屏不依赖文章数据：先进场，文章区自己出骨架 */}
       <HomeSplash scroller={scrollRef} />
 
-      {rows.map((rowPosts, rowIdx) => (
+      {loading ? <Loading /> : rows.map((rowPosts, rowIdx) => (
         <div key={rowIdx} className="magazine-page">
           <MagazineNumbering side="left">
             {rowPosts.map((post, i) => {

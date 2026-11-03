@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useSettings } from '../contexts/SettingsContext'
@@ -29,6 +29,16 @@ export default function HomeSplash({ scroller }) {
   const bannerSrc = settings?.banner_image || glowImg
   const subtitle = settings?.site_subtitle || '记录技术与热爱的角落'
   const siteTitle = settings?.site_title || "风予's Blog"
+
+  // The hero renders before any data is requested, so a short breathing ★
+  // stands in until site settings arrive. The timeout keeps a failed settings
+  // request from leaving the hero stuck on the loader forever.
+  const [bootExpired, setBootExpired] = useState(false)
+  useEffect(() => {
+    const timer = setTimeout(() => setBootExpired(true), 1600)
+    return () => clearTimeout(timer)
+  }, [])
+  const ready = Boolean(settings) || bootExpired
 
   const splashRef = useRef(null)
   const titleRef = useRef(null)
@@ -310,20 +320,28 @@ export default function HomeSplash({ scroller }) {
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', onResize)
     }
-  }, [scroller])
+  }, [scroller, ready])
 
   return (
     <div ref={splashRef} className="home-splash">
-      <img src={bannerSrc} alt="" className="splash-bg" />
-      <div className="splash-overlay" />
-      <SnowEffect progressRef={snowProgress} />
-      <div className="splash-content">
-        <span className="splash-badge">✦ BLOG ✦</span>
-        <h1 ref={titleRef} className="splash-title">{siteTitle}</h1>
-        <div className="splash-divider" />
-        <p className="splash-subtitle">{subtitle}</p>
-      </div>
-      <div className="splash-scroll-hint">SCROLL ↓</div>
+      {ready ? (
+        <>
+          <img src={bannerSrc} alt="" className="splash-bg" />
+          <div className="splash-overlay" />
+          <SnowEffect progressRef={snowProgress} />
+          <div className="splash-content">
+            <span className="splash-badge">✦ BLOG ✦</span>
+            <h1 ref={titleRef} className="splash-title">{siteTitle}</h1>
+            <div className="splash-divider" />
+            <p className="splash-subtitle">{subtitle}</p>
+          </div>
+          <div className="splash-scroll-hint">SCROLL ↓</div>
+        </>
+      ) : (
+        <div className="splash-boot" aria-hidden="true">
+          <span className="splash-boot-mark">✦</span>
+        </div>
+      )}
       <canvas ref={canvasRef} className="splash-particles" aria-hidden="true" />
     </div>
   )

@@ -67,6 +67,8 @@
    ScrollTrigger on <html>. Everything below is derived from it, so timings can
    be tuned here without touching the component. */
 .home-splash {
+  /* 图片就绪前先垫深色，避免浅色主题露出白底 */
+  background: #0b0b12;
   position: relative;
   height: 100vh;
   overflow: hidden;
@@ -82,6 +84,7 @@
   height: 100%;
   object-fit: cover;
   pointer-events: none;
+  animation: splashPhotoIn 0.6s ease-out;
   /* 44% 之后才开始溶掉，给标题留出碎裂的时间 */
   --fade: clamp(0, (var(--splash-p) - 0.44) * 1.9, 1);
   opacity: calc(1 - var(--fade));
@@ -161,6 +164,31 @@
   opacity: calc(1 - clamp(0, var(--splash-p) * 4, 1));
 }
 
+/* 首屏就绪前的占位：一颗呼吸的 ✦，通常只出现几百毫秒 */
+.splash-boot {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.splash-boot-mark {
+  font-size: 30px;
+  color: var(--accent-pink);
+  animation: splashBreath 1.9s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+@keyframes splashBreath {
+  0%, 100% { opacity: 0.22; transform: scale(0.88) rotate(-10deg); }
+  50% { opacity: 0.8; transform: scale(1.06) rotate(0deg); }
+}
+
+@keyframes splashPhotoIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 /* 粒子层：压在导航(100)之上、搜索弹窗(200)之下，才能“落进”导航栏 */
 .splash-particles {
   position: fixed;
@@ -239,6 +267,16 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .splash-boot-mark {
+    animation: none !important;
+    opacity: 0.6 !important;
+    transform: none !important;
+  }
+  .splash-bg {
+    animation: none !important;
+  }
+}
 /* ===== Unified Page Scroll Container ===== */.page-scroll-container {
   height: 100vh;
   overflow-y: scroll;
