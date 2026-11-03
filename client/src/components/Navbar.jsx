@@ -67,8 +67,10 @@ export default function Navbar({ onSearchOpen }) {
           display: 'flex', alignItems: 'center', gap: '6px',
           textDecoration: 'none',
         }}>
-          <span className="nav-brand-mark" style={{ color: 'var(--accent-pink)', fontSize: '16px' }}>✦</span>
-          <span className="nav-brand-text" style={{
+          {/* 首页的站名由首屏粒子交接过来，所以整条首页路由都先藏着：
+              只看 --splash-p，不依赖 HomeSplash 是否已挂载，避免加载态闪一下。 */}
+          <span className={`nav-brand-mark${isHome ? ' is-home' : ''}`} style={{ color: 'var(--accent-pink)', fontSize: '16px' }}>✦</span>
+          <span className={`nav-brand-text${isHome ? ' is-home' : ''}`} style={{
             color: 'var(--fg)', fontSize: '13px',
             letterSpacing: '0.15em', fontWeight: 800,
             fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', sans-serif",

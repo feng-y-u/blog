@@ -46,7 +46,6 @@ export default function HomeSplash({ scroller }) {
     if (!el || !scrollerEl) return
 
     const root = document.documentElement
-    root.classList.add('is-home-hero')
 
     const trigger = ScrollTrigger.create({
       trigger: el,
@@ -67,7 +66,6 @@ export default function HomeSplash({ scroller }) {
     return () => {
       trigger.kill()
       triggerRef.current = null
-      root.classList.remove('is-home-hero')
       root.style.removeProperty('--splash-p')
     }
   }, [scroller])

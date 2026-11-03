@@ -170,11 +170,11 @@
 }
 
 /* ===== 导航品牌与 ✦ 的交接（仅首页） ===== */
-html.is-home-hero .nav-brand-text {
+.nav-brand-text.is-home {
   opacity: clamp(0, (var(--splash-p, 0) - 0.76) * 6, 1);
 }
 
-html.is-home-hero .nav-brand-mark {
+.nav-brand-mark.is-home {
   display: inline-block;
   position: relative;
   --tm: clamp(0, (var(--splash-p, 0) - 0.70) * 5.5, 1);
@@ -189,7 +189,7 @@ html.is-home-hero .nav-brand-mark {
     0 0 calc(var(--bump) * 34px) rgba(255, 77, 106, 0.45);
 }
 
-html.is-home-hero .nav-brand-mark::after {
+.nav-brand-mark.is-home::after {
   content: '';
   position: absolute;
   inset: -7px;
@@ -228,13 +228,13 @@ html.is-home-hero .nav-brand-mark::after {
     opacity: calc(1 - var(--splash-p, 0)) !important;
     transform: none !important;
   }
-  html.is-home-hero .nav-brand-text,
-  html.is-home-hero .nav-brand-mark {
+  .nav-brand-text.is-home,
+  .nav-brand-mark.is-home {
     opacity: 1 !important;
     transform: none !important;
     text-shadow: none !important;
   }
-  html.is-home-hero .nav-brand-mark::after {
+  .nav-brand-mark.is-home::after {
     display: none !important;
   }
 }
