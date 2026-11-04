@@ -15,7 +15,7 @@ export function extractTOC(content) {
   const used = new Map()
   const headings = []
   let inFence = false
-  let domIndex = 0
+  let domIndex = -1 // 0-based, matches querySelectorAll; the skipped leading H1 still counts
   let seenHeading = false
   for (const line of content.split('\n')) {
     if (/^\s*(```|~~~)/.test(line)) {
