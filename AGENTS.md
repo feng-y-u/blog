@@ -17,6 +17,10 @@ cd client && npm install && npm run dev
 - `content/notes/*.md`：笔记，标题同文章推导规则
 - `content/config.json`：站点设置（site_title/profile_name/avatar_emoji/social_links 等）
 - `content/images/`：文章图片，构建时复制到 `client/public/images/`
+  - 优先用 WebP。`cd client && npm run images` 会批量把 PNG/JPG（>70% 收益的）转成 WebP 并改写 md/config 里的引用
+  - 原图移到 `content/images/_originals/`；构建只拷贝该目录下的文件，子目录不进 dist
+  - `/writer` 插入图片时会自动转 WebP（`utils/image-compress.js`），不用手动处理
+  - 构建时会给超过 500KB 的 PNG/JPG 打印警告
 - 分类/标签从所有文章的 frontmatter 自动收集，无需单独维护
 
 ## 部署（Cloudflare Pages）

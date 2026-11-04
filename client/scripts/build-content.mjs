@@ -107,14 +107,29 @@ await writeFile(path.join(publicDir, 'data/tags.json'), JSON.stringify(tags))
 await writeFile(path.join(publicDir, 'data/settings.json'), JSON.stringify(settings))
 
 // --- copy images ---
+// 只拷贝目录下的文件；content/images/_originals/ 这类子目录会被跳过，
+// 所以原图留在本地但不会被打进 dist。
 await mkdir(path.join(publicDir, 'images'), { recursive: true })
 const imagesSrc = path.join(contentDir, 'images')
+const IMAGE_BUDGET_KB = 500
+const oversized = []
 try {
   const files = await readdir(imagesSrc, { withFileTypes: true })
   for (const f of files) {
-    if (f.isFile()) await copyFile(path.join(imagesSrc, f.name), path.join(publicDir, 'images', f.name))
+    if (!f.isFile()) continue
+    const from = path.join(imagesSrc, f.name)
+    await copyFile(from, path.join(publicDir, 'images', f.name))
+    if (/\.(png|jpe?g)$/i.test(f.name)) {
+      const info = await stat(from)
+      if (info.size > IMAGE_BUDGET_KB * 1024) oversized.push([f.name, Math.round(info.size / 1024)])
+    }
   }
 } catch { /* no images dir, skip */ }
+if (oversized.length) {
+  console.warn(`\n⚠ ${oversized.length} 张图超过 ${IMAGE_BUDGET_KB}KB，建议转 WebP：`)
+  for (const [name, kb] of oversized) console.warn(`  ${kb} KB  ${name}`)
+  console.warn('  运行 npm run images 可批量转换并改写引用\n')
+}
 
 // --- sitemap + robots ---
 const siteUrl = settings.site_url || 'https://example.com'
