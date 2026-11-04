@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { getPostBySlug, getPosts } from '../api/posts'
@@ -89,11 +89,11 @@ export default function PostDetailPage() {
     }).catch(() => {})
   }
 
+  const headings = useMemo(() => (post ? extractTOC(post.content) : []), [post])
+
   if (loading) return <Loading />
   if (error) return <div style={{ textAlign: 'center', padding: '48px 24px', color: 'var(--accent-pink)' }}>{error}</div>
   if (!post) return null
-
-  const headings = extractTOC(post.content)
 
   return (
     <>
