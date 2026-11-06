@@ -9,6 +9,7 @@ import Lightbox from '../components/Lightbox'
 import ArticleMeta from '../components/ArticleMeta'
 import ArticleToolbar from '../components/ArticleToolbar'
 import TableOfContents, { extractTOC } from '../components/TableOfContents'
+import MobileTableOfContents from '../components/MobileTableOfContents'
 import ArticleBody from '../components/ArticleBody'
 import ArticleFooter from '../components/ArticleFooter'
 import AdjacentNav from '../components/AdjacentNav'
@@ -117,6 +118,7 @@ export default function PostDetailPage() {
             <ArticleMeta category={post.category} publishedAt={post.publishedAt} contentLength={post.content?.length} />
             <h1 className="article-title">{post.title}</h1>
             <ArticleToolbar author={settings?.profile_name || ''} viewCount={localViews} fontSize={fontSize} onFontSizeChange={setFontSize} />
+            <MobileTableOfContents headings={headings} />
             <ArticleBody content={post.content} onImageClick={setLightboxSrc} />
             <ArticleFooter tags={post.tags} onCopyLink={handleCopyLink} copied={copied} />
             <div className="article-copyright">

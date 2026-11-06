@@ -37,7 +37,7 @@ export function extractTOC(content) {
 }
 
 // Sections: h1 (part) / h2; items: h3. Only h2 increments the number; parts use ✦.
-function buildSections(headings) {
+export function buildSections(headings) {
   const sections = []
   let current = null
   let num = 0
@@ -68,8 +68,13 @@ function buildSections(headings) {
   return sections
 }
 
-function headingElements() {
+export function headingElements() {
   return document.querySelectorAll('.article-body h1, .article-body h2, .article-body h3')
+}
+
+export function jumpToHeading(domIndex) {
+  const el = headingElements()[domIndex]
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
 export default function TableOfContents({ headings }) {
@@ -129,11 +134,6 @@ export default function TableOfContents({ headings }) {
     setOverrides(patch)
   }
 
-  function jump(domIndex) {
-    const el = headingElements()[domIndex]
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
   const subCount = sections.reduce((n, s) => n + s.children.length, 0)
   const activeHeading = headings[activeIndex]
   const activeLabel = activeHeading
@@ -176,7 +176,7 @@ export default function TableOfContents({ headings }) {
                 <a
                   className="toc-sec-row"
                   href={`#${sec.id}`}
-                  onClick={e => { e.preventDefault(); jump(sec.domIndex) }}
+                  onClick={e => { e.preventDefault(); jumpToHeading(sec.domIndex) }}
                 >
                   {row}
                 </a>
@@ -192,7 +192,7 @@ export default function TableOfContents({ headings }) {
                           className={`toc-sub${current ? ' active' : ''}`}
                           href={`#${child.id}`}
                           aria-current={current ? 'location' : undefined}
-                          onClick={e => { e.preventDefault(); jump(child.domIndex) }}
+                          onClick={e => { e.preventDefault(); jumpToHeading(child.domIndex) }}
                         >
                           {hasBadges && <span className="toc-badge">{child.badge}</span>}
                           <span className="toc-sub-text">{child.title}</span>
